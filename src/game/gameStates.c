@@ -6,11 +6,12 @@ gameState* currentState = NULL;
 
 bool running = true;
 
-void initGameState(gameState* newState){
+void initGameState(const gameState* newState){
 	if(currentState != NULL){
 		(*(currentState->uninitState))();
 	}
 	
 	(*(newState->initState))();
-	currentState = newState;
+	// casting this to a pointer without const for some reason fixes the warning about disregarding the const qualifier
+	currentState = (gameState*)newState;
 }

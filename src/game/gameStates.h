@@ -14,6 +14,6 @@ extern gameState* currentState;
 
 extern bool running;
 
-void initGameState(gameState* newState);
+void initGameState(const gameState* newState);
 
 #endif

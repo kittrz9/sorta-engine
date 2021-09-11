@@ -1,6 +1,6 @@
 CC = gcc
 SHELL = /bin/bash
-CFLAGS = $(shell pkg-config --cflags glfw3) -Wall -Wpedantic -g
+CFLAGS = $(shell pkg-config --cflags glfw3) -Wall -Wpedantic -O3
 INCLUDE = -Isrc/engine -Isrc/game -Isrc/game/gameStates
 LIBS = $(shell pkg-config --libs glew glfw3) -lm
 NAME = openGL-Test

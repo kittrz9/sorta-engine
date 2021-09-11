@@ -1,5 +1,7 @@
 #include "gameStates/gameStateRunning.h" 
 
+#include <stdio.h>
+
 #include "entity.h"
 #include "player.h"
 #include "controls.h"
