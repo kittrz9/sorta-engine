@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "shader.h"
+#include "logging.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -26,7 +27,7 @@ void glfwWindowSizeCallback(GLFWwindow* window, int width, int height){
 	
 	glViewport(0,0,width,height);
 	
-	printf("window resized to (%i, %i)\n", windowWidth, windowHeight);
+	//printf("window resized to (%i, %i)\n", windowWidth, windowHeight);
 	
 	return;
 }
@@ -47,14 +48,14 @@ GLuint vertexArrayObject;
 
 void initRenderer(){
 	// set up vertex buffer object
-	printf("setting up vertex buffer object\n");
+	debugLog(LOG_NORMAL, "setting up vertex buffer object\n");
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(points)/sizeof(points[0])) * sizeof(float), points, GL_STATIC_DRAW);
 
 	// set up vertex array object
-	printf("setting up vertex array object\n");
+	debugLog(LOG_NORMAL, "setting up vertex array object\n");
 	glGenVertexArrays(1,&vertexArrayObject);
 	glBindVertexArray(vertexArrayObject);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -64,7 +65,7 @@ void initRenderer(){
 	glEnableVertexAttribArray(1);
 	
 	// compile shader 
-	printf("compiling shaders\n");
+	debugLog(LOG_NORMAL, "compiling shaders\n");
 	GLuint shaderProgram = createShader("shaders/vertexShader.glsl", "shaders/fragmentShader.glsl");
 	
 	// this will probably be really bad for later if I ever want to use other shaders

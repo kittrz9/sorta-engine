@@ -11,6 +11,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "logging.h"
+
 typedef struct {
 	char* name;
 	resource* resPointer;
@@ -71,7 +73,7 @@ const char* typeStrings[RES_TYPE_ENUM_LENGTH] = {"texture"};
 void destroyResource(resource* res){
 	for(unsigned int i = 0; i < loadedResources; i++){
 		if(resourceList[i].resPointer == res){
-			printf("Destroying resource \"%s\" with type %s at %p\n", resourceList[i].name, typeStrings[res->type], (void*)resourceList[i].resPointer);
+			debugLog(LOG_NORMAL, "Destroying resource \"%s\" with type %s at %p\n", resourceList[i].name, typeStrings[res->type], (void*)resourceList[i].resPointer);
 			(resourceDestroyingFunctions[res->type])(res);
 			// set these to NULL to be able to check for free entries in the list
 			resourceList[i].resPointer = NULL;
@@ -82,7 +84,7 @@ void destroyResource(resource* res){
 		}
 	}
 	
-	printf("could not find resource %p in resource list to destroy\n", (void*)res);
+	debugLog(LOG_ERROR, "could not find resource %p in resource list to destroy\n", (void*)res);
 	
 	return;
 }
@@ -103,7 +105,7 @@ resource* loadResource(RESOURCE_TYPE type, const char* filePath){
 	res->type = type;
 	
 	if(res->pointer == NULL){
-		printf("could not open resource with file path \"%s\"\n", filePath);
+		debugLog(LOG_ERROR, "could not open resource with file path \"%s\"\n", filePath);
 		return NULL;
 	}
 	
@@ -117,14 +119,14 @@ resource* loadResource(RESOURCE_TYPE type, const char* filePath){
 	resourceList[resourceIndex].name = malloc(strlen(filePath) * sizeof(char));
 	strcpy(resourceList[resourceIndex].name, filePath);
 	
-	printf("resource \"%s\" with type %s created at %p\n", filePath, typeStrings[type], (void*)res);
+	debugLog(LOG_SUCCESS, "resource \"%s\" with type %s created at %p\n", filePath, typeStrings[type], (void*)res);
 	
 	return res;
 }
 
 void clearResourceList(){
 	if(loadedResources < 1){
-		printf("no resources loaded\n");
+		debugLog(LOG_ERROR, "no resources loaded\n");
 		return;
 	}
 	
@@ -133,7 +135,7 @@ void clearResourceList(){
 			continue;
 		}
 		
-		printf("Destroying resourse \"%s\" with type %s at %p\n", resourceList[i].name, typeStrings[resourceList[i].resPointer->type], (void*)resourceList[i].resPointer);
+		debugLog(LOG_NORMAL, "Destroying resourse \"%s\" with type %s at %p\n", resourceList[i].name, typeStrings[resourceList[i].resPointer->type], (void*)resourceList[i].resPointer);
 		(resourceDestroyingFunctions[resourceList[i].resPointer->type])(resourceList[i].resPointer);
 		
 		free(resourceList[i].name);

@@ -6,6 +6,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "logging.h"
+
 GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	FILE* filePointer;
 	unsigned int fileSize;
@@ -16,7 +18,7 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	// read shader into string
 	filePointer = fopen(shaderFilePath, "r");
 	if(!filePointer) {
-		printf("could not open shader");
+		debugLog(LOG_ERROR, "could not open shader \"%s\"", shaderFilePath);
 		return 0;
 	}
 	fseek(filePointer, 0, SEEK_END);
@@ -26,7 +28,8 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	shaderContents = malloc((fileSize+1) * sizeof(char));
 	fread(shaderContents, fileSize, 1, filePointer);
 	shaderContents[fileSize] = '\0';
-	printf("shader \"%s\", size %i\n\"%s\"\n", shaderFilePath, fileSize, shaderContents);
+	//debugLog(LOG_NORMAL, "compiling shader \"%s\", size %i\n\"%s\"\n", shaderFilePath, fileSize, shaderContents);
+	debugLog(LOG_NORMAL, "compiling shader \"%s\", size %i\n", shaderFilePath, fileSize);
 	
 	// compile shader
 	shader = glCreateShader(shaderType);
@@ -36,17 +39,16 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	// check if shader compiled successfully 
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &shaderCompiled);
 	if(shaderCompiled == GL_FALSE){
-		printf("could not compile shader \"%s\"\n", shaderFilePath);
-		
 		GLsizei logLength = 0;
-		GLchar message[1024];
-		glGetShaderInfoLog(shader, 1024, &logLength, message);
-		printf("%s\n", message);
-		
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
+		GLchar* message = malloc(sizeof(GLchar) * logLength);
+		glGetShaderInfoLog(shader, logLength, NULL, message);
+		debugLog(LOG_ERROR, "could not compile shader \"%s\": %s", shaderFilePath, message);
+		free(message);
 		return 0;
 	}
 	
-	printf("shader \"%s\" compiled successfully\n", shaderFilePath);
+	debugLog(LOG_SUCCESS, "shader \"%s\" compiled successfully\n", shaderFilePath);
 	fclose(filePointer);
 	free(shaderContents);
 	

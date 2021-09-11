@@ -10,18 +10,22 @@
 #include "controls.h"
 #include "entity.h"
 #include "resourceManager.h"
+#include "logging.h"
 
 int main(){
+	// initialize the log file
+	initLogFile();
+	
 	// init GLFW
 	if(!glfwInit()){
-		printf("could not initialized GLFW\n");
+		debugLog(LOG_ERROR, "could not initialize GLFW\n");
 		return -1;
 	}
 	
 	// create window
 	window = glfwCreateWindow(windowWidth, windowHeight, "bruh", NULL, NULL);
 	if(!window){
-		printf("could not create window\n");
+		debugLog(LOG_ERROR, "Could not create window\n");
 		glfwTerminate();
 		return -1;
 	}
@@ -38,7 +42,7 @@ int main(){
 	// get version stuff
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version  = glGetString(GL_VERSION);
-	printf("Renderer: %s\nOpenGL version: %s\n", renderer, version);
+	debugLog(LOG_NORMAL, "Renderer: %s, OpenGL version: %s\n", renderer, version);
 	
 	// turn on vsync
 	// for some reason I was getting screen tearing with vsync on and turning it off fixed it, makes literally no sense but whatever lmao
@@ -57,12 +61,14 @@ int main(){
 	gameLoop();
 	
 	// end
-	printf("closing\n");
+	debugLog(LOG_NORMAL, "closing\n");
 	
 	destroyEntityList();
 	clearResourceList();
 	
 	glfwTerminate();
+	
+	closeLogFile();
 	
 	return 0;
 }

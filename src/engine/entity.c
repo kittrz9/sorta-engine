@@ -3,13 +3,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "logging.h"
+
 entListNode* entListHead = NULL;
 entListNode* entListTail = NULL;
 entListNode* entListCurrent = NULL;
 
 void pushToEntityList(entity* ent){
 	if(entListHead == NULL) {
-		printf("initializing entity list\n");
+		debugLog(LOG_NORMAL, "initializing entity list\n");
 		entListHead = malloc(sizeof(entListNode));
 		entListTail = entListHead;
 		entListCurrent = entListHead;
@@ -24,14 +26,14 @@ void pushToEntityList(entity* ent){
 	
 	entListCurrent->ent = ent;
 	entListCurrent->next = NULL;
-	printf("entity %p pushed to list at node %p\n", (void*)ent, (void*)entListCurrent);
+	debugLog(LOG_NORMAL, "entity %p pushed to list at node %p\n", (void*)ent, (void*)entListCurrent);
 	
 	return;
 }
 
 void removeEntity(entity* ent){
 	if(entListHead == NULL){
-		printf("entity list is empty");
+		debugLog(LOG_ERROR, "entity list is empty, cannot remove entity %p", (void*)ent);
 		return;
 	}
 	
@@ -79,7 +81,7 @@ void removeEntity(entity* ent){
 		}
 	}
 	
-	printf("could not find entity at %p in the list\n", (void*)ent);
+	debugLog(LOG_ERROR, "could not find entity at %p in the list\n", (void*)ent);
 }
 
 void destroyEntityList(){
