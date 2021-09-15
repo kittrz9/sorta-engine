@@ -67,5 +67,8 @@ GLuint createShader(const char* vertexShaderFilePath, const char* fragmentShader
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
 	
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	
 	return shaderProgram;
 }

@@ -18,9 +18,16 @@ As of now this only has support for Linux, though I'd assume it's not too hard t
 This is pretty much just a project I'm doing for fun/learning and I doubt anyone actually would want to use this, though if for some strange reason you want to I'm fine with it. All I'd really want is just to be credited but I'm fine as long as you don't claim this stuff as your own. This project uses the Unlicense so whatever, I don't really care that much.<br>
 
 ---
+## Dependencies
+GLEW : <http://glew.sourceforge.net/><br>
+GLFW : <https://www.glfw.org/><br>
+PortAudio : <http://portaudio.com/><br>
+
+---
 
 ## Compiling
-All you should need to compile this on Linux is glew and glfw3, both of which should be available from the package manager of whatever distro you're using.<br>
+All you should need to compile this on Linux is glew, glfw3, and PortAudio.<br>
+If you're on linux you should be able to get glew and glfw3 from whatever package manager you're using. Same probably goes for portaudio but idk, you might have to compile it from source (<https://github.com/PortAudio/portaudio>). A guide on compiling from source can be found at <http://portaudio.com/docs/v19-doxydocs/compile_linux.html><br> the `portaudio.h` file that is required is in this repository, but you'll need to copy the `libportaudio.a` file from wherever you have PortAudio installed.<br> 
 Then all you'd need to do to compile this is run `make` and it should compile into the `build/` directory.<br>
 
 ---
@@ -33,8 +40,18 @@ You will need to include the stuff in the directory though in the `src/game` dir
 #### animation.h and animation.c
 Very basic animation handling things using spritesheets.<br>
 
+#### audio.h and audio.c
+A very basic audio synthesizer using PortAudio. You provide the ADSR envelope thing and pointer to the function used for the synthesizer in a synthInstrument structure, and then put that with the start and end frequencies, length and volume into a synthData structure and pass that to the playSynth function. It'd probably be better to just read the header and C files to understand how to use it since I can't really explain this well (though it would probably be best to read through all the files that you're going to be using).<br>
+
 #### entity.h and entity.c
 Basically anything that gets updated and/or drawn on screen every frame is an entity. It has a pointer to another struct that has other properties (for sort of polymorphism), 2 function pointers that point to functions that will update and draw the entity that gets called every frame, and a function pointer to destroy any resources being used by the entity when the entity is removed.<br>
+
+#### logging.h and logging.c
+Lets you output to both the terminal and a log file with debug information.<br>
+
+#### portaudio.h
+Literally just from here <https://github.com/PortAudio/portaudio/blob/master/include/portaudio.h><br>
+It has to be here to use the PortAudio library I think.<br>
 
 #### renderer.h and renderer.c
 Has very basic functions for drawing rectangles and textures to the screen. I should add more functions like them but that's all there is for now.<br>

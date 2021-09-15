@@ -7,6 +7,8 @@
 #include "controls.h"
 #include "vectors.h"
 
+#include "audio.h"
+
 #define playerObj ((playerStruct*)(ent->object))
 
 const vec2f worldSize = {1333.3f, 1000.0f};
@@ -69,10 +71,6 @@ entity* createPlayer(vec2f pos, vec2f size){
 	playerObj->moving = false;
 	playerObj->facingLeft = false;
 	
-	// temporary
-	//playerObj->texture = loadResource(RES_TYPE_TEXTURE, "res/test.png");
-	
-	
 	ent->draw = drawPlayer;
 	ent->update = updatePlayerInAir;
 	
@@ -114,6 +112,24 @@ void playerBoundaryCheck(entity* ent){
 	
 	return;
 }
+
+synthInstrument jumpSndInstr = {
+	.envelope = {
+		.attack = 0.01,
+		.decay = 0.05f,
+		.sustain = 0.8f,
+		
+		.release = 0.2f,
+	},
+	.synth = synthSine,
+};
+synthData jumpSndData = {
+	.startFreq = 220.0,
+	.endFreq = 440.0,
+	.volume = 1.0,
+	.length = 0.05f,
+	.instrument = &jumpSndInstr,
+};
 
 // I hate how because this is in like 1 second instead of 1 millisecond they're all massive values
 #define MAX_RUN_SPEED 1000.0f
@@ -157,6 +173,7 @@ void updatePlayerOnGround(entity* ent, double deltaTime){
 	commonPhysicsCheck(ent, deltaTime);
 	
 	if(keys[UP].pressedTimer > 0.0f){
+		playSynth(&jumpSndData);
 		playerObj->vel.y = JUMP_FORCE;
 		ent->update = updatePlayerInAir;
 	}
@@ -192,6 +209,7 @@ void updatePlayerInAir(entity* ent, double deltaTime){
 	if(playerObj->pos.y < worldSize.y - playerObj->size.y){
 		playerObj->vel.y += GRAVITY * deltaTime;
 	} else if(playerObj->jumpTimer > 0.0f){
+		playSynth(&jumpSndData);
 		playerObj->pos.y = worldSize.y - playerObj->size.y;
 		playerObj->vel.y = JUMP_FORCE;
 	} else {

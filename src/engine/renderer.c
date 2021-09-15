@@ -44,21 +44,22 @@ const float points[] = {
 };
 
 // maybe not good to have like one vertex array object but idk it's literally just rotating scaling and translation a square
+GLuint vertexBufferObject;
 GLuint vertexArrayObject;
 
 void initRenderer(){
+	debugLog(LOG_NORMAL, "initializing renderer\n"); 
 	// set up vertex buffer object
 	debugLog(LOG_NORMAL, "setting up vertex buffer object\n");
-	GLuint vbo = 0;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glGenBuffers(1, &vertexBufferObject);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(points)/sizeof(points[0])) * sizeof(float), points, GL_STATIC_DRAW);
 
 	// set up vertex array object
 	debugLog(LOG_NORMAL, "setting up vertex array object\n");
 	glGenVertexArrays(1,&vertexArrayObject);
 	glBindVertexArray(vertexArrayObject);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), NULL);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
@@ -77,6 +78,15 @@ void initRenderer(){
 	fragmentTextureRectLocation = glGetUniformLocation(shaderProgram, "textureRect");
 	fragmentInputColorLocation = glGetUniformLocation(shaderProgram, "inputColor");
 	fragmentUseTextureLocation = glGetUniformLocation(shaderProgram, "useTexture");
+	
+	debugLog(LOG_SUCCESS, "renderer successfully initailized\n");
+	
+	return;
+}
+
+void uninitRenderer(){
+	glDeleteVertexArrays(1, &vertexArrayObject);
+	glDeleteBuffers(1, &vertexBufferObject);
 	
 	return;
 }

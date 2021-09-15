@@ -48,7 +48,7 @@ void debugLog(LOG_TYPE type, const char* fmt, ...){
 	char* str = malloc(sizeof(char) * (strlen(logTypeStrings[type]) + length + 1));
 	str[0] = '\0';
 	
-	puts(logAnsiColorStrings[type]);
+	printf("%s", logAnsiColorStrings[type]);
 	
 	char* tempStr = malloc(sizeof(char)*(length+1));
 	vsprintf(tempStr, fmt, args2);
@@ -63,7 +63,7 @@ void debugLog(LOG_TYPE type, const char* fmt, ...){
 	free(tempStr);
 	free(str);
 	
-	puts(logAnsiColorStrings[LOG_NORMAL]);
+	printf("%s", logAnsiColorStrings[LOG_NORMAL]);
 	
 	return;
 }

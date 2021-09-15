@@ -11,6 +11,7 @@
 #include "entity.h"
 #include "resourceManager.h"
 #include "logging.h"
+#include "audio.h"
 
 int main(){
 	// initialize the log file
@@ -57,11 +58,17 @@ int main(){
 	// initialize the renderer
 	initRenderer();
 	
+	// initialize the audio
+	initAudio();
+	
 	// call the game loop function (should probably get a better name since the actual part to edit for it is in the game state lmao)
 	gameLoop();
 	
 	// end
 	debugLog(LOG_NORMAL, "closing\n");
+	
+	uninitRenderer();
+	uninitAudio();
 	
 	destroyEntityList();
 	clearResourceList();

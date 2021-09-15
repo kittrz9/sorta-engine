@@ -24,6 +24,7 @@ typedef struct {
 extern colorRGBA screenClearColor;
 
 void initRenderer();
+void uninitRenderer();
 
 // location of the uniform things in the shaders
 extern GLint vertexAngleLocation;
