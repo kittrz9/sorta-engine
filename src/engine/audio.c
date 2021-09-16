@@ -170,7 +170,8 @@ int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long fra
 	(void)inputBuffer;
 	
 #define envelope (data->instrument->envelope)
-#define time2 ((data->length+envelope.release) - activeSynths[i].timeRemaining)
+// time synth is currently at
+#define synthTime ((data->length+envelope.release) - activeSynths[i].timeRemaining)
 	float amplitude = 0.1f;
 	for(unsigned int i = 0; i < frameCount; i++){
 		*output++ = audioData->leftPhase;
@@ -182,20 +183,20 @@ int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long fra
 			synthData* data = activeSynths[i].data;
 			float freq = activeSynths[i].currentFreq;
 			
-			if(data->endFreq != 0 && time2 < data->length){
+			if(data->endFreq != 0 && synthTime < data->length){
 				activeSynths[i].currentFreq += (data->endFreq - data->startFreq)/(data->length * SAMPLE_RATE*1.5);
 			} else if(data->endFreq != 0){
 				activeSynths[i].currentFreq = data->endFreq;
 			}
 			
-			if(time2 <= envelope.attack){
-				amplitude = time2/envelope.attack;
-			} else if(time2 <= envelope.attack + envelope.decay){
-				amplitude = (((envelope.sustain-1.0)*(time2 - envelope.attack)))/(envelope.decay) + 1.0;
-			} else if(time2 <= data->length){
+			if(synthTime <= envelope.attack){
+				amplitude = synthTime/envelope.attack;
+			} else if(synthTime <= envelope.attack + envelope.decay){
+				amplitude = (((envelope.sustain-1.0)*(synthTime - envelope.attack)))/(envelope.decay) + 1.0;
+			} else if(synthTime<= data->length){
 				amplitude = envelope.sustain;
 			} else {
-				amplitude = (((0 - envelope.sustain)/(envelope.release))*(time2 - data->length)) + envelope.sustain;
+				amplitude = (((0 - envelope.sustain)/(envelope.release))*(synthTime - data->length)) + envelope.sustain;
 			}
 			
 			audioData->leftPhase += data->instrument->synth(activeSynths[i].functionTime) * amplitude * data->volume * (1.0/AUDIO_CHANNELS);

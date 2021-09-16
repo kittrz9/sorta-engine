@@ -104,7 +104,8 @@ Where the shaders should be. Right now only has one vertex and fragment shader.
 
 ## Major things to do (in no particular order):
 
- - Audio (And synthesizer)
+ - Better synthesizer
+ - Music playing
  - Support for multiple shaders
  - More rendering functions
  - ciumgui integration (<https://github.com/cimgui/cimgui>)

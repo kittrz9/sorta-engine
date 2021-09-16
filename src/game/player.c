@@ -121,14 +121,32 @@ synthInstrument jumpSndInstr = {
 		
 		.release = 0.2f,
 	},
-	.synth = synthSine,
+	.synth = synthTriangle,
 };
 synthData jumpSndData = {
 	.startFreq = 220.0,
 	.endFreq = 440.0,
 	.volume = 1.0,
-	.length = 0.05f,
+	.length = 0.025f,
 	.instrument = &jumpSndInstr,
+};
+
+synthInstrument stepSndInstr = {
+	.envelope = {
+		.attack = 0.01,
+		.decay = 0.05f,
+		.sustain = 0.8f,
+		
+		.release = 0.1f,
+	},
+	.synth = synthTriangle,
+};
+synthData stepSndData = {
+	.startFreq = 200.0,
+	.endFreq = 20.0,
+	.volume = 1.0,
+	.length = 0.025f,
+	.instrument = &stepSndInstr,
 };
 
 // I hate how because this is in like 1 second instead of 1 millisecond they're all massive values
@@ -184,6 +202,9 @@ void updatePlayerOnGround(entity* ent, double deltaTime){
 		setAnimation(playerObj->animation, idleAnimation, sizeof(idleAnimation)/sizeof(animationFrame));
 	}
 	updateAnimation(playerObj->animation, deltaTime);
+	if(playerObj->animation->frames == runAnimation && playerObj->animation->index == 0 && playerObj->animation->timer == 0.0f){
+		playSynth(&stepSndData);
+	}
 	
 	playerBoundaryCheck(ent);
 }
@@ -213,6 +234,7 @@ void updatePlayerInAir(entity* ent, double deltaTime){
 		playerObj->pos.y = worldSize.y - playerObj->size.y;
 		playerObj->vel.y = JUMP_FORCE;
 	} else {
+		playSynth(&stepSndData);
 		ent->update = updatePlayerOnGround;
 	}
 	
