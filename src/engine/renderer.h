@@ -41,4 +41,6 @@ void drawLineRect(rect drawnRect, colorRGBA color, float angle);
 // texture rect is the size and position of the part of the texture to be put onto the screen, in coordinates that correspond with the pixels of the texture ( for example (0,10,20,20) will crop out the part of the texture 20x20 pixels large and 10 pixels below the top left
 void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle, resource* texture);
 
+void drawLines(float* linePoints, unsigned int count, colorRGBA color);
+
 #endif

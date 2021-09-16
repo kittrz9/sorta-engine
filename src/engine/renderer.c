@@ -147,3 +147,29 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 	
 	return;
 }
+
+void drawLines(float* linePoints, unsigned int count, colorRGBA color) {
+	glUniform1f(vertexAngleLocation, 0);
+	glUniform4f(vertexRectLocation, 0, 0, 1, 1);
+	glUniform4f(fragmentInputColorLocation, color.r, color.g, color.b, color.a);
+	glUniform1ui(fragmentUseTextureLocation, GL_FALSE);
+	
+	// maybe not a good thing to constantly change the vertex attributes thing every frame just to draw a line 
+	// but it's doing this so you don't have to define the texture coordinates with the line points
+	// I don't think it affected performance that much though I'm probably wrong
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), NULL);
+	glEnableVertexAttribArray(0);
+	
+	// change the data being used for drawing
+	glBufferData(GL_ARRAY_BUFFER, count * sizeof(float), linePoints, GL_STATIC_DRAW);
+	
+	glDrawArrays(GL_LINES, 0, count);
+	
+	// change it back
+	glBufferData(GL_ARRAY_BUFFER, (sizeof(points)/sizeof(points[0])) * sizeof(float), points, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), NULL);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
+	glEnableVertexAttribArray(1);
+	return;
+}
