@@ -33,19 +33,30 @@ void glfwWindowSizeCallback(GLFWwindow* window, int width, int height){
 }
 
 const float points[] = {
-	// position          // texture coords
-	-1.0f,  1.0f, 0.0f,  0.0f,  1.0f,
-	 1.0f, -1.0f, 0.0f,  1.0f,  0.0f,
-	-1.0f, -1.0f, 0.0f,  0.0f,  0.0f,
-		
-	-1.0f,  1.0f, 0.0f,  0.0f,  1.0f,
-	 1.0f,  1.0f, 0.0f,  1.0f,  1.0f,
-	 1.0f, -1.0f, 0.0f,  1.0f,  0.0f,
+	-1.0f,  1.0f, 0.0f,  0.0f, 1.0f, // top left
+	 1.0f,  1.0f, 0.0f,  1.0f, 1.0f, // top right
+	 1.0f, -1.0f, 0.0f,  1.0f, 0.0f, // bottom right
+	-1.0f, -1.0f, 0.0f,  0.0f, 0.0f, // bottom left
 };
 
-// maybe not good to have like one vertex array object but idk it's literally just rotating scaling and translation a square
+// indices used when drawing triangles
+const unsigned int trisIndices[] = {
+	0, 1, 2,
+	2, 3, 0,
+};
+
+// indices used when drawing lines
+const unsigned int linesIndices[] = {
+	0, 1,
+	1, 2,
+	2, 3,
+	3, 0,
+};
+
+// maybe not good to have like one vertex array object but idk it's literally just rotating scaling and translating a square
 GLuint vertexBufferObject;
 GLuint vertexArrayObject;
+GLuint elementBufferObject;
 
 void initRenderer(){
 	debugLog(LOG_NORMAL, "initializing renderer\n"); 
@@ -54,7 +65,7 @@ void initRenderer(){
 	glGenBuffers(1, &vertexBufferObject);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(points)/sizeof(points[0])) * sizeof(float), points, GL_STATIC_DRAW);
-
+	
 	// set up vertex array object
 	debugLog(LOG_NORMAL, "setting up vertex array object\n");
 	glGenVertexArrays(1,&vertexArrayObject);
@@ -64,6 +75,11 @@ void initRenderer(){
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
 	glEnableVertexAttribArray(1);
+	
+	// set up element buffer object
+	glGenBuffers(1, &elementBufferObject);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
 	
 	// compile shader 
 	debugLog(LOG_NORMAL, "compiling shaders\n");
@@ -99,7 +115,20 @@ void drawFilledRect(rect drawnRect, colorRGBA color, float angle){
 	glUniform4f(fragmentInputColorLocation, color.r, color.g, color.b, color.a);
 	glUniform1ui(fragmentUseTextureLocation, GL_FALSE);
 	
-	glDrawArrays(GL_TRIANGLES, 0, sizeof(points)/sizeof(points[0]));
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
+	glDrawElements(GL_TRIANGLES, sizeof(trisIndices)/sizeof(trisIndices[0]), GL_UNSIGNED_INT, 0);
+	
+	return;
+}
+
+void drawLineRect(rect drawnRect, colorRGBA color, float angle){
+	glUniform1f(vertexAngleLocation, angle);
+	glUniform4f(vertexRectLocation, drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
+	glUniform4f(fragmentInputColorLocation, color.r, color.g, color.b, color.a);
+	glUniform1ui(fragmentUseTextureLocation, GL_FALSE);
+	
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(linesIndices), linesIndices, GL_STATIC_DRAW);
+	glDrawElements(GL_LINES, sizeof(linesIndices), GL_UNSIGNED_INT, 0);
 	
 	return;
 }
@@ -112,7 +141,9 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 	glUniform1ui(fragmentUseTextureLocation, GL_TRUE);
 	
 	glBindTexture(GL_TEXTURE_2D, *(GLuint*)texture->pointer);
-	glDrawArrays(GL_TRIANGLES, 0, sizeof(points)/sizeof(points[0]));
+	
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
+	glDrawElements(GL_TRIANGLES, sizeof(trisIndices)/sizeof(trisIndices[0]), GL_UNSIGNED_INT, 0);
 	
 	return;
 }
