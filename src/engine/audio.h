@@ -24,6 +24,7 @@ typedef struct {
 	float startFreq, endFreq; // Should probably make it so that if endFreq is like 0 or something it would just not do the sweep thing
 	float length; // Length of the sound in seconds
 	float volume;
+	
 	synthInstrument* instrument; // seperate struct becuase I think it might make making a sequencer a lot less bad since you wont need to constantly redefine the envelope and stuff for every note making the file extremely large
 } synthData;
 

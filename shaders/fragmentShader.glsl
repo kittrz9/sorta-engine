@@ -4,6 +4,7 @@ uniform vec4 inputColor;
 uniform bool useTexture;
 uniform sampler2D inputTexture;
 uniform vec4 textureRect;
+uniform vec2 windowSize;
 out vec4 fragColor;
 void main() {
 	if(useTexture){

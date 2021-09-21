@@ -20,6 +20,7 @@ GLint vertexRectLocation;
 GLint fragmentTextureRectLocation;
 GLint fragmentInputColorLocation;
 GLint fragmentUseTextureLocation;
+GLint fragmentWindowSize;
 
 void glfwWindowSizeCallback(GLFWwindow* window, int width, int height){
 	windowWidth = width;
@@ -27,16 +28,18 @@ void glfwWindowSizeCallback(GLFWwindow* window, int width, int height){
 	
 	glViewport(0,0,width,height);
 	
+	glUniform2f(fragmentWindowSize, width, height);
 	//printf("window resized to (%i, %i)\n", windowWidth, windowHeight);
 	
 	return;
 }
 
 const float points[] = {
-	-1.0f,  1.0f, 0.0f,  0.0f, 1.0f, // top left
-	 1.0f,  1.0f, 0.0f,  1.0f, 1.0f, // top right
-	 1.0f, -1.0f, 0.0f,  1.0f, 0.0f, // bottom right
-	-1.0f, -1.0f, 0.0f,  0.0f, 0.0f, // bottom left
+//	vertex coords	texture coords
+	-1.0f,  1.0f,	0.0f, 1.0f, // top left
+	 1.0f,  1.0f,	1.0f, 1.0f, // top right
+	 1.0f, -1.0f,	1.0f, 0.0f, // bottom right
+	-1.0f, -1.0f,	0.0f, 0.0f, // bottom left
 };
 
 // indices used when drawing triangles
@@ -71,9 +74,9 @@ void initRenderer(){
 	glGenVertexArrays(1,&vertexArrayObject);
 	glBindVertexArray(vertexArrayObject);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), NULL);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), NULL);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(2*sizeof(float)));
 	glEnableVertexAttribArray(1);
 	
 	// set up element buffer object
@@ -94,6 +97,9 @@ void initRenderer(){
 	fragmentTextureRectLocation = glGetUniformLocation(shaderProgram, "textureRect");
 	fragmentInputColorLocation = glGetUniformLocation(shaderProgram, "inputColor");
 	fragmentUseTextureLocation = glGetUniformLocation(shaderProgram, "useTexture");
+	fragmentWindowSize = glGetUniformLocation(shaderProgram, "windowSize");
+	
+	glUniform2f(fragmentWindowSize, windowWidth, windowHeight);
 	
 	debugLog(LOG_SUCCESS, "renderer successfully initailized\n");
 	
@@ -148,7 +154,7 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 	return;
 }
 
-void drawLines(float* linePoints, unsigned int count, colorRGBA color) {
+void drawLines(const float* linePoints, unsigned int count, colorRGBA color) {
 	glUniform1f(vertexAngleLocation, 0);
 	glUniform4f(vertexRectLocation, 0, 0, 1, 1);
 	glUniform4f(fragmentInputColorLocation, color.r, color.g, color.b, color.a);
@@ -167,9 +173,6 @@ void drawLines(float* linePoints, unsigned int count, colorRGBA color) {
 	
 	// change it back
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(points)/sizeof(points[0])) * sizeof(float), points, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), NULL);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
-	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), NULL);
 	return;
 }
