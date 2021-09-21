@@ -176,3 +176,24 @@ void drawLines(const float* linePoints, unsigned int count, colorRGBA color) {
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), NULL);
 	return;
 }
+
+// repeated code lmao, should probably be made better eventually
+void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color) {
+	glUniform1f(vertexAngleLocation, 0);
+	glUniform4f(vertexRectLocation, 0, 0, 1, 1);
+	glUniform4f(fragmentInputColorLocation, color.r, color.g, color.b, color.a);
+	glUniform1ui(fragmentUseTextureLocation, GL_FALSE);
+	
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), NULL);
+	glEnableVertexAttribArray(0);
+	
+	// change the data being used for drawing
+	glBufferData(GL_ARRAY_BUFFER, count * sizeof(float), triPoints, GL_STATIC_DRAW);
+	
+	glDrawArrays(GL_TRIANGLES, 0, count);
+	
+	// change it back
+	glBufferData(GL_ARRAY_BUFFER, (sizeof(points)/sizeof(points[0])) * sizeof(float), points, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), NULL);
+	return;
+}

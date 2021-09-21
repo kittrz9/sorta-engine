@@ -43,5 +43,6 @@ void drawLineRect(rect drawnRect, colorRGBA color, float angle);
 void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle, resource* texture);
 
 void drawLines(const float* linePoints, unsigned int count, colorRGBA color);
+void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color);
 
 #endif
