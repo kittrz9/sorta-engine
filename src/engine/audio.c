@@ -138,16 +138,22 @@ void uninitAudio() {
 
 
 bool playSynth(synthData* data){
-	// check for free audio channels
 	int freeChannel = -1;
-	for(int i = 0; i < AUDIO_CHANNELS; i++){
-		if(activeSynths[i].data == NULL) {
-			freeChannel = i;
-			break;
+	if(data->channel < 0){
+		// check for free audio channels
+		for(int i = 0; i < AUDIO_CHANNELS; i++){
+			if(activeSynths[i].data == NULL) {
+				freeChannel = i;
+				break;
+			}
 		}
-	}
-	if(freeChannel == -1) {
+		if(freeChannel == -1) {
+			return false;
+		}
+	} else if(data->channel > AUDIO_CHANNELS){
 		return false;
+	} else if(activeSynths[data->channel].data != NULL){
+		freeChannel = data->channel;
 	}
 	
 	activeSynths[freeChannel].data = data;

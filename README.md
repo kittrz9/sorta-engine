@@ -104,6 +104,7 @@ Where the shaders should be. Right now only has one vertex and fragment shader.
 
 ## Major things to do (in no particular order):
 
+ - Batch rendering
  - Better synthesizer
  - Music playing
  - Support for multiple shaders

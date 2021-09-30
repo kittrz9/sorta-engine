@@ -128,6 +128,7 @@ synthData jumpSndData = {
 	.endFreq = 440.0,
 	.volume = 1.0,
 	.length = 0.025f,
+	.channel = -1,
 	.instrument = &jumpSndInstr,
 };
 
@@ -146,6 +147,7 @@ synthData stepSndData = {
 	.endFreq = 20.0,
 	.volume = 1.0,
 	.length = 0.025f,
+	.channel = -1,
 	.instrument = &stepSndInstr,
 };
 

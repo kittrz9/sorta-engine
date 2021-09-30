@@ -25,6 +25,8 @@ typedef struct {
 	float length; // Length of the sound in seconds
 	float volume;
 	
+	int channel; // negative makes it play in the first open audio channel, if greater than the amount of audio channels doesn't play
+	
 	synthInstrument* instrument; // seperate struct becuase I think it might make making a sequencer a lot less bad since you wont need to constantly redefine the envelope and stuff for every note making the file extremely large
 } synthData;
 
