@@ -187,7 +187,6 @@ int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long fra
 		for(int i = 0; i < AUDIO_CHANNELS; i++){
 			if(activeSynths[i].data == NULL) { continue; }
 			synthData* data = activeSynths[i].data;
-			float freq = activeSynths[i].currentFreq;
 			
 			if(data->endFreq != 0 && synthTime < data->length){
 				activeSynths[i].currentFreq += (data->endFreq - data->startFreq)/(data->length * SAMPLE_RATE*1.5);
