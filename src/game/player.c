@@ -198,9 +198,9 @@ void updatePlayerOnGround(entity* ent, double deltaTime){
 		ent->update = updatePlayerInAir;
 	}
 	
-	if(playerObj->moving && playerObj->animation->frames != runAnimation){
+	if(playerObj->animation->frames != runAnimation && playerObj->moving){
 		setAnimation(playerObj->animation, runAnimation, sizeof(runAnimation)/sizeof(animationFrame));
-	} else if(!playerObj->moving){
+	} else if(playerObj->animation->frames != idleAnimation && !playerObj->moving){
 		setAnimation(playerObj->animation, idleAnimation, sizeof(idleAnimation)/sizeof(animationFrame));
 	}
 	updateAnimation(playerObj->animation, deltaTime);
@@ -221,9 +221,9 @@ void updatePlayerInAir(entity* ent, double deltaTime){
 		playerObj->jumpTimer = 0.05f;
 	}
 	
-	if(playerObj->moving && playerObj->animation->frames != runAnimation){
+	if(playerObj->animation->frames != runAnimation && playerObj->moving){
 		setAnimation(playerObj->animation, runAnimation, sizeof(runAnimation)/sizeof(animationFrame));
-	} else if(!playerObj->moving){
+	} else if(playerObj->animation->frames != idleAnimation && !playerObj->moving){
 		setAnimation(playerObj->animation, idleAnimation, sizeof(idleAnimation)/sizeof(animationFrame));
 	}
 	updateAnimation(playerObj->animation, deltaTime);
