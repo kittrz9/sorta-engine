@@ -12,6 +12,8 @@ entity* player;
 void initGameStateRunning(){
 	player = createPlayer((vec2f){0,0}, (vec2f){175,175});
 	
+	changeClearScreenColor((colorRGBA){0.5f, 0.5f, 0.5f, 1.0f});
+	
 	return;
 }
 

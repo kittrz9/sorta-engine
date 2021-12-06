@@ -113,6 +113,14 @@ void uninitRenderer(){
 	return;
 }
 
+void changeClearScreenColor(colorRGBA color) {
+	screenClearColor = color;
+}
+
+void clearScreen() {
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClearColor(screenClearColor.r, screenClearColor.g, screenClearColor.b, screenClearColor.a);
+}
 
 // size is between -1 and 1 like the shader or whatever, has to be converted from like world space or whatever into screen space
 void drawFilledRect(rect drawnRect, colorRGBA color, float angle){

@@ -28,8 +28,7 @@ int gameLoop(){
 			}
 		}
 		
-		glClear(GL_COLOR_BUFFER_BIT);
-		glClearColor(screenClearColor.r, screenClearColor.g, screenClearColor.b, screenClearColor.a);
+		clearScreen();
 		
 		if((*(currentState->stateLoop))(deltaTime)) {running = false;}
 		
