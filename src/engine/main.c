@@ -17,6 +17,7 @@ int main(){
 	// initialize the log file
 	initLogFile();
 	
+	// should probably move this stuff to the function to initialize the renderer
 	// init GLFW
 	if(!glfwInit()){
 		debugLog(LOG_ERROR, "could not initialize GLFW\n");
@@ -24,6 +25,8 @@ int main(){
 	}
 	
 	// create window
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
 	window = glfwCreateWindow(windowWidth, windowHeight, "bruh", NULL, NULL);
 	if(!window){
 		debugLog(LOG_ERROR, "Could not create window\n");
