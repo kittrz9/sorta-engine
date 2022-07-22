@@ -183,6 +183,8 @@ void initRenderer(){
 void uninitRenderer(){
 	glDeleteVertexArrays(1, &vertexArrayObject);
 	glDeleteBuffers(1, &vertexBufferObject);
+
+	glDeleteTextures(1, ((GLuint*)fallbackTexture));
 	
 	return;
 }

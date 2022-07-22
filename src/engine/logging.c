@@ -6,22 +6,6 @@
 
 FILE* logFile;
 
-void initLogFile(){
-	logFile = fopen("log-file.txt", "w");
-	
-	if(!logFile){
-		printf("could not open log file\n");
-	}
-	
-	return;
-}
-
-void closeLogFile(){
-	fclose(logFile);
-	
-	return;
-}
-
 // in order of the LOG_TYPE enum
 const char* logAnsiColorStrings[] = {
 	"\033[97m", // LOG_NORMAL
@@ -34,6 +18,23 @@ const char* logTypeStrings[] = {
 	"ERROR: ",
 	"SUCCESS: ",
 };
+
+void initLogFile(){
+	logFile = fopen("log-file.txt", "w");
+	
+	if(!logFile){
+		printf("could not open log file\n");
+	}
+	
+	return;
+}
+
+void closeLogFile(){
+	debugLog(LOG_NORMAL, "closing log file\n");
+	fclose(logFile);
+	
+	return;
+}
 
 // variadic functions are weird
 void debugLog(LOG_TYPE type, const char* fmt, ...){

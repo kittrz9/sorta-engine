@@ -55,6 +55,9 @@ resource* loadTexture(const char* filePath){
 }
 
 void destroyTexture(resource* res){
+	if(res->pointer == fallbackTexture) {
+		debugLog(LOG_ERROR, "cannot destroy the fallback texture\n");
+	}
 	glDeleteTextures(1, ((GLuint*)res->pointer));
 	
 	return;
@@ -106,11 +109,6 @@ resource* loadResource(RESOURCE_TYPE type, const char* filePath){
 	
 	resource* res = (*resourceLoadingFunctions[type])(filePath);
 	res->type = type;
-	
-	if(res->pointer == NULL){
-		debugLog(LOG_ERROR, "could not open resource with file path \"%s\"\n", filePath);
-		return NULL;
-	}
 	
 	if(resourceIndex == -1){
 		resourceIndex = loadedResources;
