@@ -12,6 +12,7 @@
 #include "stb_image.h"
 
 #include "logging.h"
+#include "renderer.h"
 
 typedef struct {
 	char* name;
@@ -43,8 +44,10 @@ resource* loadTexture(const char* filePath){
 		// you'd just need to cast the void* to a GLuint when used
 		res->pointer = texture;
 	} else {
-		res->pointer = NULL;
-		glDeleteTextures(1, texture);
+//		res->pointer = NULL;
+//		glDeleteTextures(1, texture);
+		debugLog(LOG_ERROR, "could not load texture at %s, using fallback texture\n", filePath);
+		res->pointer = fallbackTexture;
 	}
 	stbi_image_free(data);
 	

@@ -1,6 +1,7 @@
 #include "renderer.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "shader.h"
 #include "logging.h"
@@ -21,6 +22,8 @@ GLint fragmentTextureRectLocation;
 GLint fragmentInputColorLocation;
 GLint fragmentUseTextureLocation;
 GLint fragmentWindowSize;
+
+GLuint* fallbackTexture;
 
 void glfwWindowSizeCallback(GLFWwindow* window, int width, int height){
 	windowWidth = width;
@@ -100,6 +103,25 @@ void initRenderer(){
 	fragmentWindowSize = glGetUniformLocation(shaderProgram, "windowSize");
 	
 	glUniform2f(fragmentWindowSize, windowWidth, windowHeight);
+
+	debugLog(LOG_NORMAL, "setting up fallback texture\n");
+	// probably could just set up a different function to set up a texture so I don't repeat the code in resourceManager.c but whatever
+	fallbackTexture = malloc(sizeof(GLuint));
+
+	glGenTextures(1, fallbackTexture);
+	glBindTexture(GL_TEXTURE_2D, *fallbackTexture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	// hardcoded values that probably shouldn't be hardcoded lmao
+	const unsigned char data[] = {0xFF, 0x00, 0xFF, 0xFF,  0x00, 0x00, 0x00, 0xFF,
+				      0x00, 0x00, 0x00, 0xFF,  0xFF, 0x00, 0xFF, 0xFF};
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
 	
 	debugLog(LOG_SUCCESS, "renderer successfully initailized\n");
 	
@@ -150,7 +172,12 @@ void drawLineRect(rect drawnRect, colorRGBA color, float angle){
 void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle, resource* texture){
 	glUniform1f(vertexAngleLocation, angle);
 	glUniform4f(vertexRectLocation, drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
-	glUniform4f(fragmentTextureRectLocation, textureRect.x, textureRect.y, textureRect.w, textureRect.h);
+	if(texture->pointer == fallbackTexture) {
+		// hardcoded values again lmao
+		glUniform4f(fragmentTextureRectLocation, 0, 0, 2, 2);
+	} else {
+		glUniform4f(fragmentTextureRectLocation, textureRect.x, textureRect.y, textureRect.w, textureRect.h);
+	}
 	glUniform4f(fragmentInputColorLocation, color.r, color.g, color.b, color.a);
 	glUniform1ui(fragmentUseTextureLocation, GL_TRUE);
 	
