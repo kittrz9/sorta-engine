@@ -5,6 +5,7 @@
 
 #include "shader.h"
 #include "logging.h"
+#include "controls.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -66,6 +67,54 @@ GLuint elementBufferObject;
 
 void initRenderer(){
 	debugLog(LOG_NORMAL, "initializing renderer\n"); 
+	// init GLFW
+	debugLog(LOG_NORMAL, "initializing GLFW\n");
+	if(!glfwInit()) {
+		debugLog(LOG_ERROR, "could not initialize GLFW\n");
+		exit(-1);
+	}
+	debugLog(LOG_SUCCESS, "glfw successfully initialized\n");
+
+	// create window
+	debugLog(LOG_NORMAL, "creating window\n");
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
+	window = glfwCreateWindow(windowWidth, windowHeight, "bruh", NULL, NULL);
+	if(!window) {
+		debugLog(LOG_ERROR, "could not create window\n");
+		glfwTerminate();
+		exit(-1);
+	}
+	glfwMakeContextCurrent(window);
+	debugLog(LOG_SUCCESS, "window successfully created\n");
+
+	// init glew
+	debugLog(LOG_NORMAL, "initializing glew\n");
+	glewExperimental = GL_TRUE;
+	GLenum error = glewInit();
+	if(error != GLEW_OK) {
+		debugLog(LOG_ERROR, "could not initialize glew, %s\n", glewGetErrorString(error));
+		exit(-1);
+	}
+	debugLog(LOG_SUCCESS, "glew successfully initialized\n");
+
+	// enable blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	const GLubyte* renderer = glGetString(GL_RENDERER);
+	const GLubyte* version  = glGetString(GL_VERSION);
+	debugLog(LOG_NORMAL, "Renderer: %s, OpenGL version: %s\n", renderer, version);
+
+	// turn off vsync
+	glfwSwapInterval(0);
+
+	// set window size callback
+	glfwSetWindowSizeCallback(window, glfwWindowSizeCallback);
+
+	// set key callback
+	glfwSetKeyCallback(window, handleKeyEvent);
+
 	// set up vertex buffer object
 	debugLog(LOG_NORMAL, "setting up vertex buffer object\n");
 	glGenBuffers(1, &vertexBufferObject);
@@ -81,11 +130,13 @@ void initRenderer(){
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(2*sizeof(float)));
 	glEnableVertexAttribArray(1);
+	debugLog(LOG_SUCCESS, "successfully set up vertex array object\n");
 	
 	// set up element buffer object
 	glGenBuffers(1, &elementBufferObject);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
+	debugLog(LOG_SUCCESS, "successfully set up element buffer object\n");
 	
 	// compile shader 
 	debugLog(LOG_NORMAL, "compiling shaders\n");
@@ -122,6 +173,7 @@ void initRenderer(){
 	
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
+	debugLog(LOG_SUCCESS, "fallback texture successfully set up\n");
 	
 	debugLog(LOG_SUCCESS, "renderer successfully initailized\n");
 	
