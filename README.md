@@ -108,9 +108,13 @@ Where the shaders should be. Right now only has one vertex and fragment shader.
  - Better synthesizer
  - Music playing
  - Support for multiple shaders
+ - Change the `loadResource` function to take multiple arguments depending on the type
  - More rendering functions
  - ciumgui integration (<https://github.com/cimgui/cimgui>)
  - Optimize stuff
  - Text rendering
  - Being able to read from a config file
  - Windows support
+ - Maybe add in 3D stuff
+ - Controller support
+ - Make the README file not terrible
