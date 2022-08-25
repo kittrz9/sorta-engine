@@ -57,10 +57,7 @@ It has to be here to use the PortAudio library I think.<br>
 Has very basic functions for drawing rectangles and textures to the screen. I should add more functions like them but that's all there is for now.<br>
 
 #### resourceManager.h and resourceManager.c
-This lets you load resources. If you try to load a resource you've already loaded it will return the pointer to the already loaded resource. As of now it only has support for loading textures but it should be easy to add new resource types.<br>
-
-#### shader.h and shader.c
-Used for loading the shader. There is only one shader so far. This really should be put into the resource manager so you can use multiple shaders but whatever I don't want to do that right now.<br>
+This lets you load resources. If you try to load a resource you've already loaded it will return the pointer to the already loaded resource.<br>
 
 #### stb_image.h
 Not written by me. It's a public domain image library gotten from here: <https://github.com/nothings/stb/blob/master/stb_image.h><br>
@@ -71,6 +68,9 @@ Just defines a bunch of vector types and has a few functions for doing stuff wit
 
 #### main.c
 The entry point of the program. All that's done here is just initializing a bunch of stuff.<br>
+
+#### src/engine/resourceLoaders/ directory
+Where every resource loading and destroying function is defined, you have to update the arrays in `resourceManager.h` and `resourceManager.c`. Currently has support for loading textures and shaders.<br>
 
 <br>
 
