@@ -12,6 +12,8 @@
 #include "logging.h"
 #include "renderer.h"
 
+#define RESOURCE_LIST_INITIAL_SIZE 32
+
 // array of strings that correspond with the types to be able to print debugging stuff
 const char* typeStrings[RES_TYPE_ENUM_LENGTH] = {"texture", "shader"};
 
@@ -22,6 +24,7 @@ typedef struct {
 
 resourceListEntry* resourceList;
 unsigned int loadedResources = 0;
+unsigned int resourceListSize = 0;
 
 char* resourceDir = NULL;
 unsigned int resDirStrLen = 0;
@@ -44,8 +47,17 @@ resource* checkIfAlreadyLoaded(const char* filename) {
 }
 
 void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res) {
+	if(resourceListSize == 0) {
+		resourceList = malloc(sizeof(resourceListEntry) * RESOURCE_LIST_INITIAL_SIZE);
+		resourceListSize = RESOURCE_LIST_INITIAL_SIZE;
+		for(unsigned int i = 0; i < resourceListSize; i++) {
+			resourceList[i].resPointer = NULL;
+			resourceList[i].name = NULL;
+		}
+	}
+
 	unsigned int resourceIndex = -1; // used for checking for free entries
-	for(unsigned int i = 0; i < loadedResources; i++) {
+	for(unsigned int i = 0; i < resourceListSize; i++) {
 		if(resourceList[i].resPointer == NULL) {
 			resourceIndex = i;
 			break;
@@ -56,10 +68,15 @@ void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res) {
 	listRes->type = type;
 
 	if(resourceIndex == -1) {
-		resourceIndex = loadedResources;
-		resourceList = realloc(resourceList, sizeof(resourceListEntry) * (loadedResources+1));
-		loadedResources++;
+		resourceIndex = resourceListSize;
+		resourceListSize *= 2;
+		resourceList = realloc(resourceList, sizeof(resourceListEntry) * resourceListSize);
+		for(unsigned int i = resourceIndex; i < resourceListSize; i++) {
+			resourceList[i].resPointer = NULL;
+			resourceList[i].name = NULL;
+		}
 	}
+	loadedResources++;
 
 	resourceList[resourceIndex].resPointer = listRes;
 	resourceList[resourceIndex].name = malloc(strlen(name) * sizeof(char));
