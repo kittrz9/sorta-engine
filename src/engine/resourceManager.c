@@ -12,6 +12,9 @@
 #include "logging.h"
 #include "renderer.h"
 
+// array of strings that correspond with the types to be able to print debugging stuff
+const char* typeStrings[RES_TYPE_ENUM_LENGTH] = {"texture", "shader"};
+
 typedef struct {
 	char* name;
 	resource* resPointer;
@@ -20,57 +23,59 @@ typedef struct {
 resourceListEntry* resourceList;
 unsigned int loadedResources = 0;
 
-resource* loadTexture(const char* filePath){
-	resource* res = malloc(sizeof(resource));
-	
-	int width, height, nrChannels;
-	GLuint* texture = malloc(sizeof(GLuint));
-	
-	glGenTextures(1, texture);
-	glBindTexture(GL_TEXTURE_2D, *texture);
-	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	
-	unsigned char* data = stbi_load(filePath, &width, &height, &nrChannels, 4);
-	if(data){
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		// I think this will work since the GLuint is used as sort of a pointer I think???
-		// you'd just need to cast the void* to a GLuint when used
-		res->pointer = texture;
-	} else {
-		debugLog(LOG_ERROR, "could not load texture at %s, using fallback texture\n", filePath);
-		res->pointer = fallbackTexture;
-	}
-	stbi_image_free(data);
-	
-	return res;
+char* resourceDir = NULL;
+unsigned int resDirStrLen = 0;
+
+void setResourceDir(char* path) {
+	resourceDir = malloc(strlen(path));
+	strcpy(resourceDir, path);
+	resDirStrLen = strlen(path);
+
+	return;
 }
 
-void destroyTexture(resource* res){
-	if(res->pointer == fallbackTexture) {
-		debugLog(LOG_ERROR, "cannot destroy the fallback texture\n");
+resource* checkIfAlreadyLoaded(const char* filename) {
+	for(unsigned int i = 0; i < loadedResources; i++) {
+		if(strcmp(resourceList[i].name, filename) == 0) {
+			return resourceList[i].resPointer;
+		}
 	}
-	glDeleteTextures(1, ((GLuint*)res->pointer));
-	
+	return NULL;
+}
+
+void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res) {
+	unsigned int resourceIndex = -1; // used for checking for free entries
+	for(unsigned int i = 0; i < loadedResources; i++) {
+		if(resourceList[i].resPointer == NULL) {
+			resourceIndex = i;
+			break;
+		}
+	}
+
+	resource* listRes = res;
+	listRes->type = type;
+
+	if(resourceIndex == -1) {
+		resourceIndex = loadedResources;
+		resourceList = realloc(resourceList, sizeof(resourceListEntry) * (loadedResources+1));
+		loadedResources++;
+	}
+
+	resourceList[resourceIndex].resPointer = listRes;
+	resourceList[resourceIndex].name = malloc(strlen(name) * sizeof(char));
+	strcpy(resourceList[resourceIndex].name, name);
+
+	debugLog(LOG_SUCCESS, "resource \"%s\" with type %s created at %p\n", name, typeStrings[type], (void*)res);
+
 	return;
 }
 
 
-// array of function pointers for creating and destroying resources, has to be in the same order as the enum of types
+
+// array of function pointers to destroy resources, has to be in the same order as the enum of types
 void (*resourceDestroyingFunctions[RES_TYPE_ENUM_LENGTH]) (resource* res) = {
-	destroyTexture,
+	destroyTexture, destroyShader,
 };
-
-resource* (*resourceLoadingFunctions[RES_TYPE_ENUM_LENGTH]) (const char* filePath) = {
-	loadTexture,
-};
-
-// array of strings that correspond with the types to be able to print debugging stuff
-const char* typeStrings[RES_TYPE_ENUM_LENGTH] = {"texture"};
 
 void destroyResource(resource* res){
 	for(unsigned int i = 0; i < loadedResources; i++){
@@ -89,36 +94,6 @@ void destroyResource(resource* res){
 	debugLog(LOG_ERROR, "could not find resource %p in resource list to destroy\n", (void*)res);
 	
 	return;
-}
-
-resource* loadResource(RESOURCE_TYPE type, const char* filePath){
-	int resourceIndex = -1; // used for checking for free entries
-	for(unsigned int i = 0; i < loadedResources; i++){
-		if(resourceList[i].resPointer == NULL){
-			resourceIndex = i;
-			continue;
-		}
-		if(strcmp(resourceList[i].name, filePath) == 0){
-			return resourceList[i].resPointer;
-		}
-	}
-	
-	resource* res = (*resourceLoadingFunctions[type])(filePath);
-	res->type = type;
-	
-	if(resourceIndex == -1){
-		resourceIndex = loadedResources;
-		resourceList = realloc(resourceList, sizeof(resourceListEntry) * (loadedResources+1));
-		loadedResources++;
-	}
-	
-	resourceList[resourceIndex].resPointer = res;
-	resourceList[resourceIndex].name = malloc(strlen(filePath) * sizeof(char));
-	strcpy(resourceList[resourceIndex].name, filePath);
-	
-	debugLog(LOG_SUCCESS, "resource \"%s\" with type %s created at %p\n", filePath, typeStrings[type], (void*)res);
-	
-	return res;
 }
 
 void clearResourceList(){

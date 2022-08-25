@@ -3,12 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "shader.h"
 #include "logging.h"
 #include "controls.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+#include "resourceLoaders/shaderLoader.h"
 
 int windowWidth  = 640;
 int windowHeight = 480;
@@ -140,7 +141,8 @@ void initRenderer(){
 	
 	// compile shader 
 	debugLog(LOG_NORMAL, "compiling shaders\n");
-	GLuint shaderProgram = createShader("shaders/vertexShader.glsl", "shaders/fragmentShader.glsl");
+	resource* shaderResource = loadShader("defaultShader", "shaders/vertexShader.glsl", "shaders/fragmentShader.glsl");
+	GLuint shaderProgram = *(GLuint*)shaderResource->pointer;
 	
 	// this will probably be really bad for later if I ever want to use other shaders
 	glUseProgram(shaderProgram);
@@ -152,6 +154,7 @@ void initRenderer(){
 	fragmentInputColorLocation = glGetUniformLocation(shaderProgram, "inputColor");
 	fragmentUseTextureLocation = glGetUniformLocation(shaderProgram, "useTexture");
 	fragmentWindowSize = glGetUniformLocation(shaderProgram, "windowSize");
+
 	
 	glUniform2f(fragmentWindowSize, windowWidth, windowHeight);
 

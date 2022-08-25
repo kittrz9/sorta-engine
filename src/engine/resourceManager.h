@@ -3,18 +3,26 @@
 
 typedef enum {
 	RES_TYPE_TEXTURE,
+	RES_TYPE_SHADER,
 	RES_TYPE_ENUM_LENGTH,
 } RESOURCE_TYPE;
+void setResourceDir(char* path);
+extern char* resourceDir;
+extern unsigned int resDirStrLen;
 
 typedef struct {
 	RESOURCE_TYPE type;
 	void* pointer; // pointer to where the actual loaded in thing is in memory
 } resource;
 
-resource* loadResource(RESOURCE_TYPE type, const char* filePath);
-void destroyResource(resource* res);
+resource* checkIfAlreadyLoaded(const char* filename);
+void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res);
 
 // destroys every resource
 void clearResourceList();
+
+// include the header for every resource loader here
+#include "resourceLoaders/textureLoader.h"
+#include "resourceLoaders/shaderLoader.h"
 
 #endif

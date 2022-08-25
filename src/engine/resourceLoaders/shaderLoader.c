@@ -1,12 +1,14 @@
-#include "shader.h"
+#include "shaderLoader.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include "logging.h"
+#include "resourceManager.h"
 
 GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	FILE* filePointer;
@@ -14,6 +16,16 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	char* shaderContents;
 	GLint  shaderCompiled = 1;
 	GLuint shader;
+
+	char* shaderTypeString;
+	if(shaderType == GL_VERTEX_SHADER) {
+		shaderTypeString = "vertex";
+	} else if(shaderType == GL_FRAGMENT_SHADER) {
+		shaderTypeString = "fragment";
+	} else {
+		debugLog(LOG_ERROR, "unknown shader type");
+		return 0;
+	}
 	
 	// read shader into string
 	filePointer = fopen(shaderFilePath, "r");
@@ -29,7 +41,7 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	fread(shaderContents, fileSize, 1, filePointer);
 	shaderContents[fileSize] = '\0';
 	//debugLog(LOG_NORMAL, "compiling shader \"%s\", size %i\n\"%s\"\n", shaderFilePath, fileSize, shaderContents);
-	debugLog(LOG_NORMAL, "compiling shader \"%s\", size %i\n", shaderFilePath, fileSize);
+	debugLog(LOG_NORMAL, "compiling %s shader \"%s\", size %i\n", shaderTypeString, shaderFilePath, fileSize);
 	
 	// compile shader
 	shader = glCreateShader(shaderType);
@@ -43,23 +55,37 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
 		GLchar* message = malloc(sizeof(GLchar) * logLength);
 		glGetShaderInfoLog(shader, logLength, NULL, message);
-		debugLog(LOG_ERROR, "could not compile shader \"%s\": %s", shaderFilePath, message);
+		debugLog(LOG_ERROR, "could not compile %s shader \"%s\": %s", shaderTypeString, shaderFilePath, message);
 		free(message);
 		return 0;
 	}
 	
-	debugLog(LOG_SUCCESS, "shader \"%s\" compiled successfully\n", shaderFilePath);
+	debugLog(LOG_SUCCESS, "%s shader \"%s\" compiled successfully\n", shaderTypeString, shaderFilePath);
 	fclose(filePointer);
 	free(shaderContents);
 	
 	return shader;
 }
 
+resource* loadShader(const char* name, const char* vertexShaderPath, const char* fragmentShaderPath) {
+	resource* tempRes = checkIfAlreadyLoaded(name);
+	if(tempRes != NULL) {
+		return tempRes;
+	}
 
-GLuint createShader(const char* vertexShaderFilePath, const char* fragmentShaderFilePath){
+	resource* res = malloc(sizeof(resource));
+
 	// compile vertex and fragment shader
-	GLuint vertexShader = readAndCompileShader(vertexShaderFilePath, GL_VERTEX_SHADER);
-	GLuint fragmentShader = readAndCompileShader(fragmentShaderFilePath, GL_FRAGMENT_SHADER);
+	char* fullResourcePath = malloc(resDirStrLen + strlen(vertexShaderPath));
+	sprintf(fullResourcePath, "%s%s", resourceDir, vertexShaderPath);
+
+	GLuint vertexShader = readAndCompileShader(fullResourcePath, GL_VERTEX_SHADER);
+	free(fullResourcePath);
+	fullResourcePath = malloc(resDirStrLen + strlen(fragmentShaderPath));
+	sprintf(fullResourcePath, "%s%s", resourceDir, fragmentShaderPath);
+
+	GLuint fragmentShader = readAndCompileShader(fullResourcePath, GL_FRAGMENT_SHADER);
+	free(fullResourcePath);
 	
 	// link them
 	GLuint shaderProgram = glCreateProgram();
@@ -69,6 +95,16 @@ GLuint createShader(const char* vertexShaderFilePath, const char* fragmentShader
 	
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
+	res->pointer = &shaderProgram;
+
+	addResourceToList(RES_TYPE_SHADER, name, res);
 	
-	return shaderProgram;
+	return res;
+}
+
+void destroyShader(resource* res) {
+	glDeleteProgram(*(GLuint*)res->pointer);
+
+	return;
 }
