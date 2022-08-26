@@ -2,7 +2,7 @@ CC = gcc
 SHELL = /bin/bash
 # I kept putting CFLAGS+="-DSTBI_ONLY_PNG" as a command line argument when doing the make command and thought it would add that to the end of the CFLAGS variable but instead just overwrote it I guess and I wasn't getting warnings lmao
 # this needs to be changed if I ever need to use stuff that isn't a png lmao
-CFLAGS = $(shell pkg-config --cflags glfw3) -Wall -Wpedantic -O3 -DSTBI_ONLY_PNG
+CFLAGS = $(shell pkg-config --cflags glfw3) -Wall -Wpedantic -O3
 INCLUDE = -Isrc/engine -Isrc/game -Isrc/game/gameStates
 LIBS = $(shell pkg-config --libs glew glfw3) -lm -lrt -lasound -ljack -pthread
 NAME = openGL-Test

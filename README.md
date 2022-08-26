@@ -117,4 +117,4 @@ Where the shaders should be. Right now only has one vertex and fragment shader.
  - Maybe add in 3D stuff
  - Controller support
  - Make the README file not terrible
- - Get the filesize of the executable down (it's getting close to 1MB and most of the size is just from stb_image.h)
+ - Get the filesize of the executable down (it's getting close to 1MB and most of the size is just from stb_image.h, it also takes stb_image.h a while to actually compile)
