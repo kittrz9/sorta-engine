@@ -95,9 +95,9 @@ A very basic example of an entity.<br>
 Where all the game states should be defined. So far only has one defined.
 
 ### res/ directory
-Where the resources for the game should be. For now it only has a place holder image used for the player.
+Where the resources for the game should be. For now it only has a place holder image used for the player and the default shader.
 
-### shaders/ directory
+### res/shaders/ directory
 Where the shaders should be. Right now only has one vertex and fragment shader.
 
 ---
@@ -117,3 +117,4 @@ Where the shaders should be. Right now only has one vertex and fragment shader.
  - Maybe add in 3D stuff
  - Controller support
  - Make the README file not terrible
+ - Get the filesize of the executable down (it's getting close to 1MB and most of the size is just from stb_image.h)

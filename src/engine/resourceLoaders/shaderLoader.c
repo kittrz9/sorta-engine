@@ -5,7 +5,6 @@
 #include <string.h>
 
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
 #include "logging.h"
 #include "resourceManager.h"
@@ -40,7 +39,6 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	shaderContents = malloc((fileSize+1) * sizeof(char));
 	fread(shaderContents, fileSize, 1, filePointer);
 	shaderContents[fileSize] = '\0';
-	//debugLog(LOG_NORMAL, "compiling shader \"%s\", size %i\n\"%s\"\n", shaderFilePath, fileSize, shaderContents);
 	debugLog(LOG_NORMAL, "compiling %s shader \"%s\", size %i\n", shaderTypeString, shaderFilePath, fileSize);
 	
 	// compile shader

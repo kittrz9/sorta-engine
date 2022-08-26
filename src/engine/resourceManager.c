@@ -4,13 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include "stb_image.h"
-
 #include "logging.h"
-#include "renderer.h"
 
 #define RESOURCE_LIST_INITIAL_SIZE 32
 
@@ -40,6 +34,7 @@ void setResourceDir(char* path) {
 resource* checkIfAlreadyLoaded(const char* filename) {
 	for(unsigned int i = 0; i < loadedResources; i++) {
 		if(strcmp(resourceList[i].name, filename) == 0) {
+			debugLog(LOG_NORMAL, "resource \"%s\" is already loaded, returning that\n", resourceList[i].name);
 			return resourceList[i].resPointer;
 		}
 	}
@@ -64,8 +59,7 @@ void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res) {
 		}
 	}
 
-	resource* listRes = res;
-	listRes->type = type;
+	res->type = type;
 
 	if(resourceIndex == -1) {
 		resourceIndex = resourceListSize;
@@ -78,7 +72,7 @@ void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res) {
 	}
 	loadedResources++;
 
-	resourceList[resourceIndex].resPointer = listRes;
+	resourceList[resourceIndex].resPointer = res;
 	resourceList[resourceIndex].name = malloc(strlen(name) * sizeof(char));
 	strcpy(resourceList[resourceIndex].name, name);
 
