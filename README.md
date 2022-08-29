@@ -44,7 +44,7 @@ Very basic animation handling things using spritesheets.<br>
 A very basic audio synthesizer using PortAudio. You provide the ADSR envelope thing and pointer to the function used for the synthesizer in a synthInstrument structure, and then put that with the start and end frequencies, length and volume into a synthData structure and pass that to the playSynth function. It'd probably be better to just read the header and C files to understand how to use it since I can't really explain this well (though it would probably be best to read through all the files that you're going to be using).<br>
 
 #### entity.h and entity.c
-Basically anything that gets updated and/or drawn on screen every frame is an entity. It has a pointer to another struct that has other properties (for sort of polymorphism), 2 function pointers that point to functions that will update and draw the entity that gets called every frame, and a function pointer to destroy any resources being used by the entity when the entity is removed.<br>
+Basically anything that gets updated and/or drawn on screen every frame is an entity. It has a pointer to another struct that has other properties (for sort of polymorphism), 2 function pointers that point to functions that will update and draw the entity that gets called every frame, and a function pointer to destroy any resources being used by the entity when the entity is removed. You can change these function pointers at any time to create a sort of finite state machine (for example you could have it switch from a function to move on the ground to a function to move in the air when jumping)<br>
 
 #### logging.h and logging.c
 Lets you output to both the terminal and a log file with debug information.<br>
@@ -110,7 +110,7 @@ Where the shaders should be. Right now only has one vertex and fragment shader.
  - Support for multiple shaders
  - More rendering functions
  - ciumgui integration (<https://github.com/cimgui/cimgui>)
- - Optimize stuff
+ - Optimize stuff (the framerate goes down to about 150fps when there's only like 2500 quads on screen)
  - Text rendering
  - Being able to read from a config file
  - Windows support
@@ -118,3 +118,4 @@ Where the shaders should be. Right now only has one vertex and fragment shader.
  - Controller support
  - Make the README file not terrible
  - Get the filesize of the executable down (it's getting close to 1MB and most of the size is just from stb_image.h, it also takes stb_image.h a while to actually compile)
+ - Support for multiple rendering (and maybe audio) backends like vulkan

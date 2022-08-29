@@ -32,6 +32,7 @@ void setResourceDir(char* path) {
 }
 
 resource* checkIfAlreadyLoaded(const char* filename) {
+	// probably would be a good idea to just have something to hash the filename and use that in a hash map or whatever but idk, I've literally never used a hash map before
 	for(unsigned int i = 0; i < loadedResources; i++) {
 		if(strcmp(resourceList[i].name, filename) == 0) {
 			debugLog(LOG_NORMAL, "resource \"%s\" is already loaded, returning that\n", resourceList[i].name);

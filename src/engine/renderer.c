@@ -39,6 +39,10 @@ void glfwWindowSizeCallback(GLFWwindow* window, int width, int height){
 	return;
 }
 
+void glfwErrorCallback(int error, const char* description) {
+	debugLog(LOG_ERROR, "GLFW error: %s", description);
+}
+
 const float points[] = {
 //	vertex coords	texture coords
 	-1.0f,  1.0f,	0.0f, 1.0f, // top left
@@ -115,6 +119,7 @@ void initRenderer(){
 
 	// set key callback
 	glfwSetKeyCallback(window, handleKeyEvent);
+	glfwSetErrorCallback(glfwErrorCallback);
 
 	// set up vertex buffer object
 	debugLog(LOG_NORMAL, "setting up vertex buffer object\n");
