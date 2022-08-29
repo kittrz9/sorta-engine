@@ -117,6 +117,7 @@ resource* loadShader(const char* name, const char* vertexShaderPath, const char*
 
 void destroyShader(resource* res) {
 	glDeleteProgram(*(GLuint*)res->pointer);
+	free(res->pointer);
 
 	return;
 }

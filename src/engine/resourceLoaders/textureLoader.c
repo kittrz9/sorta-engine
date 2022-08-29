@@ -58,6 +58,7 @@ void destroyTexture(resource* res){
 		debugLog(LOG_ERROR, "cannot destroy the fallback texture\n");
 	}
 	glDeleteTextures(1, ((GLuint*)res->pointer));
+	free(res->pointer);
 	
 	return;
 }
