@@ -98,7 +98,7 @@ void drawPlayer(entity* ent){
 		drawnSize.x * (playerObj->facingLeft ? -1 : 1),
 		-drawnSize.y,
 	};
-	
+
 	drawTexture(drawnRect, playerObj->animation->frames[playerObj->animation->index].textureRect, (colorRGBA){1.0f,1.0f,1.0f,1.0f}, 0.0f, playerObj->animation->texture);
 	
 	return;

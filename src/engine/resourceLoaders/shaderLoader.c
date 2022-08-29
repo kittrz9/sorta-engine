@@ -90,11 +90,25 @@ resource* loadShader(const char* name, const char* vertexShaderPath, const char*
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
+	GLint shaderCompiled = 1;
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &shaderCompiled);
+	if(!shaderCompiled) {
+		GLsizei logLength = 0;
+		glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logLength);
+		GLchar* message = malloc(sizeof(GLchar) * logLength);
+		glGetProgramInfoLog(shaderProgram, logLength, NULL, message);
+		debugLog(LOG_ERROR, "could not link shader \"%s\": %s", name, message);
+		free(message);
+		return NULL;
+	}
+
 	
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	res->pointer = &shaderProgram;
+	//res->pointer = &shaderProgram;
+	res->pointer = malloc(sizeof(GLuint));
+	*(GLuint*)res->pointer = shaderProgram;
 
 	addResourceToList(RES_TYPE_SHADER, name, res);
 	

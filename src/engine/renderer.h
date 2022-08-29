@@ -40,6 +40,8 @@ extern GLint fragmentWindowSize;
 void changeClearScreenColor(colorRGBA color);
 void clearScreen();
 
+void useShader(resource* shaderRes);
+
 void drawFilledRect(rect drawnRect, colorRGBA color, float angle);
 void drawLineRect(rect drawnRect, colorRGBA color, float angle);
 // pointer to the resource instead of the texture itself since it makes it so you don't have to do weird like casts and pointer stuff when calling the function

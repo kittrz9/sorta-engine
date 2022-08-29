@@ -9,7 +9,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "resourceLoaders/shaderLoader.h"
+#include "resourceManager.h"
 
 int windowWidth  = 640;
 int windowHeight = 480;
@@ -27,13 +27,36 @@ GLint fragmentWindowSize;
 
 GLuint* fallbackTexture;
 
+resource* currentShaderRes;
+GLuint currentShader;
+
+// could probably use defines to have less repetition
+void setShaderUniform1f(const char* name, float value) {
+	GLint location = glGetUniformLocation(currentShader, name);
+	glUniform1f(location, value);
+}
+
+void setShaderUniform2f(const char* name, float value1, float value2) {
+	GLint location = glGetUniformLocation(currentShader, name);
+	glUniform2f(location, value1, value2);
+}
+
+void setShaderUniform4f(const char* name, float value1, float value2, float value3, float value4) {
+	GLint location = glGetUniformLocation(currentShader, name);
+	glUniform4f(location, value1, value2, value3, value4);
+}
+
+void setShaderUniform1ui(const char* name, unsigned int value) {
+	GLint location = glGetUniformLocation(currentShader, name);
+	glUniform1ui(location, value);
+}
 void glfwWindowSizeCallback(GLFWwindow* window, int width, int height){
 	windowWidth = width;
 	windowHeight = height;
 	
 	glViewport(0,0,width,height);
 	
-	glUniform2f(fragmentWindowSize, width, height);
+	setShaderUniform2f("windowSize", width, height);
 	//printf("window resized to (%i, %i)\n", windowWidth, windowHeight);
 	
 	return;
@@ -42,6 +65,7 @@ void glfwWindowSizeCallback(GLFWwindow* window, int width, int height){
 void glfwErrorCallback(int error, const char* description) {
 	debugLog(LOG_ERROR, "GLFW error: %s", description);
 }
+
 
 const float points[] = {
 //	vertex coords	texture coords
@@ -145,23 +169,13 @@ void initRenderer(){
 	debugLog(LOG_SUCCESS, "successfully set up element buffer object\n");
 	
 	// compile shader 
-	debugLog(LOG_NORMAL, "compiling shaders\n");
+	// need to have a default shader to set the windowSize uniform
+	debugLog(LOG_NORMAL, "compiling default shader\n");
 	resource* shaderResource = loadShader("defaultShader", "shaders/vertexShader.glsl", "shaders/fragmentShader.glsl");
-	GLuint shaderProgram = *(GLuint*)shaderResource->pointer;
-	
-	// this will probably be really bad for later if I ever want to use other shaders
-	glUseProgram(shaderProgram);
-	
-	// set up the uniform things in the shaders
-	vertexAngleLocation = glGetUniformLocation(shaderProgram, "angle");
-	vertexRectLocation = glGetUniformLocation(shaderProgram, "rect");
-	fragmentTextureRectLocation = glGetUniformLocation(shaderProgram, "textureRect");
-	fragmentInputColorLocation = glGetUniformLocation(shaderProgram, "inputColor");
-	fragmentUseTextureLocation = glGetUniformLocation(shaderProgram, "useTexture");
-	fragmentWindowSize = glGetUniformLocation(shaderProgram, "windowSize");
 
-	
-	glUniform2f(fragmentWindowSize, windowWidth, windowHeight);
+	useShader(shaderResource);
+
+	setShaderUniform2f("windowSize", windowWidth, windowHeight);
 
 	debugLog(LOG_NORMAL, "setting up fallback texture\n");
 	// probably could just set up a different function to set up a texture so I don't repeat the code in resourceManager.c but whatever
@@ -206,12 +220,28 @@ void clearScreen() {
 	glClearColor(screenClearColor.r, screenClearColor.g, screenClearColor.b, screenClearColor.a);
 }
 
+// probably not really necessary for having support for multiple shader but it'll probably make supporting another backend like vulkan easier
+void useShader(resource* shaderRes) {
+	if(shaderRes->type != RES_TYPE_SHADER) {
+		debugLog(LOG_ERROR, "resource \"%s\" is not a shader\n", shaderRes->name);
+		return;
+	}
+
+	if(currentShaderRes == shaderRes) {
+		return;
+	}
+	
+	currentShader = *(GLuint*)shaderRes->pointer;
+	glUseProgram(currentShader);
+	currentShaderRes = shaderRes;
+}
+
 // size is between -1 and 1 like the shader or whatever, has to be converted from like world space or whatever into screen space
 void drawFilledRect(rect drawnRect, colorRGBA color, float angle){
-	glUniform1f(vertexAngleLocation, angle);
-	glUniform4f(vertexRectLocation, drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
-	glUniform4f(fragmentInputColorLocation, color.r, color.g, color.b, color.a);
-	glUniform1ui(fragmentUseTextureLocation, GL_FALSE);
+	setShaderUniform1f("angle", angle);
+	setShaderUniform4f("rect", drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
+	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
+	setShaderUniform1ui("useTexture", GL_FALSE);
 	
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
 	glDrawElements(GL_TRIANGLES, sizeof(trisIndices)/sizeof(trisIndices[0]), GL_UNSIGNED_INT, 0);
@@ -220,10 +250,10 @@ void drawFilledRect(rect drawnRect, colorRGBA color, float angle){
 }
 
 void drawLineRect(rect drawnRect, colorRGBA color, float angle){
-	glUniform1f(vertexAngleLocation, angle);
-	glUniform4f(vertexRectLocation, drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
-	glUniform4f(fragmentInputColorLocation, color.r, color.g, color.b, color.a);
-	glUniform1ui(fragmentUseTextureLocation, GL_FALSE);
+	setShaderUniform1f("angle", angle);
+	setShaderUniform4f("rect", drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
+	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
+	setShaderUniform1ui("useTexture", GL_FALSE);
 	
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(linesIndices), linesIndices, GL_STATIC_DRAW);
 	glDrawElements(GL_LINES, sizeof(linesIndices), GL_UNSIGNED_INT, 0);
@@ -231,19 +261,25 @@ void drawLineRect(rect drawnRect, colorRGBA color, float angle){
 	return;
 }
 
-void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle, resource* texture){
-	glUniform1f(vertexAngleLocation, angle);
-	glUniform4f(vertexRectLocation, drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
-	if(texture->pointer == fallbackTexture) {
-		// hardcoded values again lmao
-		glUniform4f(fragmentTextureRectLocation, 0, 0, 2, 2);
-	} else {
-		glUniform4f(fragmentTextureRectLocation, textureRect.x, textureRect.y, textureRect.w, textureRect.h);
+void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle, resource* textureRes){
+	if(textureRes->type != RES_TYPE_TEXTURE) {
+		debugLog(LOG_ERROR, "resource  \"%s\" is not a texture\n", textureRes->name);
+		exit(1);
 	}
-	glUniform4f(fragmentInputColorLocation, color.r, color.g, color.b, color.a);
-	glUniform1ui(fragmentUseTextureLocation, GL_TRUE);
+
+	setShaderUniform1f("angle", angle);
+	setShaderUniform4f("rect", drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
+	if(textureRes->pointer == fallbackTexture) {
+		// hardcoded values again lmao
+		setShaderUniform4f("rect", 0,0,2,2);
+	} else {
+		setShaderUniform4f("rect", drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
+		setShaderUniform4f("textureRect", textureRect.x, textureRect.y, textureRect.w, textureRect.h);
+	}
+	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
+	setShaderUniform1ui("useTexture", GL_TRUE);
 	
-	glBindTexture(GL_TEXTURE_2D, *(GLuint*)texture->pointer);
+	glBindTexture(GL_TEXTURE_2D, *(GLuint*)textureRes->pointer);
 	
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
 	glDrawElements(GL_TRIANGLES, sizeof(trisIndices)/sizeof(trisIndices[0]), GL_UNSIGNED_INT, 0);
@@ -252,10 +288,10 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 }
 
 void drawLines(const float* linePoints, unsigned int count, colorRGBA color) {
-	glUniform1f(vertexAngleLocation, 0);
-	glUniform4f(vertexRectLocation, 0, 0, 1, 1);
-	glUniform4f(fragmentInputColorLocation, color.r, color.g, color.b, color.a);
-	glUniform1ui(fragmentUseTextureLocation, GL_FALSE);
+	setShaderUniform1f("angle", 0);
+	setShaderUniform4f("rect", 0,0,1,1);
+	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
+	setShaderUniform1ui("useTexture", GL_FALSE);
 	
 	// maybe not a good thing to constantly change the vertex attributes thing every frame just to draw a line 
 	// but it's doing this so you don't have to define the texture coordinates with the line points
@@ -276,10 +312,10 @@ void drawLines(const float* linePoints, unsigned int count, colorRGBA color) {
 
 // repeated code lmao, should probably be made better eventually
 void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color) {
-	glUniform1f(vertexAngleLocation, 0);
-	glUniform4f(vertexRectLocation, 0, 0, 1, 1);
-	glUniform4f(fragmentInputColorLocation, color.r, color.g, color.b, color.a);
-	glUniform1ui(fragmentUseTextureLocation, GL_FALSE);
+	setShaderUniform1f("angle", 0);
+	setShaderUniform4f("rect", 0,0,1,1);
+	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
+	setShaderUniform1ui("useTexture", GL_FALSE);
 	
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), NULL);
 	glEnableVertexAttribArray(0);

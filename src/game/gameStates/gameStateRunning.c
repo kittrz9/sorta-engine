@@ -6,8 +6,9 @@
 #include "player.h"
 #include "controls.h"
 
-entity* player;
+#include "renderer.h"
 
+entity* player;
 
 void initGameStateRunning(){
 	player = createPlayer((vec2f){0,0}, (vec2f){175,175});

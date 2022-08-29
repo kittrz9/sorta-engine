@@ -107,7 +107,6 @@ Where the shaders should be. Right now only has one vertex and fragment shader.
  - Batch rendering
  - Better synthesizer
  - Music playing
- - Support for multiple shaders
  - More rendering functions
  - ciumgui integration (<https://github.com/cimgui/cimgui>)
  - Optimize stuff (the framerate goes down to about 150fps when there's only like 2500 quads on screen)

@@ -11,12 +11,11 @@
 // array of strings that correspond with the types to be able to print debugging stuff
 const char* typeStrings[RES_TYPE_ENUM_LENGTH] = {"texture", "shader"};
 
-typedef struct {
-	char* name;
-	resource* resPointer;
-} resourceListEntry;
+//typedef struct {
+//	resource* resPointer;
+//} resourceListEntry;
 
-resourceListEntry* resourceList;
+resource** resourceList;
 unsigned int loadedResources = 0;
 unsigned int resourceListSize = 0;
 
@@ -34,9 +33,9 @@ void setResourceDir(char* path) {
 resource* checkIfAlreadyLoaded(const char* filename) {
 	// probably would be a good idea to just have something to hash the filename and use that in a hash map or whatever but idk, I've literally never used a hash map before
 	for(unsigned int i = 0; i < loadedResources; i++) {
-		if(strcmp(resourceList[i].name, filename) == 0) {
-			debugLog(LOG_NORMAL, "resource \"%s\" is already loaded, returning that\n", resourceList[i].name);
-			return resourceList[i].resPointer;
+		if(strcmp(resourceList[i]->name, filename) == 0) {
+			debugLog(LOG_NORMAL, "resource \"%s\" is already loaded, returning that\n", resourceList[i]->name);
+			return resourceList[i];
 		}
 	}
 	return NULL;
@@ -44,17 +43,16 @@ resource* checkIfAlreadyLoaded(const char* filename) {
 
 void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res) {
 	if(resourceListSize == 0) {
-		resourceList = malloc(sizeof(resourceListEntry) * RESOURCE_LIST_INITIAL_SIZE);
+		resourceList = malloc(sizeof(resource) * RESOURCE_LIST_INITIAL_SIZE);
 		resourceListSize = RESOURCE_LIST_INITIAL_SIZE;
 		for(unsigned int i = 0; i < resourceListSize; i++) {
-			resourceList[i].resPointer = NULL;
-			resourceList[i].name = NULL;
+			resourceList[i] = NULL;
 		}
 	}
 
 	unsigned int resourceIndex = -1; // used for checking for free entries
 	for(unsigned int i = 0; i < resourceListSize; i++) {
-		if(resourceList[i].resPointer == NULL) {
+		if(resourceList[i] == NULL) {
 			resourceIndex = i;
 			break;
 		}
@@ -65,17 +63,16 @@ void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res) {
 	if(resourceIndex == -1) {
 		resourceIndex = resourceListSize;
 		resourceListSize *= 2;
-		resourceList = realloc(resourceList, sizeof(resourceListEntry) * resourceListSize);
+		resourceList = realloc(resourceList, sizeof(resource) * resourceListSize);
 		for(unsigned int i = resourceIndex; i < resourceListSize; i++) {
-			resourceList[i].resPointer = NULL;
-			resourceList[i].name = NULL;
+			resourceList[i] = NULL;
 		}
 	}
 	loadedResources++;
 
-	resourceList[resourceIndex].resPointer = res;
-	resourceList[resourceIndex].name = malloc(strlen(name) * sizeof(char));
-	strcpy(resourceList[resourceIndex].name, name);
+	resourceList[resourceIndex] = res;
+	resourceList[resourceIndex]->name = malloc(strlen(name) * sizeof(char));
+	strcpy(resourceList[resourceIndex]->name, name);
 
 	debugLog(LOG_SUCCESS, "resource \"%s\" with type %s created at %p\n", name, typeStrings[type], (void*)res);
 
@@ -91,13 +88,13 @@ void (*resourceDestroyingFunctions[RES_TYPE_ENUM_LENGTH]) (resource* res) = {
 
 void destroyResource(resource* res){
 	for(unsigned int i = 0; i < loadedResources; i++){
-		if(resourceList[i].resPointer == res){
-			debugLog(LOG_NORMAL, "Destroying resource \"%s\" with type %s at %p\n", resourceList[i].name, typeStrings[res->type], (void*)resourceList[i].resPointer);
+		if(resourceList[i] == res){
+			debugLog(LOG_NORMAL, "Destroying resource \"%s\" with type %s at %p\n", resourceList[i]->name, typeStrings[res->type], (void*)resourceList[i]);
 			(resourceDestroyingFunctions[res->type])(res);
 			// set these to NULL to be able to check for free entries in the list
-			resourceList[i].resPointer = NULL;
-			free(resourceList[i].name);
-			resourceList[i].name = NULL;
+			resourceList[i] = NULL;
+			free(resourceList[i]->name);
+			resourceList[i]->name = NULL;
 			free(res);
 			return;
 		}
@@ -115,14 +112,14 @@ void clearResourceList(){
 	}
 	
 	for(unsigned int i = 0; i < loadedResources; i++){
-		if(resourceList[i].resPointer == NULL){
+		if(resourceList[i] == NULL){
 			continue;
 		}
 		
-		debugLog(LOG_NORMAL, "Destroying resourse \"%s\" with type %s at %p\n", resourceList[i].name, typeStrings[resourceList[i].resPointer->type], (void*)resourceList[i].resPointer);
-		(resourceDestroyingFunctions[resourceList[i].resPointer->type])(resourceList[i].resPointer);
+		debugLog(LOG_NORMAL, "Destroying resourse \"%s\" with type %s at %p\n", resourceList[i]->name, typeStrings[resourceList[i]->type], (void*)resourceList[i]);
+		(resourceDestroyingFunctions[resourceList[i]->type])(resourceList[i]);
 		
-		free(resourceList[i].name);
+		free(resourceList[i]->name);
 	}
 	
 	free(resourceList);

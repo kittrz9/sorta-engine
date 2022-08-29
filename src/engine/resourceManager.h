@@ -13,6 +13,7 @@ extern unsigned int resDirStrLen;
 typedef struct {
 	RESOURCE_TYPE type;
 	void* pointer; // pointer to where the actual loaded in thing is in memory
+	char* name;
 } resource;
 
 resource* checkIfAlreadyLoaded(const char* filename);
