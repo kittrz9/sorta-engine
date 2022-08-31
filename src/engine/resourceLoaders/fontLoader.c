@@ -154,7 +154,10 @@ resFont->chars[(unsigned int)charIndex].TYPE = atof(str); /* have to cast to uns
 		resFont->chars[(unsigned int)charIndex].loaded = true;
 	}
 	free(str);
-	printf("%f\n", resFont->chars[(unsigned int)' '].advance);
+	for(i = 0; i < lineCount; ++i) {
+		free(lines[i]);
+	}
+	free(lines);
 
 	// return resource
 	res->pointer = resFont;
