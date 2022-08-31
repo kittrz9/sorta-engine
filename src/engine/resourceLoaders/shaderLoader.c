@@ -53,7 +53,7 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLength);
 		GLchar* message = malloc(sizeof(GLchar) * logLength);
 		glGetShaderInfoLog(shader, logLength, NULL, message);
-		debugLog(LOG_ERROR, "could not compile %s shader \"%s\": %s", shaderTypeString, shaderFilePath, message);
+		debugLog(LOG_ERROR, "could not compile %s shader \"%s\": %s\n", shaderTypeString, shaderFilePath, message);
 		free(message);
 		return 0;
 	}
@@ -97,7 +97,7 @@ resource* loadShader(const char* name, const char* vertexShaderPath, const char*
 		glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logLength);
 		GLchar* message = malloc(sizeof(GLchar) * logLength);
 		glGetProgramInfoLog(shaderProgram, logLength, NULL, message);
-		debugLog(LOG_ERROR, "could not link shader \"%s\": %s", name, message);
+		debugLog(LOG_ERROR, "could not link shader \"%s\": %s\n", name, message);
 		free(message);
 		return NULL;
 	}

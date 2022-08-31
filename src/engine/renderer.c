@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "logging.h"
 #include "controls.h"
@@ -268,10 +269,10 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 	}
 
 	setShaderUniform1f("angle", angle);
-	setShaderUniform4f("rect", drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
 	if(textureRes->pointer == fallbackTexture) {
+		setShaderUniform4f("rect", drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
 		// hardcoded values again lmao
-		setShaderUniform4f("rect", 0,0,2,2);
+		setShaderUniform4f("textureRect", 0,0,2,2);
 	} else {
 		setShaderUniform4f("rect", drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
 		setShaderUniform4f("textureRect", textureRect.x, textureRect.y, textureRect.w, textureRect.h);
@@ -328,5 +329,52 @@ void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color) 
 	// change it back
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(points)/sizeof(points[0])) * sizeof(float), points, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), NULL);
+	return;
+}
+
+void drawText(resource* fontRes, char* text, float size, colorRGBA color, float x, float y) {
+#define currentFont ((font*)fontRes->pointer)
+	if(fontRes->type != RES_TYPE_FONT) {
+		debugLog(LOG_ERROR, "resource \"%s\" is not a font\n", fontRes->name);
+		return;
+	}
+	unsigned int length = strlen(text);
+	float xPos = x;
+	float yPos = y;
+	// should probably just use the drawTexture function but I made the texture value in the font resource just have the GLuint for the texture instead of a whole other resource
+	for(unsigned int i = 0; i < length; ++i) {
+		fontChar currentCharData = currentFont->chars[(unsigned int)text[i]];
+		if(!currentCharData.loaded) {
+			continue;
+		}
+		if(text[i] != ' ') {
+			// this is a mess
+			float charAtlasX = currentCharData.atlasLeft;
+			float charAtlasY = currentFont->textureHeight - currentCharData.atlasTop;
+			float charAtlasW = currentCharData.atlasRight - charAtlasX;
+			float charAtlasH = currentCharData.atlasTop - currentCharData.atlasBottom;
+
+			float charX = currentCharData.left;
+			float charY = currentCharData.top;
+			float charW = currentCharData.right - charX;
+			float charH = currentCharData.top - currentCharData.bottom;
+
+			float drawnX = (xPos-windowWidth)/(float)windowWidth + (1.0f - currentCharData.right)* size/windowWidth;
+			float drawnY = (windowHeight-yPos)/(float)windowHeight - (1.0f - charY) * (size/windowHeight);
+			float drawnW = (charW * size)/windowWidth;
+			float drawnH = (charH * size)/windowHeight;
+			setShaderUniform4f("rect", drawnX, drawnY, drawnW, drawnH);
+			setShaderUniform4f("textureRect", charAtlasX, charAtlasY+charAtlasH, charAtlasW, -charAtlasH); // characters get rendered upside down for some reason unless this is done
+			setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
+			setShaderUniform1ui("useTexture", GL_TRUE);
+			
+			glBindTexture(GL_TEXTURE_2D, *currentFont->texture);
+			
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
+			glDrawElements(GL_TRIANGLES, sizeof(trisIndices)/sizeof(trisIndices[0]), GL_UNSIGNED_INT, 0);
+		}
+		xPos += currentCharData.advance * size * 2;
+	}
+
 	return;
 }

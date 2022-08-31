@@ -15,18 +15,13 @@
 #include "gameStates.h"
 #include "gameStateRunning.h"
 
-resource* defaultShader;
-
 int gameLoop(){
 	double lastTime = glfwGetTime();
 	double deltaTime = 0.0f;
-
-	defaultShader = loadShader("defaultShader2", "shaders/vertexShader.glsl", "shaders/fragmentShader2.glsl");
 	
 	initGameState(&gameStateRunning);
 	
 	while(!glfwWindowShouldClose(window)){
-		useShader(defaultShader);
 		for(int i = 0; i < CONTROLS_LENGTH; i++){
 			if(keys[i].pressedTimer > 0.0){
 				keys[i].pressedTimer -= deltaTime;

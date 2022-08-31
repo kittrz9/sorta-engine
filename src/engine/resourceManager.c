@@ -8,12 +8,12 @@
 
 #define RESOURCE_LIST_INITIAL_SIZE 32
 
-// array of strings that correspond with the types to be able to print debugging stuff
-const char* typeStrings[RES_TYPE_ENUM_LENGTH] = {"texture", "shader"};
-
 //typedef struct {
 //	resource* resPointer;
 //} resourceListEntry;
+
+// array of strings that correspond with the types to be able to print debugging stuff
+static const char* typeStrings[RES_TYPE_ENUM_LENGTH] = {"texture", "shader", "font"};
 
 resource** resourceList;
 unsigned int loadedResources = 0;
@@ -83,7 +83,7 @@ void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res) {
 
 // array of function pointers to destroy resources, has to be in the same order as the enum of types
 void (*resourceDestroyingFunctions[RES_TYPE_ENUM_LENGTH]) (resource* res) = {
-	destroyTexture, destroyShader,
+	destroyTexture, destroyShader, destroyFont, 
 };
 
 void destroyResource(resource* res){

@@ -4,8 +4,10 @@
 typedef enum {
 	RES_TYPE_TEXTURE,
 	RES_TYPE_SHADER,
+	RES_TYPE_FONT,
 	RES_TYPE_ENUM_LENGTH,
 } RESOURCE_TYPE;
+
 void setResourceDir(char* path);
 extern char* resourceDir;
 extern unsigned int resDirStrLen;
@@ -25,5 +27,6 @@ void clearResourceList();
 // include the header for every resource loader here
 #include "resourceLoaders/textureLoader.h"
 #include "resourceLoaders/shaderLoader.h"
+#include "resourceLoaders/fontLoader.h"
 
 #endif

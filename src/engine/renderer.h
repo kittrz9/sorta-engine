@@ -52,4 +52,6 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 void drawLines(const float* linePoints, unsigned int count, colorRGBA color);
 void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color);
 
+void drawText(resource* fontRes, char* text, float size, colorRGBA color, float x, float y);
+
 #endif

@@ -100,6 +100,9 @@ Where the resources for the game should be. For now it only has a place holder i
 ### res/shaders/ directory
 Where the shaders should be. Right now only has one vertex and fragment shader.
 
+### res/fonts/ directory
+Where the font files should be. They are generated with [msdf-atlas-gen](https://github.com/Chlumsky/msdf-atlas-gen/). Fonts require both a png file and csv file (both generated with msdf-atlas-gen).
+
 ---
 
 ## Major things to do (in no particular order):
@@ -118,3 +121,5 @@ Where the shaders should be. Right now only has one vertex and fragment shader.
  - Make the README file not terrible
  - Get the filesize of the executable down (it's getting close to 1MB and most of the size is just from stb_image.h, it also takes stb_image.h a while to actually compile)
  - Support for multiple rendering (and maybe audio) backends like vulkan
+ - Reduce memory usage
+ - Fix font rendering (currently draws them in slightly off positions)
