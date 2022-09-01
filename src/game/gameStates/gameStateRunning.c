@@ -13,6 +13,7 @@ entity* player;
 resource* defaultFont;
 resource* fontShader;
 resource* defaultShader2;
+char* fpsStr;
 
 void initGameStateRunning(){
 	player = createPlayer((vec2f){0,0}, (vec2f){175,175});
@@ -22,6 +23,8 @@ void initGameStateRunning(){
 	defaultShader2 = loadShader("defaultShader2", "shaders/vertexShader.glsl", "shaders/fragmentShader2.glsl");
 	
 	changeClearScreenColor((colorRGBA){0.5f, 0.5f, 0.5f, 1.0f});
+
+	fpsStr = malloc(sizeof(char) * 32);
 	
 	return;
 }
@@ -29,6 +32,8 @@ void initGameStateRunning(){
 void uninitGameStateRunning(){
 	removeEntity(player);
 	
+	free(fpsStr);
+
 	return;
 }
 
@@ -44,11 +49,11 @@ int runGameStateRunning(double deltaTime){
 		running = false;
 	}
 	
-	char* str = malloc(sizeof(char) * 32);
-	sprintf(str, "fps: %.2f", 1/deltaTime);
+	sprintf(fpsStr, "fps: %.2f", 1/deltaTime);
 	useShader(fontShader);
-	drawText(defaultFont, str, 50.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 50);
-	free(str);
+	drawText(defaultFont, fpsStr, 50.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 20); // font renders too high up right now, temporary fix
+
+	drawText(defaultFont, "balls", 50, (colorRGBA){1.0f, 0.0f, 1.0f, 1.0f}, 0, 200);
 	
 	return 0;
 }

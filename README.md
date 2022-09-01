@@ -113,7 +113,6 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - More rendering functions
  - ciumgui integration (<https://github.com/cimgui/cimgui>)
  - Optimize stuff (the framerate goes down to about 150fps when there's only like 2500 quads on screen)
- - Text rendering
  - Being able to read from a config file
  - Windows support
  - Maybe add in 3D stuff
@@ -122,4 +121,4 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Get the filesize of the executable down (it's getting close to 1MB and most of the size is just from stb_image.h, it also takes stb_image.h a while to actually compile)
  - Support for multiple rendering (and maybe audio) backends like vulkan
  - Reduce memory usage
- - Fix font rendering (currently draws them in slightly off positions)
+ - Fix font rendering (currently draws slightly too high)

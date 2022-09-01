@@ -336,7 +336,7 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 #define currentFont ((font*)fontRes->pointer)
 	if(fontRes->type != RES_TYPE_FONT) {
 		debugLog(LOG_ERROR, "resource \"%s\" is not a font\n", fontRes->name);
-		return;
+		exit(1);
 	}
 	unsigned int length = strlen(text);
 	float xPos = x;
@@ -344,6 +344,11 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 	// should probably just use the drawTexture function but I made the texture value in the font resource just have the GLuint for the texture instead of a whole other resource
 	for(unsigned int i = 0; i < length; ++i) {
 		fontChar currentCharData = currentFont->chars[(unsigned int)text[i]];
+		if(text[i] == '\n') {
+			yPos += size*1.5; // hard coded value that probably wont work for other fonts
+			xPos = x;
+			continue;
+		}
 		if(!currentCharData.loaded) {
 			continue;
 		}
@@ -355,7 +360,7 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 			float charAtlasH = currentCharData.atlasTop - currentCharData.atlasBottom;
 
 			float charX = currentCharData.left;
-			float charY = currentCharData.top;
+			float charY = currentCharData.top + currentCharData.bottom;
 			float charW = currentCharData.right - charX;
 			float charH = currentCharData.top - currentCharData.bottom;
 
