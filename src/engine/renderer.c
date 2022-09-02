@@ -172,15 +172,6 @@ void initRenderer(){
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
 	debugLog(LOG_SUCCESS, "successfully set up element buffer object\n");
-	
-	// compile shader 
-	// need to have a default shader to set the windowSize uniform
-	debugLog(LOG_NORMAL, "compiling default shader\n");
-	resource* shaderResource = loadShader("defaultShader", "shaders/vertexShader.glsl", "shaders/fragmentShader.glsl");
-
-	useShader(shaderResource);
-
-	setShaderUniform2f("windowSize", windowWidth, windowHeight);
 
 	debugLog(LOG_NORMAL, "setting up fallback texture\n");
 	// probably could just set up a different function to set up a texture so I don't repeat the code in resourceManager.c but whatever
@@ -239,6 +230,8 @@ void useShader(resource* shaderRes) {
 	currentShader = *(GLuint*)shaderRes->pointer;
 	glUseProgram(currentShader);
 	currentShaderRes = shaderRes;
+
+	setShaderUniform2f("windowSize", windowWidth, windowHeight);
 }
 
 // size is between -1 and 1 like the shader or whatever, has to be converted from like world space or whatever into screen space
