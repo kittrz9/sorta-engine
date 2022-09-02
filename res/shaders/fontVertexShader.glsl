@@ -1,9 +1,8 @@
 #version 400
-layout (location = 0) in vec3 vp;
+layout (location = 0) in vec2 vp;
 layout (location = 1) in vec2 textureCoords;
 
 out vec2 texCoord;
-uniform vec4 rect;
 uniform vec2 windowSize;
 
 vec3 scalePoint(vec3 input, vec2 scaling){
@@ -19,10 +18,7 @@ vec3 translatePoint(vec3 input, vec2 translation){
 }
 
 void main() {
-	vec3 vp2 = scalePoint(vp, vec2(rect.z, rect.w));
-	vp2 = translatePoint(vp2, vec2(rect.x, rect.y));
-
-	gl_Position = vec4(vp2, 1.0);
+	gl_Position = vec4(vp, 1.0, 1.0);
 
 	texCoord = textureCoords;
 }

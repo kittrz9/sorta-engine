@@ -81,10 +81,13 @@ const vertex points[] = {
 };
 
 // indices used when drawing triangles
-const unsigned int trisIndices[] = {
+const unsigned int baseTrisIndices[] = {
 	0, 1, 2,
 	2, 3, 0,
 };
+
+#define MAX_CHARS 1024
+unsigned int trisIndices[MAX_CHARS * 6];
 
 // indices used when drawing lines
 const unsigned int linesIndices[] = {
@@ -98,6 +101,9 @@ const unsigned int linesIndices[] = {
 GLuint vertexBufferObject;
 GLuint vertexArrayObject;
 GLuint elementBufferObject;
+
+GLuint textVertexBuffer;
+GLuint textVertexArray;
 
 void initRenderer(){
 	debugLog(LOG_NORMAL, "initializing renderer\n"); 
@@ -149,6 +155,20 @@ void initRenderer(){
 	// set key callback
 	glfwSetKeyCallback(window, handleKeyEvent);
 	glfwSetErrorCallback(glfwErrorCallback);
+	// set up text vertex buffer
+	debugLog(LOG_NORMAL, "setting up text vertex buffer\n");
+	glGenBuffers(1, &textVertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, textVertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, MAX_CHARS * 4 * sizeof(vertex), NULL, GL_DYNAMIC_DRAW);
+
+	debugLog(LOG_NORMAL, "setting up text vertex object array\n");
+	glGenVertexArrays(1, &textVertexArray);
+	glBindVertexArray(textVertexArray);
+	glBindBuffer(GL_ARRAY_BUFFER, textVertexBuffer);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, position));
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, texCoords));
+	glEnableVertexAttribArray(1);
 
 	// set up vertex buffer object
 	debugLog(LOG_NORMAL, "setting up vertex buffer object\n");
@@ -168,10 +188,14 @@ void initRenderer(){
 	debugLog(LOG_SUCCESS, "successfully set up vertex array object\n");
 	
 	// set up element buffer object
+	for(unsigned int i = 0; i < MAX_CHARS*6; ++i) {
+		trisIndices[i] = baseTrisIndices[i%6] + (i/6)*4;
+	}
 	glGenBuffers(1, &elementBufferObject);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferObject);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
 	debugLog(LOG_SUCCESS, "successfully set up element buffer object\n");
+
 
 	debugLog(LOG_NORMAL, "setting up fallback texture\n");
 	// probably could just set up a different function to set up a texture so I don't repeat the code in resourceManager.c but whatever
@@ -201,6 +225,8 @@ void initRenderer(){
 void uninitRenderer(){
 	glDeleteVertexArrays(1, &vertexArrayObject);
 	glDeleteBuffers(1, &vertexBufferObject);
+	glDeleteVertexArrays(1, &textVertexArray);
+	glDeleteBuffers(1, &textVertexBuffer);
 
 	glDeleteTextures(1, ((GLuint*)fallbackTexture));
 	
@@ -335,10 +361,20 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 		debugLog(LOG_ERROR, "resource \"%s\" is not a font\n", fontRes->name);
 		exit(1);
 	}
+	glBindBuffer(GL_ARRAY_BUFFER, textVertexBuffer);
 	unsigned int length = strlen(text);
+	unsigned int verticesLength = 0;
+	for(unsigned int i = 0; i < length; ++i) {
+		if(currentFont->chars[(unsigned int)text[i]].loaded && text[i] != ' ') {
+			verticesLength++;
+		}
+	}
+
+	vertex* textVertices = malloc(4*sizeof(vertex) * verticesLength);
+	
 	float xPos = x;
 	float yPos = y;
-	// should probably just use the drawTexture function but I made the texture value in the font resource just have the GLuint for the texture instead of a whole other resource
+	unsigned int j = 0;
 	for(unsigned int i = 0; i < length; ++i) {
 		fontChar currentCharData = currentFont->chars[(unsigned int)text[i]];
 		if(text[i] == '\n') {
@@ -365,18 +401,36 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 			float drawnY = (windowHeight-yPos)/(float)windowHeight - (1.0f - charY) * (size/windowHeight);
 			float drawnW = (charW * size)/windowWidth;
 			float drawnH = (charH * size)/windowHeight;
-			setShaderUniform4f("rect", drawnX, drawnY, drawnW, drawnH);
-			setShaderUniform4f("textureRect", charAtlasX, charAtlasY+charAtlasH, charAtlasW, -charAtlasH); // characters get rendered upside down for some reason unless this is done
-			setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
-			setShaderUniform1ui("useTexture", GL_TRUE);
-			
-			glBindTexture(GL_TEXTURE_2D, *currentFont->texture);
-			
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
-			glDrawElements(GL_TRIANGLES, sizeof(trisIndices)/sizeof(trisIndices[0]), GL_UNSIGNED_INT, 0);
+
+			for(unsigned int k = 0; k < 4; ++k) {
+				textVertices[(j*4)+k].position.x = (points[k].position.x * drawnW) + drawnX;
+				textVertices[(j*4)+k].position.y = (points[k].position.y * drawnH) + drawnY;
+				textVertices[(j*4)+k].texCoords.x = charAtlasX + (points[k].texCoords.x * charAtlasW);
+				textVertices[(j*4)+k].texCoords.y = charAtlasY + ((1.0f -points[k].texCoords.y) * charAtlasH); // characters get rendered upside down unless I do this
+			}
+			++j;
 		}
 		xPos += currentCharData.advance * size * 2;
 	}
+
+	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
+	
+	// I guess I have to put these here after binging the vertex buffer? idk why, it should stay the same
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, position));
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, texCoords));
+	glEnableVertexAttribArray(1);
+	
+	glBindTexture(GL_TEXTURE_2D, *currentFont->texture);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, 4*verticesLength*sizeof(vertex), textVertices);
+	glDrawElements(GL_TRIANGLES, verticesLength*6, GL_UNSIGNED_INT, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, position));
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, texCoords));
+	glEnableVertexAttribArray(1);
+	free(textVertices);
 
 	return;
 }

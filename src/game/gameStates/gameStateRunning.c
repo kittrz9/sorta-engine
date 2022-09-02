@@ -53,7 +53,8 @@ int runGameStateRunning(double deltaTime){
 	useShader(fontShader);
 	drawText(defaultFont, fpsStr, 50.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 20); // font renders too high up right now, temporary fix
 
-	drawText(defaultFont, "balls", 50, (colorRGBA){1.0f, 0.0f, 1.0f, 1.0f}, 0, 200);
+	drawText(defaultFont, "placeholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\n", 30, (colorRGBA){1.0f, 0.0f, 1.0f, 1.0f}, 0, 200);
+
 	
 	return 0;
 }
