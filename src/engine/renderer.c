@@ -6,6 +6,7 @@
 
 #include "logging.h"
 #include "controls.h"
+#include "vectors.h"
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -30,6 +31,11 @@ GLuint* fallbackTexture;
 
 resource* currentShaderRes;
 GLuint currentShader;
+
+typedef struct {
+	vec2f position;
+	vec2f texCoords;
+} vertex;
 
 // could probably use defines to have less repetition
 void setShaderUniform1f(const char* name, float value) {
@@ -67,13 +73,11 @@ void glfwErrorCallback(int error, const char* description) {
 	debugLog(LOG_ERROR, "GLFW error: %s", description);
 }
 
-
-const float points[] = {
-//	vertex coords	texture coords
-	-1.0f,  1.0f,	0.0f, 1.0f, // top left
-	 1.0f,  1.0f,	1.0f, 1.0f, // top right
-	 1.0f, -1.0f,	1.0f, 0.0f, // bottom right
-	-1.0f, -1.0f,	0.0f, 0.0f, // bottom left
+const vertex points[] = {
+	{.position={-1.0f, 1.0f}, .texCoords={0.0f,1.0f}},
+	{.position={ 1.0f, 1.0f}, .texCoords={1.0f,1.0f}},
+	{.position={ 1.0f,-1.0f}, .texCoords={1.0f,0.0f}},
+	{.position={-1.0f,-1.0f}, .texCoords={0.0f,0.0f}},
 };
 
 // indices used when drawing triangles
@@ -150,16 +154,16 @@ void initRenderer(){
 	debugLog(LOG_NORMAL, "setting up vertex buffer object\n");
 	glGenBuffers(1, &vertexBufferObject);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-	glBufferData(GL_ARRAY_BUFFER, (sizeof(points)/sizeof(points[0])) * sizeof(float), points, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
 	
 	// set up vertex array object
 	debugLog(LOG_NORMAL, "setting up vertex array object\n");
 	glGenVertexArrays(1,&vertexArrayObject);
 	glBindVertexArray(vertexArrayObject);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), NULL);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, position));
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(2*sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, texCoords));
 	glEnableVertexAttribArray(1);
 	debugLog(LOG_SUCCESS, "successfully set up vertex array object\n");
 	
@@ -306,8 +310,8 @@ void drawLines(const float* linePoints, unsigned int count, colorRGBA color) {
 	glDrawArrays(GL_LINES, 0, count);
 	
 	// change it back
-	glBufferData(GL_ARRAY_BUFFER, (sizeof(points)/sizeof(points[0])) * sizeof(float), points, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), NULL);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), NULL);
 	return;
 }
 
@@ -327,8 +331,8 @@ void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color) 
 	glDrawArrays(GL_TRIANGLES, 0, count);
 	
 	// change it back
-	glBufferData(GL_ARRAY_BUFFER, (sizeof(points)/sizeof(points[0])) * sizeof(float), points, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), NULL);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), NULL);
 	return;
 }
 
