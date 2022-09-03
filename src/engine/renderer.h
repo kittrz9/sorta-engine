@@ -37,6 +37,12 @@ extern GLint fragmentInputColorLocation;
 extern GLint fragmentUseTextureLocation;
 extern GLint fragmentWindowSize;
 
+void setShaderUniform1f(const char* name, float value);
+void setShaderUniform2f(const char* name, float value1, float value2);
+void setShaderUniform3f(const char* name, float value1, float value2, float value3);
+void setShaderUniform4f(const char* name, float value1, float value2, float value3, float value4);
+void setShaderUniform1ui(const char* name, unsigned int value);
+
 void changeClearScreenColor(colorRGBA color);
 void clearScreen();
 

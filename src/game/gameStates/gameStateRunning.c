@@ -12,6 +12,7 @@
 entity* player;
 resource* defaultFont;
 resource* fontShader;
+resource* fontShader2;
 resource* defaultShader2;
 char* fpsStr;
 
@@ -21,6 +22,7 @@ void initGameStateRunning(){
 	defaultFont = loadFont("Terminus", "fonts/Terminus.png", "fonts/Terminus.csv");
 	fontShader = loadShader("fontShader", "shaders/fontVertexShader.glsl", "shaders/fontFragmentShader.glsl");
 	defaultShader2 = loadShader("defaultShader2", "shaders/vertexShader.glsl", "shaders/fragmentShader2.glsl");
+	fontShader2 = loadShader("fontShader2", "shaders/fontVertexShader2.glsl", "shaders/fontFragmentShader.glsl");
 	
 	changeClearScreenColor((colorRGBA){0.5f, 0.5f, 0.5f, 1.0f});
 
@@ -53,7 +55,12 @@ int runGameStateRunning(double deltaTime){
 	useShader(fontShader);
 	drawText(defaultFont, fpsStr, 50.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 20); // font renders too high up right now, temporary fix
 
-	drawText(defaultFont, "placeholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\nplaceholder text placeholder text\n", 30, (colorRGBA){1.0f, 0.0f, 1.0f, 1.0f}, 0, 200);
+	static float fontTime = 0.0f;
+	useShader(fontShader2);
+	setShaderUniform1f("time", fontTime);
+	drawText(defaultFont, "balls", 100.0, (colorRGBA){1.0f, 0.0f, 1.0f, 1.0f}, 200, 200);
+	fontTime += deltaTime * 0.2;
+	if(fontTime >= 1.0f) { fontTime = 0.0f; }
 
 	
 	return 0;

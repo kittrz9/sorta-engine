@@ -363,6 +363,9 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, textVertexBuffer);
 	unsigned int length = strlen(text);
+	if(length > MAX_CHARS) {
+		printf("string is too long to be printed (%i)\n", length);
+	}
 	unsigned int verticesLength = 0;
 	for(unsigned int i = 0; i < length; ++i) {
 		if(currentFont->chars[(unsigned int)text[i]].loaded && text[i] != ' ') {
