@@ -53,12 +53,12 @@ int runGameStateRunning(double deltaTime){
 	
 	sprintf(fpsStr, "fps: %.2f", 1/deltaTime);
 	useShader(fontShader);
-	drawText(defaultFont, fpsStr, 50.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 20); // font renders too high up right now, temporary fix
+	drawText(defaultFont, fpsStr, 50.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 0);
 
 	static float fontTime = 0.0f;
 	useShader(fontShader2);
 	setShaderUniform1f("time", fontTime);
-	drawText(defaultFont, "balls", 100.0, (colorRGBA){1.0f, 0.0f, 1.0f, 1.0f}, 200, 200);
+	drawText(defaultFont, "balls", 100.0, (colorRGBA){1.0f, 0.0f, 1.0f, 1.0f}, windowWidth/2 - 130, windowHeight/2 - 50);
 	fontTime += deltaTime * 0.2;
 	if(fontTime >= 1.0f) { fontTime = 0.0f; }
 

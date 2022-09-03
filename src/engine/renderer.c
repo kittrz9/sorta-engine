@@ -400,8 +400,8 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 			float charW = currentCharData.right - charX;
 			float charH = currentCharData.top - currentCharData.bottom;
 
-			float drawnX = (xPos-windowWidth)/(float)windowWidth + (1.0f - currentCharData.right)* size/windowWidth;
-			float drawnY = (windowHeight-yPos)/(float)windowHeight - (1.0f - charY) * (size/windowHeight);
+			float drawnX = (xPos*2-windowWidth)/(float)windowWidth + (1.0f - currentCharData.right) * size/windowWidth;
+			float drawnY = (windowHeight-yPos*2 - size/2)/(float)windowHeight - (1.0f - charY) * (size/windowHeight);
 			float drawnW = (charW * size)/windowWidth;
 			float drawnH = (charH * size)/windowHeight;
 
@@ -411,9 +411,10 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 				textVertices[(j*4)+k].texCoords.x = charAtlasX + (points[k].texCoords.x * charAtlasW);
 				textVertices[(j*4)+k].texCoords.y = charAtlasY + ((1.0f -points[k].texCoords.y) * charAtlasH); // characters get rendered upside down unless I do this
 			}
+
 			++j;
 		}
-		xPos += currentCharData.advance * size * 2;
+		xPos += currentCharData.advance * size;
 	}
 
 	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);

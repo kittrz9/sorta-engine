@@ -121,4 +121,5 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Get the filesize of the executable down (it's getting close to 1MB and most of the size is just from stb_image.h, it also takes stb_image.h a while to actually compile)
  - Support for multiple rendering (and maybe audio) backends like vulkan
  - Reduce memory usage
- - Fix font rendering (currently draws slightly too high)
+ - Make portaudio not choose the pulseaudio device by default (probably mostly only relevant for if/when I make this able to compile for windows)
+ - Fix the font looking weird when small
