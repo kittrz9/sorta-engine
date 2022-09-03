@@ -119,6 +119,8 @@ void initRenderer(){
 	debugLog(LOG_NORMAL, "creating window\n");
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glEnable(GL_MULTISAMPLE);
 	window = glfwCreateWindow(windowWidth, windowHeight, "bruh", NULL, NULL);
 	if(!window) {
 		debugLog(LOG_ERROR, "could not create window\n");

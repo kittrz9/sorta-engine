@@ -12,9 +12,9 @@ float median(float r, float g, float b) {
 }
 
 float screenPxRange() {
-	float pxRange = 0.1f;
+	float pxRange = 250.0f;
 	vec2 unitRange = vec2(pxRange)/vec2(textureSize(inputTexture,0));
-	vec2 screenTexSize = vec2(1.0);
+	vec2 screenTexSize = vec2(1.0)/fwidth(texCoord);
 	return max(0.5*dot(unitRange, screenTexSize), 1.0);
 }
 

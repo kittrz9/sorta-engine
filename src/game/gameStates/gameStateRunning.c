@@ -53,7 +53,7 @@ int runGameStateRunning(double deltaTime){
 	
 	sprintf(fpsStr, "fps: %.2f", 1/deltaTime);
 	useShader(fontShader);
-	drawText(defaultFont, fpsStr, 50.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 0);
+	drawText(defaultFont, fpsStr, 15.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 0);
 
 	static float fontTime = 0.0f;
 	useShader(fontShader2);
