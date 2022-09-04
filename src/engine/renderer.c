@@ -32,11 +32,6 @@ GLuint* fallbackTexture;
 resource* currentShaderRes;
 GLuint currentShader;
 
-typedef struct {
-	vec2f position;
-	vec2f texCoords;
-} vertex;
-
 // could probably use defines to have less repetition
 void setShaderUniform1f(const char* name, float value) {
 	GLint location = glGetUniformLocation(currentShader, name);
@@ -97,13 +92,30 @@ const unsigned int linesIndices[] = {
 	3, 0,
 };
 
-// maybe not good to have like one vertex array object but idk it's literally just rotating scaling and translating a square
-GLuint vertexBufferObject;
+vertexBuffer defaultVertexBuffer;
+//vertexBuffer textureVertexBuffer; // batch rendering with multiple textures is weird, not doing it right now
+vertexBuffer textVertexBuffer;
 GLuint vertexArrayObject;
 GLuint elementBufferObject;
 
-GLuint textVertexBuffer;
-GLuint textVertexArray;
+void switchVertexBuffer(vertexBuffer* buf) {
+	glBindBuffer(GL_ARRAY_BUFFER, buf->bufferID);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, position));
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, texCoords));
+	glEnableVertexAttribArray(1);
+}
+
+void setupVertexBuffer(vertexBuffer* buf, unsigned int size, const void* data, GLenum mode) {
+	glGenBuffers(1, &buf->bufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, buf->bufferID);
+	glBufferData(GL_ARRAY_BUFFER, size, data, mode);
+	textVertexBuffer.mode = mode;
+}
+// draw a vertex buffer to the screen and clear the buffer (really only for dynamic buffers)
+//void flushVertexBuffer(vertexBuffer* buf);
+// called at the end of the frame
+//void flushAlllVertexBuffers();
 
 void initRenderer(){
 	debugLog(LOG_NORMAL, "initializing renderer\n"); 
@@ -119,8 +131,6 @@ void initRenderer(){
 	debugLog(LOG_NORMAL, "creating window\n");
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
-	glfwWindowHint(GLFW_SAMPLES, 4);
-	glEnable(GL_MULTISAMPLE);
 	window = glfwCreateWindow(windowWidth, windowHeight, "bruh", NULL, NULL);
 	if(!window) {
 		debugLog(LOG_ERROR, "could not create window\n");
@@ -159,34 +169,20 @@ void initRenderer(){
 	glfwSetErrorCallback(glfwErrorCallback);
 	// set up text vertex buffer
 	debugLog(LOG_NORMAL, "setting up text vertex buffer\n");
-	glGenBuffers(1, &textVertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, textVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, MAX_CHARS * 4 * sizeof(vertex), NULL, GL_DYNAMIC_DRAW);
+	setupVertexBuffer(&textVertexBuffer, MAX_CHARS * 4 * sizeof(vertex), NULL, GL_DYNAMIC_DRAW);
 
-	debugLog(LOG_NORMAL, "setting up text vertex object array\n");
-	glGenVertexArrays(1, &textVertexArray);
-	glBindVertexArray(textVertexArray);
-	glBindBuffer(GL_ARRAY_BUFFER, textVertexBuffer);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, position));
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, texCoords));
-	glEnableVertexAttribArray(1);
+//	debugLog(LOG_NORMAL, "setting up text vertex object array\n");
+//	glGenVertexArrays(1, &textVertexArray);
+//	switchVertexBuffer(&textVertexBuffer);
 
 	// set up vertex buffer object
 	debugLog(LOG_NORMAL, "setting up vertex buffer object\n");
-	glGenBuffers(1, &vertexBufferObject);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+	setupVertexBuffer(&defaultVertexBuffer, sizeof(points), points, GL_STATIC_DRAW);
 	
 	// set up vertex array object
 	debugLog(LOG_NORMAL, "setting up vertex array object\n");
 	glGenVertexArrays(1,&vertexArrayObject);
 	glBindVertexArray(vertexArrayObject);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, position));
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, texCoords));
-	glEnableVertexAttribArray(1);
 	debugLog(LOG_SUCCESS, "successfully set up vertex array object\n");
 	
 	// set up element buffer object
@@ -226,9 +222,8 @@ void initRenderer(){
 
 void uninitRenderer(){
 	glDeleteVertexArrays(1, &vertexArrayObject);
-	glDeleteBuffers(1, &vertexBufferObject);
-	glDeleteVertexArrays(1, &textVertexArray);
-	glDeleteBuffers(1, &textVertexBuffer);
+	glDeleteBuffers(1, &defaultVertexBuffer.bufferID);
+	glDeleteBuffers(1, &textVertexBuffer.bufferID);
 
 	glDeleteTextures(1, ((GLuint*)fallbackTexture));
 	
@@ -363,7 +358,7 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 		debugLog(LOG_ERROR, "resource \"%s\" is not a font\n", fontRes->name);
 		exit(1);
 	}
-	glBindBuffer(GL_ARRAY_BUFFER, textVertexBuffer);
+	switchVertexBuffer(&textVertexBuffer);
 	unsigned int length = strlen(text);
 	if(length > MAX_CHARS) {
 		printf("string is too long to be printed (%i)\n", length);
@@ -421,21 +416,11 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 
 	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
 	
-	// I guess I have to put these here after binging the vertex buffer? idk why, it should stay the same
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, position));
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, texCoords));
-	glEnableVertexAttribArray(1);
-	
 	glBindTexture(GL_TEXTURE_2D, *currentFont->texture);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 4*verticesLength*sizeof(vertex), textVertices);
 	glDrawElements(GL_TRIANGLES, verticesLength*6, GL_UNSIGNED_INT, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, position));
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, texCoords));
-	glEnableVertexAttribArray(1);
+	switchVertexBuffer(&defaultVertexBuffer);
 	free(textVertices);
 
 	return;

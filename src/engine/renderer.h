@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include "resourceManager.h"
+#include "vectors.h"
 
 extern int windowWidth;
 extern int windowHeight;
@@ -21,6 +22,23 @@ typedef struct {
 typedef struct {
 	float r,g,b,a;
 } colorRGBA;
+
+typedef struct {
+	vec2f position;
+	vec2f texCoords;
+} vertex;
+
+typedef struct {
+	GLuint bufferID;
+	unsigned int loadedVertices;
+	GLenum mode; // things like GL_STATIC_DRAW and GL_DYNAMIC_DRAW
+} vertexBuffer;
+
+// commented out for now since I don't want to implement them right now
+// draw a vertex buffer to the screen and clear the buffer (really only for dynamic buffers)
+//void flushVertexBuffer(vertexBuffer* buf);
+// called at the end of the frame
+//void flushAlllVertexBuffers();
 
 // color that the screen will be clear to
 extern colorRGBA screenClearColor;
