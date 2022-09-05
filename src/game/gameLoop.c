@@ -33,6 +33,8 @@ int gameLoop(){
 		if((*(currentState->stateLoop))(deltaTime)) {running = false;}
 		
 		if(running == false)  { glfwSetWindowShouldClose(window, GLFW_TRUE); }
+
+		flushAllVertexBuffers();
 		
 		// swap the frame buffers
 		glfwSwapBuffers(window);

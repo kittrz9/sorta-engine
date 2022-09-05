@@ -107,12 +107,13 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
 
 ## Major things to do (in no particular order):
 
- - Batch rendering
+ - Batch rendering for things other than textures
+ - Make it not need to start a whole new batch when switching textures
  - Better synthesizer
  - Music playing
  - More rendering functions
  - ciumgui integration (<https://github.com/cimgui/cimgui>)
- - Optimize stuff (the framerate goes down to about 150fps when there's only like 2500 quads on screen)
+ - Optimize stuff (the framerate goes down to about 130fps when there's only like 10000 quads of the same texture on screen)
  - Being able to read from a config file
  - Windows support
  - Maybe add in 3D stuff

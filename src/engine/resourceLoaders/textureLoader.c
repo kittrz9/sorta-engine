@@ -24,10 +24,10 @@ resource* loadTexture(const char* filename){
 	sprintf(fullResourcePath, "%s%s", resourceDir, filename);
 	
 	int width, height, nrChannels;
-	GLuint* texture = malloc(sizeof(GLuint));
+	textureStruct* texture = malloc(sizeof(textureStruct));
 	
-	glGenTextures(1, texture);
-	glBindTexture(GL_TEXTURE_2D, *texture);
+	glGenTextures(1, &texture->id);
+	glBindTexture(GL_TEXTURE_2D, texture->id);
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -40,6 +40,7 @@ resource* loadTexture(const char* filename){
 		glGenerateMipmap(GL_TEXTURE_2D);
 		// I think this will work since the GLuint is used as sort of a pointer I think???
 		// you'd just need to cast the void* to a GLuint when used
+		texture->size = (vec2f){(float)width, (float)height};
 		res->pointer = texture;
 	} else {
 		debugLog(LOG_ERROR, "could not load texture at %s, using fallback texture\n", filename);
@@ -57,7 +58,7 @@ void destroyTexture(resource* res){
 	if(res->pointer == fallbackTexture) {
 		debugLog(LOG_ERROR, "cannot destroy the fallback texture\n");
 	}
-	glDeleteTextures(1, ((GLuint*)res->pointer));
+	glDeleteTextures(1, &((textureStruct*)res->pointer)->id);
 	free(res->pointer);
 	
 	return;

@@ -81,8 +81,9 @@ const unsigned int baseTrisIndices[] = {
 	2, 3, 0,
 };
 
-#define MAX_CHARS 1024
-unsigned int trisIndices[MAX_CHARS * 6];
+// this value is pretty much arbitrary
+#define MAX_QUADS 4096
+unsigned int trisIndices[MAX_QUADS * 6];
 
 // indices used when drawing lines
 const unsigned int linesIndices[] = {
@@ -93,29 +94,61 @@ const unsigned int linesIndices[] = {
 };
 
 vertexBuffer defaultVertexBuffer;
-//vertexBuffer textureVertexBuffer; // batch rendering with multiple textures is weird, not doing it right now
+vertexBuffer textureVertexBuffer;
 vertexBuffer textVertexBuffer;
 GLuint vertexArrayObject;
 GLuint elementBufferObject;
 
+vertexBuffer* currentVertexBuffer = NULL;
 void switchVertexBuffer(vertexBuffer* buf) {
 	glBindBuffer(GL_ARRAY_BUFFER, buf->bufferID);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, position));
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, texCoords));
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, color));
+	glEnableVertexAttribArray(2);
+
+	currentVertexBuffer = buf;
 }
 
 void setupVertexBuffer(vertexBuffer* buf, unsigned int size, const void* data, GLenum mode) {
 	glGenBuffers(1, &buf->bufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, buf->bufferID);
+	switchVertexBuffer(buf);
 	glBufferData(GL_ARRAY_BUFFER, size, data, mode);
-	textVertexBuffer.mode = mode;
+	buf->mode = mode;
 }
+
+void addQuadToVertexBuffer(vertexBuffer* buf, vertex* quad) {
+	glBufferSubData(GL_ARRAY_BUFFER, buf->loadedVertices*sizeof(vertex), 4*sizeof(vertex), quad);
+
+	vertex* test = malloc(sizeof(vertex) * 4);
+	glGetBufferSubData(GL_ARRAY_BUFFER, 0, 4*sizeof(vertex), test);
+
+	buf->loadedVertices += 4;
+}
+
 // draw a vertex buffer to the screen and clear the buffer (really only for dynamic buffers)
-//void flushVertexBuffer(vertexBuffer* buf);
+resource* currentTexture = NULL;
+void flushVertexBuffer(vertexBuffer* buf) {
+	if(buf->mode == GL_STATIC_DRAW) {
+		return;
+	}
+
+	if(buf->loadedVertices == 0) { return; }
+
+	if(buf == &textureVertexBuffer) {
+		glBindTexture(GL_TEXTURE_2D, 2);
+	}
+	glDrawElements(GL_TRIANGLES, buf->loadedVertices/4 * 6, GL_UNSIGNED_INT, 0);
+	buf->loadedVertices = 0;
+
+	return;
+}
 // called at the end of the frame
-//void flushAlllVertexBuffers();
+void flushAllVertexBuffers() {
+	flushVertexBuffer(&textureVertexBuffer);
+}
 
 void initRenderer(){
 	debugLog(LOG_NORMAL, "initializing renderer\n"); 
@@ -167,17 +200,16 @@ void initRenderer(){
 	// set key callback
 	glfwSetKeyCallback(window, handleKeyEvent);
 	glfwSetErrorCallback(glfwErrorCallback);
-	// set up text vertex buffer
-	debugLog(LOG_NORMAL, "setting up text vertex buffer\n");
-	setupVertexBuffer(&textVertexBuffer, MAX_CHARS * 4 * sizeof(vertex), NULL, GL_DYNAMIC_DRAW);
 
 //	debugLog(LOG_NORMAL, "setting up text vertex object array\n");
 //	glGenVertexArrays(1, &textVertexArray);
 //	switchVertexBuffer(&textVertexBuffer);
 
 	// set up vertex buffer object
-	debugLog(LOG_NORMAL, "setting up vertex buffer object\n");
+	debugLog(LOG_NORMAL, "setting up vertex buffers\n");
 	setupVertexBuffer(&defaultVertexBuffer, sizeof(points), points, GL_STATIC_DRAW);
+	setupVertexBuffer(&textVertexBuffer, MAX_QUADS * 4 * sizeof(vertex), NULL, GL_DYNAMIC_DRAW);
+	setupVertexBuffer(&textureVertexBuffer, MAX_QUADS * 4 * sizeof(vertex), NULL, GL_DYNAMIC_DRAW);
 	
 	// set up vertex array object
 	debugLog(LOG_NORMAL, "setting up vertex array object\n");
@@ -186,7 +218,7 @@ void initRenderer(){
 	debugLog(LOG_SUCCESS, "successfully set up vertex array object\n");
 	
 	// set up element buffer object
-	for(unsigned int i = 0; i < MAX_CHARS*6; ++i) {
+	for(unsigned int i = 0; i < MAX_QUADS*6; ++i) {
 		trisIndices[i] = baseTrisIndices[i%6] + (i/6)*4;
 	}
 	glGenBuffers(1, &elementBufferObject);
@@ -249,6 +281,10 @@ void useShader(resource* shaderRes) {
 	if(currentShaderRes == shaderRes) {
 		return;
 	}
+
+	if(currentVertexBuffer != NULL) {
+		flushVertexBuffer(currentVertexBuffer);
+	}
 	
 	currentShader = *(GLuint*)shaderRes->pointer;
 	glUseProgram(currentShader);
@@ -282,30 +318,37 @@ void drawLineRect(rect drawnRect, colorRGBA color, float angle){
 	return;
 }
 
-void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle, resource* textureRes){
+void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle, resource* textureRes) {
 	if(textureRes->type != RES_TYPE_TEXTURE) {
-		debugLog(LOG_ERROR, "resource  \"%s\" is not a texture\n", textureRes->name);
+		debugLog(LOG_ERROR, "resource \"%s\" is not a texture\n", textureRes->name);
 		exit(1);
 	}
 
-	setShaderUniform1f("angle", angle);
-	if(textureRes->pointer == fallbackTexture) {
-		setShaderUniform4f("rect", drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
-		// hardcoded values again lmao
-		setShaderUniform4f("textureRect", 0,0,2,2);
-	} else {
-		setShaderUniform4f("rect", drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
-		setShaderUniform4f("textureRect", textureRect.x, textureRect.y, textureRect.w, textureRect.h);
+	// really need to change this so I can use multiple textures per batch but for now this will work
+	if(textureRes != currentTexture) {
+		switchVertexBuffer(&textureVertexBuffer);
+		currentTexture = textureRes;
+		glBindTexture(GL_TEXTURE_2D, ((textureStruct*)textureRes->pointer)->id);
+		flushVertexBuffer(&textureVertexBuffer);
 	}
-	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
-	setShaderUniform1ui("useTexture", GL_TRUE);
-	
-	glBindTexture(GL_TEXTURE_2D, *(GLuint*)textureRes->pointer);
-	
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
-	glDrawElements(GL_TRIANGLES, sizeof(trisIndices)/sizeof(trisIndices[0]), GL_UNSIGNED_INT, 0);
-	
-	return;
+
+	switchVertexBuffer(&textureVertexBuffer);
+
+	vertex quad[4];
+	for(unsigned int i = 0; i < 4; ++i) {
+		quad[i].position.x = (points[i].position.x * drawnRect.w) + drawnRect.x;
+		quad[i].position.y = (points[i].position.y * drawnRect.h) + drawnRect.y;
+		quad[i].texCoords.x = ((points[i].texCoords.x * textureRect.w) + textureRect.x) / ((textureStruct*)textureRes->pointer)->size.x;
+		quad[i].texCoords.y = ((points[i].texCoords.y * textureRect.h) + textureRect.y) / ((textureStruct*)textureRes->pointer)->size.y;
+		quad[i].color = color;
+	}
+
+	addQuadToVertexBuffer(&textureVertexBuffer, &quad[0]);
+
+	if(textureVertexBuffer.loadedVertices >= MAX_QUADS * 4) {
+		glBindTexture(GL_TEXTURE_2D, ((textureStruct*)textureRes->pointer)->id);
+		flushVertexBuffer(&textureVertexBuffer);
+	}
 }
 
 void drawLines(const float* linePoints, unsigned int count, colorRGBA color) {
@@ -360,7 +403,7 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 	}
 	switchVertexBuffer(&textVertexBuffer);
 	unsigned int length = strlen(text);
-	if(length > MAX_CHARS) {
+	if(length > MAX_QUADS) {
 		printf("string is too long to be printed (%i)\n", length);
 	}
 	unsigned int verticesLength = 0;

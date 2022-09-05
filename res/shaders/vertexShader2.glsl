@@ -1,10 +1,10 @@
 #version 400
-layout (location = 0) in vec2 vp;
+layout (location = 0) in vec3 vp;
 layout (location = 1) in vec2 textureCoords;
-layout (location = 2) in vec4 inColor;
 
 out vec2 texCoord;
-out vec4 color;
+uniform vec4 rect;
+uniform float angle;
 
 vec3 scalePoint(vec3 input, vec2 scaling){
 	return vec3(input.x * scaling.x, input.y * scaling.y, 1.0f);
@@ -19,9 +19,11 @@ vec3 translatePoint(vec3 input, vec2 translation){
 }
 
 void main() {
-	gl_Position = vec4(vp, 1.0, 1.0);
+	vec3 vp2 = scalePoint(vp, vec2(rect.z, rect.w));
+	vp2 = rotatePoint(vp2, angle);
+	vp2 = translatePoint(vp2, vec2(rect.x, rect.y));
+	gl_Position = vec4(vp2, 1.0);
 	
 	
 	texCoord = textureCoords;
-	color = inColor;
 }

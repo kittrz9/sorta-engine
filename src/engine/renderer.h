@@ -26,6 +26,7 @@ typedef struct {
 typedef struct {
 	vec2f position;
 	vec2f texCoords;
+	colorRGBA color;
 } vertex;
 
 typedef struct {
@@ -34,11 +35,10 @@ typedef struct {
 	GLenum mode; // things like GL_STATIC_DRAW and GL_DYNAMIC_DRAW
 } vertexBuffer;
 
-// commented out for now since I don't want to implement them right now
 // draw a vertex buffer to the screen and clear the buffer (really only for dynamic buffers)
-//void flushVertexBuffer(vertexBuffer* buf);
+void flushVertexBuffer(vertexBuffer* buf);
 // called at the end of the frame
-//void flushAlllVertexBuffers();
+void flushAllVertexBuffers();
 
 // color that the screen will be clear to
 extern colorRGBA screenClearColor;
