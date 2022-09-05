@@ -138,7 +138,7 @@ void flushVertexBuffer(vertexBuffer* buf) {
 	if(buf->loadedVertices == 0) { return; }
 
 	if(buf == &textureVertexBuffer) {
-		glBindTexture(GL_TEXTURE_2D, 2);
+		glBindTexture(GL_TEXTURE_2D, ((textureStruct*)currentTexture->pointer)->id);
 	}
 	glDrawElements(GL_TRIANGLES, buf->loadedVertices/4 * 6, GL_UNSIGNED_INT, 0);
 	buf->loadedVertices = 0;
