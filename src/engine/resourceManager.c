@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 #include "logging.h"
 
@@ -23,11 +24,21 @@ char* resourceDir = NULL;
 unsigned int resDirStrLen = 0;
 
 void setResourceDir(char* path) {
-	resourceDir = malloc(strlen(path));
-	strcpy(resourceDir, path);
-	resDirStrLen = strlen(path);
+	resourceDir = realpath(path, NULL);
+	if(resourceDir == NULL) {
+		printf("couldnt resolve resource path %s\n%i\n", path, errno);
+		panicExit();
+	}
+	resDirStrLen = strlen(resourceDir);
 
 	return;
+}
+
+char* getResourcePath(const char* name) {
+	char* fullResourcePath = malloc(resDirStrLen + strlen(name));
+	sprintf(fullResourcePath, "%s/%s", resourceDir, name);
+	printf("%s\n", fullResourcePath);
+	return fullResourcePath;
 }
 
 resource* checkIfAlreadyLoaded(const char* filename) {

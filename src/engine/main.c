@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -15,24 +16,25 @@
 
 int main(int argc, char** argv){
 	// assumes path wont have "build" anywhere, should probably be changed in case someone runs this in a directory that has build but isn't the build directory
-	char* c = &argv[0][0];
 	char buildstr[] = "build";
-	char* c2 = &buildstr[0];
-	while(*c != '\0') {
-		if(*c2 == *c) {
-			++c2;
-		}
-		if(*c2 == '\0') {
+	unsigned int i = 0;
+	unsigned int flag = 0;
+	for(i = 0; argv[0][i] != '\0'; ++i) {
+		if(strncmp(argv[0]+i, buildstr, strlen(buildstr)) == 0) {
+			flag = 1;
 			break;
 		}
-		++c;
 	}
 	// only has "build" in the path if being ran outside of the build dir
-	if(*c2 != '\0') {
-		setResourceDir("../res/");
+	char* str = malloc(256 * sizeof(char));
+	if(flag) {
+		strncpy(str, argv[0], i);
+		strcat(str, "res/");
 	} else {
-		setResourceDir("res/");
+		sprintf(str, "res/");
 	}
+	setResourceDir(str);
+	free(str);
 
 	// initialize the log file
 	initLogFile();

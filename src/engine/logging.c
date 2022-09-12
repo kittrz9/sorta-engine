@@ -36,6 +36,13 @@ void closeLogFile(){
 	return;
 }
 
+void panicExit() {
+	// have to do this so it actually saves the log file
+	closeLogFile();
+
+	exit(1);
+}
+
 // variadic functions are weird
 void debugLog(LOG_TYPE type, const char* fmt, ...){
 	va_list args;

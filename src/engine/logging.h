@@ -12,6 +12,8 @@ typedef enum {
 void initLogFile();
 void closeLogFile();
 
+void panicExit();
+
 // naming it this so it doesn't conflict with the log fucntion from math.h
 void debugLog(LOG_TYPE type, const char* fmt, ...);
 
