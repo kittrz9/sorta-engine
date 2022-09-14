@@ -332,13 +332,6 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 		flushVertexBuffer(&textureVertexBuffer);
 	}
 
-	if(textureRes->pointer == fallbackTexture) {
-		textureRect.x = 0;
-		textureRect.y = 0;
-		textureRect.w = 2;
-		textureRect.h = 2;
-	}
-
 	switchVertexBuffer(&textureVertexBuffer);
 
 	vertex quad[4];
