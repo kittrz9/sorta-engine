@@ -128,3 +128,4 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Reduce memory usage
  - Make portaudio not choose the pulseaudio device by default (probably mostly only relevant for if/when I make this able to compile for windows)
  - Add multithreading (like maybe have a seperate rendering thread for doing opengl calls)
+ - Fix makefile error about ignoring recipes for stb_image.h

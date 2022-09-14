@@ -44,6 +44,7 @@ resource* loadTexture(const char* filename){
 	} else {
 		debugLog(LOG_ERROR, "could not load texture at %s, using fallback texture\n", filename);
 		res->pointer = fallbackTexture;
+		texture->size = (vec2f){2.0f, 2.0f};
 	}
 	free(fullResourcePath);
 	stbi_image_free(data);

@@ -37,7 +37,6 @@ void setResourceDir(char* path) {
 char* getResourcePath(const char* name) {
 	char* fullResourcePath = malloc(resDirStrLen + strlen(name));
 	sprintf(fullResourcePath, "%s/%s", resourceDir, name);
-	printf("%s\n", fullResourcePath);
 	return fullResourcePath;
 }
 
