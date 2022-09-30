@@ -124,6 +124,7 @@ void addQuadToVertexBuffer(vertexBuffer* buf, vertex* quad) {
 
 	vertex* test = malloc(sizeof(vertex) * 4);
 	glGetBufferSubData(GL_ARRAY_BUFFER, 0, 4*sizeof(vertex), test);
+	free(test);
 
 	buf->loadedVertices += 4;
 }
