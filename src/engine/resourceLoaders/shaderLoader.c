@@ -23,15 +23,14 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 		shaderTypeString = "fragment";
 	} else {
 		debugLog(LOG_ERROR, "unknown shader type");
-		panicExit();
-		return 0; // literally only here so I dont get a compiler warning about shaderTypeString being potentially uninitialized event though panicExit stops the entire program
+		return 0;
 	}
 	
 	// read shader into string
 	filePointer = fopen(shaderFilePath, "r");
 	if(!filePointer) {
 		debugLog(LOG_ERROR, "could not open shader \"%s\"", shaderFilePath);
-		panicExit();
+		return 0;
 	}
 	fseek(filePointer, 0, SEEK_END);
 	fileSize = ftell(filePointer);
@@ -56,7 +55,7 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 		glGetShaderInfoLog(shader, logLength, NULL, message);
 		debugLog(LOG_ERROR, "could not compile %s shader \"%s\": %s\n", shaderTypeString, shaderFilePath, message);
 		free(message);
-		panicExit();
+		return 0;
 	}
 	
 	debugLog(LOG_SUCCESS, "%s shader \"%s\" compiled successfully\n", shaderTypeString, shaderFilePath);
@@ -75,11 +74,13 @@ resource* loadShader(const char* name, const char* vertexShaderPath, const char*
 	resource* res = malloc(sizeof(resource));
 
 	// compile vertex and fragment shader
-	char* fullResourcePath = getResourcePath(vertexShaderPath);
+	char* fullResourcePath = malloc(resDirStrLen + strlen(vertexShaderPath));
+	sprintf(fullResourcePath, "%s%s", resourceDir, vertexShaderPath);
 
 	GLuint vertexShader = readAndCompileShader(fullResourcePath, GL_VERTEX_SHADER);
 	free(fullResourcePath);
-	fullResourcePath = getResourcePath(fragmentShaderPath);
+	fullResourcePath = malloc(resDirStrLen + strlen(fragmentShaderPath));
+	sprintf(fullResourcePath, "%s%s", resourceDir, fragmentShaderPath);
 
 	GLuint fragmentShader = readAndCompileShader(fullResourcePath, GL_FRAGMENT_SHADER);
 	free(fullResourcePath);
@@ -98,7 +99,7 @@ resource* loadShader(const char* name, const char* vertexShaderPath, const char*
 		glGetProgramInfoLog(shaderProgram, logLength, NULL, message);
 		debugLog(LOG_ERROR, "could not link shader \"%s\": %s\n", name, message);
 		free(message);
-		panicExit();
+		return NULL;
 	}
 
 	

@@ -5,7 +5,7 @@ All of the stuff I've seen that tries to define what is a game engine or a frame
 
 Though I feel like this classifies as an engine in the way you can say a game that was built off of another game "uses the same engine" even if they don't use something like unreal or unity or whatever.<br>
 
-Who knows, maybe I'll work on this for long enough this becomes an actual full game engine and I wont have to be like "it might be one idk" lmao<br>
+Who knows, maybe I'll work on this for long enough this becomes an actual full game engine and I wont have to be like "it might be one idk". lmao<br>
 
 To make stuff you should be able to just edit stuff in the `src/game/` directory to make things.<br>
 
@@ -18,7 +18,6 @@ As of now this only has support for Linux, though I'd assume it's not too hard t
 This is pretty much just a project I'm doing for fun/learning and I doubt anyone actually would want to use this, though if for some strange reason you want to I'm fine with it. All I'd really want is just to be credited but I'm fine as long as you don't claim this stuff as your own. This project uses the Unlicense so whatever, I don't really care that much.<br>
 
 ---
-
 ## Dependencies
 GLEW : <http://glew.sourceforge.net/><br>
 GLFW : <https://www.glfw.org/><br>
@@ -71,7 +70,7 @@ Just defines a bunch of vector types and has a few functions for doing stuff wit
 The entry point of the program. All that's done here is just initializing a bunch of stuff.<br>
 
 #### src/engine/resourceLoaders/ directory
-Where every resource loading and destroying function is defined, you have to update the arrays in `resourceManager.h` and `resourceManager.c`. <br>
+Where every resource loading and destroying function is defined, you have to update the arrays in `resourceManager.h` and `resourceManager.c`. Currently has support for loading textures and shaders.<br>
 
 <br>
 
@@ -91,21 +90,18 @@ Defines the gameState type. The `initState` and `uninitState` function pointers 
 #### player.h and player.c
 A very basic example of an entity.<br>
 
-<br>
 
 ### src/game/gameStates/ directory
 Where all the game states should be defined. So far only has one defined.
 
-<br>
-
 ### res/ directory
-Where the resources for the game should be. There are seperate folders for each type but it's not *strictly* necessary to put resources in their corresponding folder since you can just put the resource in the `res/` directory and put in the file name (though I do not recommend this just because it's dumb and clutters stuff up lmao) <br>
+Where the resources for the game should be. For now it only has a place holder image used for the player and the default shader.
 
 ### res/shaders/ directory
-Where the shaders should be. <br>
+Where the shaders should be. Right now only has one vertex and fragment shader.
 
 ### res/fonts/ directory
-Where the font files should be. They are generated with [msdf-atlas-gen](https://github.com/Chlumsky/msdf-atlas-gen/). Fonts require both a png file and csv file (both generated with msdf-atlas-gen). <br>
+Where the font files should be. They are generated with [msdf-atlas-gen](https://github.com/Chlumsky/msdf-atlas-gen/). Fonts require both a png file and csv file (both generated with msdf-atlas-gen).
 
 ---
 
@@ -118,7 +114,7 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - More rendering functions
  - ciumgui integration (<https://github.com/cimgui/cimgui>)
  - Optimize stuff (the framerate goes down to about 130fps when there's only like 10000 quads of the same texture on screen)
- - Add config file stuff
+ - Being able to read from a config file
  - Windows support
  - Maybe add in 3D stuff
  - Controller support
@@ -127,4 +123,3 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Support for multiple rendering (and maybe audio) backends like vulkan
  - Reduce memory usage
  - Make portaudio not choose the pulseaudio device by default (probably mostly only relevant for if/when I make this able to compile for windows)
- - Add multithreading (like maybe have a seperate rendering thread for doing opengl calls)

@@ -20,7 +20,8 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 
 	// load font msdf texture
 	debugLog(LOG_NORMAL, "loading font texture \"%s\"\n", fontFilename);
-	char* fullResourcePath = getResourcePath(fontFilename);
+	char* fullResourcePath = malloc(resDirStrLen + strlen(fontFilename));
+	sprintf(fullResourcePath, "%s%s", resourceDir, fontFilename);
 
 	int width, height, nrChannels;
 	GLuint* texture = malloc(sizeof(GLuint));
@@ -41,10 +42,10 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 		resFont->textureWidth = width;
 		resFont->textureHeight = height;
 	} else {
-		debugLog(LOG_ERROR, "couldn't load font \"%s\" with msdf \"%s\"\n", name, fontFilename);
+		debugLog(LOG_ERROR, "couldn't load font \"%s\" with msdf \"%s\"", name, fontFilename);
 		free(texture);
 		free(data);
-		panicExit();
+		return NULL;
 	}
 	free(fullResourcePath);
 	stbi_image_free(data);
@@ -56,12 +57,13 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 	
 	debugLog(LOG_NORMAL, "loading font data \"%s\"\n", fontDataFilename);
 	
-	fullResourcePath = getResourcePath(fontDataFilename);
+	fullResourcePath = malloc(resDirStrLen + strlen(fontDataFilename));
+	sprintf(fullResourcePath, "%s%s", resourceDir, fontDataFilename);
 	filePointer = fopen(fullResourcePath, "r");
 	free(fullResourcePath);
 	if(!filePointer) {
 		debugLog(LOG_ERROR, "could not open font data \"%s\"\n", fontDataFilename);
-		panicExit();
+		return NULL;
 	}
 	fseek(filePointer, 0, SEEK_END);
 	fileSize = ftell(filePointer);
