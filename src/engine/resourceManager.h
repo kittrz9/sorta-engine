@@ -9,6 +9,8 @@ typedef enum {
 } RESOURCE_TYPE;
 
 void setResourceDir(char* path);
+void initResourceManager(char* path);
+void uninitResourceManager();
 extern char* resourceDir;
 extern unsigned int resDirStrLen;
 

@@ -13,29 +13,12 @@
 #include "logging.h"
 #include "audio.h"
 
-int main(int argc, char** argv){
-	// assumes path wont have "build" anywhere, should probably be changed in case someone runs this in a directory that has build but isn't the build directory
-	char* c = &argv[0][0];
-	char buildstr[] = "build";
-	char* c2 = &buildstr[0];
-	while(*c != '\0') {
-		if(*c2 == *c) {
-			++c2;
-		}
-		if(*c2 == '\0') {
-			break;
-		}
-		++c;
-	}
-	// only has "build" in the path if being ran outside of the build dir
-	if(*c2 != '\0') {
-		setResourceDir("../res/");
-	} else {
-		setResourceDir("res/");
-	}
-
+int main(int argc, char** argv, char** envp){
 	// initialize the log file
 	initLogFile();
+
+	// initialize the resource manager
+	initResourceManager(argv[0]);
 	
 	// initialize the renderer
 	initRenderer();
@@ -53,7 +36,8 @@ int main(int argc, char** argv){
 	uninitAudio();
 	
 	destroyEntityList();
-	clearResourceList();
+
+	uninitResourceManager();
 	
 	glfwTerminate();
 	

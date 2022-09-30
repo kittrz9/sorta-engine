@@ -23,10 +23,49 @@ char* resourceDir = NULL;
 unsigned int resDirStrLen = 0;
 
 void setResourceDir(char* path) {
-	resourceDir = malloc(strlen(path));
+	resourceDir = malloc(strlen(path) + 1);
 	strcpy(resourceDir, path);
 	resDirStrLen = strlen(path);
 
+	debugLog(LOG_NORMAL, "resource directory set to \"%s\"\n", resourceDir);
+
+	return;
+}
+
+void initResourceManager(char* path) {
+	// find where the executable is being ran from
+	char buildstr[] = EXECUTABLE_NAME; // defined in makefile
+	char* c = path;
+	unsigned int i = 0;
+	while(*c != '\0') {
+		if(strncmp(c, buildstr, strlen(buildstr)) == 0) {
+			break;
+		}
+		++i;
+		++c;
+	}
+	if(*c == '\0' || i == 0) {
+		debugLog(LOG_ERROR, "could not initialize resource manager\n");
+		return;
+	}
+	char str[256] = "";
+	char str2[256] = "";
+	strncpy(str, path, i);
+	// for some reason it randomly crashes if I use ./ at the beginning of the path
+	if(path[0] == '.') {
+		// this is a mess but it works
+		char* pwd = getenv("PWD");
+		if(pwd == NULL) {
+			debugLog(LOG_ERROR, "could not get current working directory\n");
+		}
+		// get everything past the first character and put it after the current directory
+		strncpy(str2, path+1, i-1);
+		sprintf(str, "%s%s../res/", pwd, str2);
+		setResourceDir(str);
+	} else {
+		sprintf(str2, "%s../res/", str);
+		setResourceDir(str2);
+	}
 	return;
 }
 
@@ -124,5 +163,13 @@ void clearResourceList(){
 	
 	free(resourceList);
 	
+	return;
+}
+
+void uninitResourceManager() {
+	clearResourceList();
+
+	free(resourceDir);
+
 	return;
 }

@@ -123,3 +123,4 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Support for multiple rendering (and maybe audio) backends like vulkan
  - Reduce memory usage
  - Make portaudio not choose the pulseaudio device by default (probably mostly only relevant for if/when I make this able to compile for windows)
+ - Make log file get put into specific location instead of the current directory

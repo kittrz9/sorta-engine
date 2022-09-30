@@ -15,7 +15,7 @@ ${NAME}: obj-dir build-dir ${OBJS}
 
 # creates an executable with debug symbols and stuff
 debug: build-dir ${SOURCES}
-	$(CC) $(CFLAGS) $(INCLUDE) -pg -g $(SOURCES) $(LDFLAGS) -o build/${NAME}-debug $(LIBS) libportaudio.a
+	$(CC) $(CFLAGS) $(INCLUDE) -D EXECUTABLE_NAME=\"${NAME}\" -pg -g $(SOURCES) $(LDFLAGS) -o build/${NAME}-debug $(LIBS) libportaudio.a
 
 # removes all builds of the game
 clean:
@@ -33,4 +33,4 @@ obj-dir:
 # rule to make object files
 # https://stackoverflow.com/questions/14639794/getting-make-to-create-object-files-in-a-specific-directory
 ${OBJS}: obj/%.o : src/%.c
-	${CC} ${CFLAGS} -pg ${INCLUDE} -c src/$*.c -o obj/$*.o
+	${CC} ${CFLAGS} -D EXECUTABLE_NAME=\"${NAME}\" -pg ${INCLUDE} -c src/$*.c -o obj/$*.o
