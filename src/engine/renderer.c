@@ -332,27 +332,14 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 		flushVertexBuffer(&textureVertexBuffer);
 	}
 
-	if(textureRes->pointer == fallbackTexture) {
-		textureRect.x = 0;
-		textureRect.y = 0;
-		textureRect.w = 2;
-		textureRect.h = 2;
-	}
-
 	switchVertexBuffer(&textureVertexBuffer);
 
 	vertex quad[4];
 	for(unsigned int i = 0; i < 4; ++i) {
 		quad[i].position.x = (points[i].position.x * drawnRect.w) + drawnRect.x;
 		quad[i].position.y = (points[i].position.y * drawnRect.h) + drawnRect.y;
-		// dumb if statment because the fallback texture isn't a resource
-		if(textureRes->pointer == fallbackTexture) {
-			quad[i].texCoords.x = points[i].texCoords.x;
-			quad[i].texCoords.y = points[i].texCoords.y;
-		} else {
-			quad[i].texCoords.x = ((points[i].texCoords.x * textureRect.w) + textureRect.x) / ((textureStruct*)textureRes->pointer)->size.x;
-			quad[i].texCoords.y = ((points[i].texCoords.y * textureRect.h) + textureRect.y) / ((textureStruct*)textureRes->pointer)->size.y;
-		}
+		quad[i].texCoords.x = ((points[i].texCoords.x * textureRect.w) + textureRect.x) / ((textureStruct*)textureRes->pointer)->size.x;
+		quad[i].texCoords.y = ((points[i].texCoords.y * textureRect.h) + textureRect.y) / ((textureStruct*)textureRes->pointer)->size.y;
 		quad[i].color = color;
 	}
 

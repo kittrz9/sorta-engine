@@ -20,8 +20,6 @@ const char* logTypeStrings[] = {
 };
 
 void initLogFile(){
-	// this will create the log file where ever the current working directory is
-	// should probably be changed so it always goes in the same place but I think it should be fine since pcmanfm sets the current working directory to where the executable is when you run it, other file managers (and probably windows too idk) might do weird shit though
 	logFile = fopen("log-file.txt", "w");
 	
 	if(!logFile){
@@ -64,7 +62,8 @@ void debugLog(LOG_TYPE type, const char* fmt, ...){
 	vsprintf(tempStr, fmt, args2);
 	va_end(args);
 	va_end(args2);
-	sprintf(str, "%s%s", logTypeStrings[type], tempStr);
+	strcat(str, logTypeStrings[type]);
+	strcat(str, tempStr);
 	printf("%s", str);
 	if(logFile){
 		fprintf(logFile, "%s", str);
