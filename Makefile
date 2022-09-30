@@ -11,7 +11,7 @@ OBJS = ${subst src/, obj/, ${subst .c,.o,${SOURCES}}}
 
 # creates the executable normally using object files
 ${NAME}: obj-dir build-dir ${OBJS}
-	${CC} ${CFLAGS} ${INCLUDE} ${LIBS} -o build/${NAME} ${OBJS} libportaudio.a
+	${CC} ${CFLAGS} ${INCLUDE} ${LIBS} -g -pg -o build/${NAME} ${OBJS} libportaudio.a
 
 # creates an executable with debug symbols and stuff
 debug: build-dir ${SOURCES}
@@ -34,9 +34,3 @@ obj-dir:
 # https://stackoverflow.com/questions/14639794/getting-make-to-create-object-files-in-a-specific-directory
 ${OBJS}: obj/%.o : src/%.c
 	${CC} ${CFLAGS} -pg ${INCLUDE} -c src/$*.c -o obj/$*.o
-
-# compiling stb_image.h with -Os because it takes up quite a bit of space and doesn't really get hit with a performance decrease
-# I know it doesn't really matter but I don't really want to have the final executable be over 1 MB just because of this
-# also gives a warning about ignoring recipes but it still works
-obj/engine/stb_image.o: src/engine/stb_image.c
-	${CC} -Os -c src/engine/stb_image.c -o obj/engine/stb_image.o
