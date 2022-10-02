@@ -27,8 +27,6 @@ GLint fragmentInputColorLocation;
 GLint fragmentUseTextureLocation;
 GLint fragmentWindowSize;
 
-GLuint* fallbackTexture;
-
 resource* currentShaderRes;
 GLuint currentShader;
 
@@ -227,26 +225,8 @@ void initRenderer(){
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
 	debugLog(LOG_SUCCESS, "successfully set up element buffer object\n");
 
-
-	debugLog(LOG_NORMAL, "setting up fallback texture\n");
-	// probably could just set up a different function to set up a texture so I don't repeat the code in resourceManager.c but whatever
-	fallbackTexture = malloc(sizeof(GLuint));
-
-	glGenTextures(1, fallbackTexture);
-	glBindTexture(GL_TEXTURE_2D, *fallbackTexture);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	// hardcoded values that probably shouldn't be hardcoded lmao
-	const unsigned char data[] = {0xFF, 0x00, 0xFF, 0xFF,  0x00, 0x00, 0x00, 0xFF,
-				      0x00, 0x00, 0x00, 0xFF,  0xFF, 0x00, 0xFF, 0xFF};
-	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	debugLog(LOG_SUCCESS, "fallback texture successfully set up\n");
+	// feels weird having it be loaded in from a file but it's probably better this way
+	fallbackTexture = loadTexture("fallbackTexture.png");
 	
 	debugLog(LOG_SUCCESS, "renderer successfully initailized\n");
 	
@@ -331,6 +311,13 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 		currentTexture = textureRes;
 		glBindTexture(GL_TEXTURE_2D, ((textureStruct*)textureRes->pointer)->id);
 		flushVertexBuffer(&textureVertexBuffer);
+	}
+
+	if(textureRes == fallbackTexture) {
+		textureRect.x = 0;
+		textureRect.y = 0;
+		textureRect.w = 2;
+		textureRect.h = 2;
 	}
 
 	switchVertexBuffer(&textureVertexBuffer);

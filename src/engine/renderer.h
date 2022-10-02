@@ -11,8 +11,6 @@ extern int windowWidth;
 extern int windowHeight;
 extern GLFWwindow* window;
 
-extern GLuint* fallbackTexture;
-
 void glfwWindowSizeCallback(GLFWwindow* window, int width, int height);
 
 typedef struct {

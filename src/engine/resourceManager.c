@@ -8,10 +8,6 @@
 
 #define RESOURCE_LIST_INITIAL_SIZE 32
 
-//typedef struct {
-//	resource* resPointer;
-//} resourceListEntry;
-
 // array of strings that correspond with the types to be able to print debugging stuff
 static const char* typeStrings[RES_TYPE_ENUM_LENGTH] = {"texture", "shader", "font"};
 
@@ -21,6 +17,8 @@ unsigned int resourceListSize = 0;
 
 char* resourceDir = NULL;
 unsigned int resDirStrLen = 0;
+
+resource* fallbackTexture;
 
 void setResourceDir(char* path) {
 	resourceDir = malloc(strlen(path) + 1);

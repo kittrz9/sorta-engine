@@ -35,6 +35,7 @@ resource* loadTexture(const char* filename){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	
 	unsigned char* data = stbi_load(fullResourcePath, &width, &height, &nrChannels, 4);
+	free(fullResourcePath);
 	if(data){
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
@@ -44,9 +45,11 @@ resource* loadTexture(const char* filename){
 		res->pointer = texture;
 	} else {
 		debugLog(LOG_ERROR, "could not load texture at %s, using fallback texture\n", filename);
-		res->pointer = fallbackTexture;
+		free(res);
+		glDeleteTextures(1, &texture->id);
+		free(texture);
+		return fallbackTexture;
 	}
-	free(fullResourcePath);
 	stbi_image_free(data);
 
 	addResourceToList(RES_TYPE_TEXTURE, filename, res);

@@ -20,6 +20,8 @@ typedef struct {
 	char* name;
 } resource;
 
+extern resource* fallbackTexture;
+
 resource* checkIfAlreadyLoaded(const char* filename);
 void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res);
 
