@@ -120,10 +120,6 @@ void setupVertexBuffer(vertexBuffer* buf, unsigned int size, const void* data, G
 void addQuadToVertexBuffer(vertexBuffer* buf, vertex* quad) {
 	glBufferSubData(GL_ARRAY_BUFFER, buf->loadedVertices*sizeof(vertex), 4*sizeof(vertex), quad);
 
-	vertex* test = malloc(sizeof(vertex) * 4);
-	glGetBufferSubData(GL_ARRAY_BUFFER, 0, 4*sizeof(vertex), test);
-	free(test);
-
 	buf->loadedVertices += 4;
 }
 
@@ -401,7 +397,7 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 		}
 	}
 
-	vertex* textVertices = malloc(4*sizeof(vertex) * verticesLength);
+	vertex textVertices[MAX_QUADS * 4];
 	
 	float xPos = x;
 	float yPos = y;
@@ -452,7 +448,6 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 	glDrawElements(GL_TRIANGLES, verticesLength*6, GL_UNSIGNED_INT, 0);
 
 	switchVertexBuffer(&defaultVertexBuffer);
-	free(textVertices);
 
 	return;
 }
