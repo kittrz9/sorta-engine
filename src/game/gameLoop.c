@@ -28,7 +28,7 @@ int gameLoop(){
 			}
 		}
 		
-		clearScreen();
+		//clearScreen();
 		
 		if((*(currentState->stateLoop))(deltaTime)) {running = false;}
 		

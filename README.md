@@ -124,3 +124,4 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Reduce memory usage
  - Make portaudio not choose the pulseaudio device by default (probably mostly only relevant for if/when I make this able to compile for windows)
  - Make log file get put into specific location instead of the current directory
+ - Figure out why it crashes randomly if the shader files are renamed
