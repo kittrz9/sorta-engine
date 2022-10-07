@@ -1,21 +1,19 @@
 # sorta engine?
-This is kinda a 2d game engine (I think? idk what classifies it as like either a game engine or framework or whatever the fuck this thing is)<br>
+This is a small 2D game engine (I'm still not sure what exactly classifies things as game engines or not but I think this counts) using OpenGL<br>
 
-All of the stuff I've seen that tries to define what is a game engine or a framework or whatever seems to contradict a lot and I am very confused lmao. This feels somewhere in between a framework like SDL and an engine. You don't like include this as like a library like you do with SDL, but a lot of stuff isn't done for you like physics and other things (mostly because I feel like if I do that it would make this thing a lot less useful since it would limit it to only one kind of game or whatever without major modifications or workarounds.). There also isn't any like tools made for this (yet) so I guess you could be like "oh if it doesn't have a level editor or whatever it's not a game engine" though I think that's kinda stupid.<br>
+The main goal of this project is mostly to make a simple thing for me to make other dumb graphical things with (that I'll probably never actually release lmao)<br>
 
-Though I feel like this classifies as an engine in the way you can say a game that was built off of another game "uses the same engine" even if they don't use something like unreal or unity or whatever.<br>
-
-Who knows, maybe I'll work on this for long enough this becomes an actual full game engine and I wont have to be like "it might be one idk". lmao<br>
+I probably wont implement things like a physics engine or even like a whole thing for collision detection because the main idea with this is to provide as little of the actual "game" part so things can be made to fit the specific game being made (e.g. not having an extremely accurate and complex collision detection when all you really need is AABB collision detection or whatever) <br>
 
 To make stuff you should be able to just edit stuff in the `src/game/` directory to make things.<br>
-
-I'll hopefully be able to use this as sort of a base for other projects/games (if I ever make them lmao)<br>
 
 This is based off of the other thing I made that I'm not sure classifies as a game engine or not (<https://github.com/kittrz9/SDL_ProjectBase>)<br>
 
 As of now this only has support for Linux, though I'd assume it's not too hard to make things compile for windows.<br>
 
-This is pretty much just a project I'm doing for fun/learning and I doubt anyone actually would want to use this, though if for some strange reason you want to I'm fine with it. All I'd really want is just to be credited but I'm fine as long as you don't claim this stuff as your own. This project uses the Unlicense so whatever, I don't really care that much.<br>
+This is pretty much just a project I'm doing for fun and to learn, and I doubt anyone actually would want to use this, though if for some strange reason you want to I'm fine with it. All I'd really want is just to be credited but I'm fine as long as you don't claim this stuff as your own. This project uses the Unlicense so whatever, I don't really care that much.<br>
+
+If you want to contribute to this project I'd appreciate bug fixes but I don't really want big changes that would affect things like the whole structure of the program.<br>
 
 ---
 ## Dependencies
@@ -95,10 +93,10 @@ A very basic example of an entity.<br>
 Where all the game states should be defined. So far only has one defined.
 
 ### res/ directory
-Where the resources for the game should be. For now it only has a place holder image used for the player and the default shader.
+Where the resources for the game should be.
 
 ### res/shaders/ directory
-Where the shaders should be. Right now only has one vertex and fragment shader.
+Where the shaders should be.
 
 ### res/fonts/ directory
 Where the font files should be. They are generated with [msdf-atlas-gen](https://github.com/Chlumsky/msdf-atlas-gen/). Fonts require both a png file and csv file (both generated with msdf-atlas-gen).

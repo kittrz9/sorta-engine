@@ -157,6 +157,7 @@ resFont->chars[(unsigned int)charIndex].TYPE = atof(str); /* have to cast to uns
 	for(i = 0; i < lineCount; ++i) {
 		free(lines[i]);
 	}
+	free(fontData);
 	free(lines);
 
 	// return resource
