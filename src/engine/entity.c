@@ -102,7 +102,7 @@ void destroyEntityList(){
 
 void initializeEntityPropertyList(entity* ent) {
 	for(unsigned int i = 0; i < MAX_PROPERTIES; ++i) {
-		ent->properties[i].id = EMPTY_PROPERTY_SLOT;
+		ent->properties[i].id = LAST_PROPERTY_SLOT;
 		ent->properties[i].data = NULL;
 	}
 }
@@ -112,6 +112,10 @@ entityProperty* getEmptyPropertySlot(entity* ent) {
 	for(uint16_t i = 0; i < MAX_PROPERTIES; ++i) {
 		if(firstEmptySlot == NULL && ent->properties[i].id == EMPTY_PROPERTY_SLOT) {
 			firstEmptySlot = &ent->properties[i];
+		}
+		if(firstEmptySlot == NULL && ent->properties[i].id == LAST_PROPERTY_SLOT) {
+			firstEmptySlot = &ent->properties[i];
+			break;
 		}
 	}
 	if(firstEmptySlot == NULL) {
@@ -131,6 +135,10 @@ entityProperty* createEntityProperty(entity* ent, ENTITY_PROPERTY property, size
 		if(firstEmptySlot == NULL && ent->properties[i].id == EMPTY_PROPERTY_SLOT) {
 			firstEmptySlot = &ent->properties[i];
 		}
+		if(firstEmptySlot == NULL && ent->properties[i].id == LAST_PROPERTY_SLOT) {
+			firstEmptySlot = &ent->properties[i];
+			break;
+		}
 	}
 	if(firstEmptySlot == NULL) {
 		debugLog(LOG_ERROR, "all property slots are full for entity %p\n", ent);
@@ -140,7 +148,7 @@ entityProperty* createEntityProperty(entity* ent, ENTITY_PROPERTY property, size
 	firstEmptySlot->data = malloc(bytes);
 	return firstEmptySlot;
 }
-void setEntityPropertyAddress(entity* ent, ENTITY_PROPERTY property, void* address, size_t bytes) {
+void setEntityPropertyAddress(entity* ent, ENTITY_PROPERTY property, void* address) {
 	entityProperty* foundProperty = getEntityProperty(ent, property);
 	if(foundProperty == NULL) {
 		foundProperty = getEmptyPropertySlot(ent);
@@ -155,9 +163,12 @@ entityProperty* getEntityProperty(entity* ent, ENTITY_PROPERTY property) {
 		if(ent->properties[i].id == property) {
 			foundProperty = &ent->properties[i];
 		}
+		if(ent->properties[i].id == LAST_PROPERTY_SLOT) {
+			break;
+		}
 	}
 	if(foundProperty == NULL) {
-		debugLog(LOG_ERROR, "could not find property %i\n", property);
+		//debugLog(LOG_ERROR, "could not find property %i\n", property);
 		return NULL;
 	}
 
