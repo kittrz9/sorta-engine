@@ -73,6 +73,10 @@ int runGameStateRunning(double deltaTime){
 	fontTime += deltaTime * 0.2;
 	if(fontTime >= 1.0f) { fontTime = 0.0f; }
 
+	sprintf(fpsStr, "%.2f", ((vec2f*)getEntityProperty(player, PROPERTY_POSITION)->data)->x);
+	useShader(fontShader);
+	drawText(defaultFont, fpsStr, 25.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 100);
+
 	
 	return 0;
 }

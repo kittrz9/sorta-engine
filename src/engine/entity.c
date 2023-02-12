@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "logging.h"
 
@@ -98,3 +99,73 @@ void destroyEntityList(){
 	}
 	return;
 }
+
+void initializeEntityPropertyList(entity* ent) {
+	for(unsigned int i = 0; i < MAX_PROPERTIES; ++i) {
+		ent->properties[i].id = EMPTY_PROPERTY_SLOT;
+		ent->properties[i].data = NULL;
+	}
+}
+
+entityProperty* getEmptyPropertySlot(entity* ent) {
+	entityProperty* firstEmptySlot = NULL;
+	for(uint16_t i = 0; i < MAX_PROPERTIES; ++i) {
+		if(firstEmptySlot == NULL && ent->properties[i].id == EMPTY_PROPERTY_SLOT) {
+			firstEmptySlot = &ent->properties[i];
+		}
+	}
+	if(firstEmptySlot == NULL) {
+		debugLog(LOG_ERROR, "all property slots are full for entity %p\n", ent);
+		return NULL;
+	}
+	return firstEmptySlot;
+}
+
+entityProperty* createEntityProperty(entity* ent, ENTITY_PROPERTY property, size_t bytes) { 
+	entityProperty* firstEmptySlot = NULL;
+	// probably shouldn't loop through all possible property slots
+	for(unsigned int i = 0; i < MAX_PROPERTIES; ++i) {
+		if(ent->properties[i].id == property) {
+			return &ent->properties[i];
+		}
+		if(firstEmptySlot == NULL && ent->properties[i].id == EMPTY_PROPERTY_SLOT) {
+			firstEmptySlot = &ent->properties[i];
+		}
+	}
+	if(firstEmptySlot == NULL) {
+		debugLog(LOG_ERROR, "all property slots are full for entity %p\n", ent);
+		return NULL;
+	}
+	firstEmptySlot->id = property;
+	firstEmptySlot->data = malloc(bytes);
+	return firstEmptySlot;
+}
+void setEntityPropertyAddress(entity* ent, ENTITY_PROPERTY property, void* address, size_t bytes) {
+	entityProperty* foundProperty = getEntityProperty(ent, property);
+	if(foundProperty == NULL) {
+		foundProperty = getEmptyPropertySlot(ent);
+		foundProperty->id = property;
+	}
+
+	foundProperty->data = address;
+}
+entityProperty* getEntityProperty(entity* ent, ENTITY_PROPERTY property) {
+	entityProperty* foundProperty = NULL;
+	for(uint16_t i = 0; i < MAX_PROPERTIES; ++i) {
+		if(ent->properties[i].id == property) {
+			foundProperty = &ent->properties[i];
+		}
+	}
+	if(foundProperty == NULL) {
+		debugLog(LOG_ERROR, "could not find property %i\n", property);
+		return NULL;
+	}
+
+	return foundProperty;
+}
+
+
+
+
+
+

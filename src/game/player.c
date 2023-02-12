@@ -53,10 +53,16 @@ animationFrame idleAnimation[] = {
 entity* createPlayer(vec2f pos, vec2f size){
 	entity* ent = malloc(sizeof(entity));
 	ent->object = malloc(sizeof(playerStruct));
+
+	initializeEntityPropertyList(ent);
 	
 	playerObj->pos = pos;
 	playerObj->size = size;
 	playerObj->vel = (vec2f){0,0};
+
+	setEntityPropertyAddress(ent, PROPERTY_POSITION, &(playerObj->pos), sizeof(vec2f));
+	setEntityPropertyAddress(ent, PROPERTY_VELOCITY, &(playerObj->vel), sizeof(vec2f));
+	setEntityPropertyAddress(ent, PROPERTY_SIZE, &(playerObj->size), sizeof(vec2f));
 	
 	playerObj->jumpTimer = 0.0f;
 	
