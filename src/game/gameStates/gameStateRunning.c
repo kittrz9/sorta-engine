@@ -25,7 +25,7 @@ void initGameStateRunning(){
 	playerShader = loadShader("playerShader", "shaders/vertexShader.glsl", "shaders/fragmentShader2.glsl");
 	fontShader2 = loadShader("fontShader2", "shaders/fontVertexShader2.glsl", "shaders/fontFragmentShader.glsl");
 
-	backgroundShader = loadShader("backgroundShader", "shaders/vertexShader2.glsl", "shaders/backgroundFrag.glsl");
+	backgroundShader = loadShader("backgroundShader", "shaders/vertexShader.glsl", "shaders/backgroundFrag.glsl");
 	
 	changeClearScreenColor((colorRGBA){0.5f, 0.5f, 0.5f, 1.0f});
 
@@ -48,6 +48,7 @@ int runGameStateRunning(double deltaTime){
 	setShaderUniform1f("time", backgroundTimer);
 	// just drawing this quad halves the framerate lmao, probably because it's setting a ton of uniforms since this function still uses the old method of setting up vertices
 	drawFilledRect((rect){0,0,windowWidth,windowHeight}, (colorRGBA){1.0f, 1.0f, 1.0f, 1.0f}, 0.0f);
+
 	backgroundTimer += deltaTime;
 	if(backgroundTimer >= 3.1415926535 * 2) { backgroundTimer = 0.0f; }
 

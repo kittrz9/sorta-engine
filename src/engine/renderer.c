@@ -92,6 +92,7 @@ const unsigned int linesIndices[] = {
 };
 
 vertexBuffer defaultVertexBuffer;
+vertexBuffer staticVertexBuffer;
 vertexBuffer textureVertexBuffer;
 vertexBuffer textVertexBuffer;
 GLuint vertexArrayObject;
@@ -143,6 +144,7 @@ void flushVertexBuffer(vertexBuffer* buf) {
 // called at the end of the frame
 void flushAllVertexBuffers() {
 	flushVertexBuffer(&textureVertexBuffer);
+	flushVertexBuffer(&defaultVertexBuffer);
 }
 
 void initRenderer(){
@@ -202,7 +204,8 @@ void initRenderer(){
 
 	// set up vertex buffer object
 	debugLog(LOG_NORMAL, "setting up vertex buffers\n");
-	setupVertexBuffer(&defaultVertexBuffer, sizeof(points), points, GL_STATIC_DRAW);
+	setupVertexBuffer(&staticVertexBuffer, sizeof(points), points, GL_STATIC_DRAW);
+	setupVertexBuffer(&defaultVertexBuffer, MAX_QUADS * 4 * sizeof(vertex), NULL, GL_DYNAMIC_DRAW);
 	setupVertexBuffer(&textVertexBuffer, MAX_QUADS * 4 * sizeof(vertex), NULL, GL_DYNAMIC_DRAW);
 	setupVertexBuffer(&textureVertexBuffer, MAX_QUADS * 4 * sizeof(vertex), NULL, GL_DYNAMIC_DRAW);
 	
@@ -272,18 +275,23 @@ void useShader(resource* shaderRes) {
 
 // size is between -1 and 1 like the shader or whatever, has to be converted from like world space or whatever into screen space
 void drawFilledRect(rect drawnRect, colorRGBA color, float angle){
-	setShaderUniform1f("angle", angle);
-	setShaderUniform4f("rect", drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
-	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
-	setShaderUniform1ui("useTexture", GL_FALSE);
-	
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(trisIndices), trisIndices, GL_STATIC_DRAW);
-	glDrawElements(GL_TRIANGLES, sizeof(trisIndices)/sizeof(trisIndices[0]), GL_UNSIGNED_INT, 0);
+	switchVertexBuffer(&defaultVertexBuffer);
+	vertex quad[4];
+	for(unsigned int i = 0; i < 4; ++i) {
+		quad[i].position.x = (points[i].position.x * drawnRect.w) + drawnRect.x;
+		quad[i].position.y = (points[i].position.y * drawnRect.h) + drawnRect.y;
+		quad[i].texCoords.x = 0.0f; // doesn't use texture coords
+		quad[i].texCoords.y = 0.0f;
+		quad[i].color = color;
+	}
+
+	addQuadToVertexBuffer(&defaultVertexBuffer, &quad[0]);
 	
 	return;
 }
 
 void drawLineRect(rect drawnRect, colorRGBA color, float angle){
+	switchVertexBuffer(&staticVertexBuffer);
 	setShaderUniform1f("angle", angle);
 	setShaderUniform4f("rect", drawnRect.x, drawnRect.y, drawnRect.w, drawnRect.h);
 	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
@@ -336,6 +344,7 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 }
 
 void drawLines(const float* linePoints, unsigned int count, colorRGBA color) {
+	switchVertexBuffer(&staticVertexBuffer);
 	setShaderUniform1f("angle", 0);
 	setShaderUniform4f("rect", 0,0,1,1);
 	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
@@ -360,6 +369,7 @@ void drawLines(const float* linePoints, unsigned int count, colorRGBA color) {
 
 // repeated code lmao, should probably be made better eventually
 void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color) {
+	switchVertexBuffer(&staticVertexBuffer);
 	setShaderUniform1f("angle", 0);
 	setShaderUniform4f("rect", 0,0,1,1);
 	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
@@ -391,11 +401,6 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 		printf("string is too long to be printed (%i)\n", length);
 	}
 	unsigned int verticesLength = 0;
-	for(unsigned int i = 0; i < length; ++i) {
-		if(currentFont->chars[(unsigned int)text[i]].loaded && text[i] != ' ') {
-			verticesLength++;
-		}
-	}
 
 	vertex textVertices[MAX_QUADS * 4];
 	
@@ -413,7 +418,9 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 			continue;
 		}
 		if(text[i] != ' ') {
+			verticesLength++;
 			// this is a mess
+			// could probably be sped up by precalculating all this so it doens't have to do tons of float stuff but I don't think that would speed everything up by much
 			float charAtlasX = currentCharData.atlasLeft;
 			float charAtlasY = currentFont->textureHeight - currentCharData.atlasTop;
 			float charAtlasW = currentCharData.atlasRight - charAtlasX;
