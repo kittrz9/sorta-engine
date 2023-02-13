@@ -109,7 +109,7 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Batch rendering for things other than textures
  - Make it not need to start a whole new batch when switching textures
  - Better synthesizer
- - Music playing
+ - Music playback (probably using amiga mod files since [libopenmpt](https://lib.openmpt.org/libopenmpt/) is a thing)
  - More rendering functions
  - ciumgui integration (<https://github.com/cimgui/cimgui>)
  - Optimize stuff (the framerate goes down to about 130fps when there's only like 10000 quads of the same texture on screen)

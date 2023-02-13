@@ -110,10 +110,7 @@ void initializeEntityPropertyList(entity* ent) {
 entityProperty* getEmptyPropertySlot(entity* ent) {
 	entityProperty* firstEmptySlot = NULL;
 	for(uint16_t i = 0; i < MAX_PROPERTIES; ++i) {
-		if(firstEmptySlot == NULL && ent->properties[i].id == EMPTY_PROPERTY_SLOT) {
-			firstEmptySlot = &ent->properties[i];
-		}
-		if(firstEmptySlot == NULL && ent->properties[i].id == LAST_PROPERTY_SLOT) {
+		if(ent->properties[i].id == EMPTY_PROPERTY_SLOT || ent->properties[i].id == LAST_PROPERTY_SLOT) {
 			firstEmptySlot = &ent->properties[i];
 			break;
 		}
@@ -132,6 +129,7 @@ entityProperty* createEntityProperty(entity* ent, ENTITY_PROPERTY property, size
 		if(ent->properties[i].id == property) {
 			return &ent->properties[i];
 		}
+		// keep looping through until either the end or a match is found in case it's already been created
 		if(firstEmptySlot == NULL && ent->properties[i].id == EMPTY_PROPERTY_SLOT) {
 			firstEmptySlot = &ent->properties[i];
 		}
@@ -166,10 +164,6 @@ entityProperty* getEntityProperty(entity* ent, ENTITY_PROPERTY property) {
 		if(ent->properties[i].id == LAST_PROPERTY_SLOT) {
 			break;
 		}
-	}
-	if(foundProperty == NULL) {
-		//debugLog(LOG_ERROR, "could not find property %i\n", property);
-		return NULL;
 	}
 
 	return foundProperty;
