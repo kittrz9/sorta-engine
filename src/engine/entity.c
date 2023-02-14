@@ -147,7 +147,7 @@ entityProperty* createEntityProperty(entity* ent, ENTITY_PROPERTY property, size
 	return firstEmptySlot;
 }
 void setEntityPropertyAddress(entity* ent, ENTITY_PROPERTY property, void* address) {
-	entityProperty* foundProperty = getEntityProperty(ent, property);
+	entityProperty* foundProperty = getEntityPropertySlot(ent, property);
 	if(foundProperty == NULL) {
 		foundProperty = getEmptyPropertySlot(ent);
 		foundProperty->id = property;
@@ -155,7 +155,7 @@ void setEntityPropertyAddress(entity* ent, ENTITY_PROPERTY property, void* addre
 
 	foundProperty->data = address;
 }
-entityProperty* getEntityProperty(entity* ent, ENTITY_PROPERTY property) {
+entityProperty* getEntityPropertySlot(entity* ent, ENTITY_PROPERTY property) {
 	entityProperty* foundProperty = NULL;
 	for(uint16_t i = 0; i < MAX_PROPERTIES; ++i) {
 		if(ent->properties[i].id == property) {

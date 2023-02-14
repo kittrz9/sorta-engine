@@ -56,7 +56,10 @@ void destroyEntityList();
 void initializeEntityPropertyList(entity* ent);
 entityProperty* createEntityProperty(entity* ent, ENTITY_PROPERTY property, size_t bytes);
 void setEntityPropertyAddress(entity* ent, ENTITY_PROPERTY property, void* address);
-entityProperty* getEntityProperty(entity* ent, ENTITY_PROPERTY property);
+entityProperty* getEntityPropertySlot(entity* ent, ENTITY_PROPERTY property);
 // might not make a function to destroy entity properties since some might just point to something allocated in the object thing
+
+// used to avoid needing to do a bunch of pointer typecasting
+#define getEntityProperty(ent, property, type) ((type*)getEntityPropertySlot(ent, property)->data)
 
 #endif

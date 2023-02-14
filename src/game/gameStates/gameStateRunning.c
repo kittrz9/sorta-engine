@@ -46,7 +46,6 @@ int runGameStateRunning(double deltaTime){
 	useShader(backgroundShader);
 	static float backgroundTimer = 0.0f;
 	setShaderUniform1f("time", backgroundTimer);
-	// just drawing this quad halves the framerate lmao, probably because it's setting a ton of uniforms since this function still uses the old method of setting up vertices
 	drawFilledRect((rect){0,0,windowWidth,windowHeight}, (colorRGBA){1.0f, 1.0f, 1.0f, 1.0f}, 0.0f);
 
 	backgroundTimer += deltaTime;
@@ -74,7 +73,7 @@ int runGameStateRunning(double deltaTime){
 	fontTime += deltaTime * 0.2;
 	if(fontTime >= 1.0f) { fontTime = 0.0f; }
 
-	sprintf(fpsStr, "%.2f", ((vec2f*)getEntityProperty(player, PROPERTY_POSITION)->data)->x);
+	sprintf(fpsStr, "%.2f", getEntityProperty(player, PROPERTY_POSITION, vec2f)->x);
 	useShader(fontShader);
 	drawText(defaultFont, fpsStr, 25.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 100);
 
