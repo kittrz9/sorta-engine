@@ -278,9 +278,11 @@ void drawFilledRect(rect drawnRect, colorRGBA color, float angle){
 	switchVertexBuffer(&defaultVertexBuffer);
 	vertex quad[4];
 	for(unsigned int i = 0; i < 4; ++i) {
-		quad[i].position.x = (points[i].position.x * drawnRect.w) + drawnRect.x;
-		quad[i].position.y = (points[i].position.y * drawnRect.h) + drawnRect.y;
-		quad[i].texCoords.x = 0.0f; // doesn't use texture coords
+		vertex point;
+		point.position = rotateVec2f(points[i].position, angle);
+		quad[i].position.x = (point.position.x * drawnRect.w) + drawnRect.x;
+		quad[i].position.y = (point.position.y * drawnRect.h) + drawnRect.y;
+		quad[i].texCoords.x = 0.0f;
 		quad[i].texCoords.y = 0.0f;
 		quad[i].color = color;
 	}
@@ -328,8 +330,10 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 
 	vertex quad[4];
 	for(unsigned int i = 0; i < 4; ++i) {
-		quad[i].position.x = (points[i].position.x * drawnRect.w) + drawnRect.x;
-		quad[i].position.y = (points[i].position.y * drawnRect.h) + drawnRect.y;
+		vertex point;
+		point.position = rotateVec2f(points[i].position, angle);
+		quad[i].position.x = (point.position.x * drawnRect.w) + drawnRect.x;
+		quad[i].position.y = (point.position.y * drawnRect.h) + drawnRect.y;
 		quad[i].texCoords.x = ((points[i].texCoords.x * textureRect.w) + textureRect.x) / ((textureStruct*)textureRes->pointer)->size.x;
 		quad[i].texCoords.y = ((points[i].texCoords.y * textureRect.h) + textureRect.y) / ((textureStruct*)textureRes->pointer)->size.y;
 		quad[i].color = color;
