@@ -118,14 +118,15 @@ void setupVertexBuffer(vertexBuffer* buf, unsigned int size, const void* data, G
 	buf->mode = mode;
 }
 
-void addQuadToVertexBuffer(vertexBuffer* buf, vertex* quad) {
-	glBufferSubData(GL_ARRAY_BUFFER, buf->loadedVertices*sizeof(vertex), 4*sizeof(vertex), quad);
+void addVerticesToVertexBuffer(vertexBuffer* buf, vertex* vertices, size_t count) {
+	glBufferSubData(GL_ARRAY_BUFFER, buf->loadedVertices*sizeof(vertex), count*sizeof(vertex), vertices);
 
-	buf->loadedVertices += 4;
+	buf->loadedVertices += count;
 }
 
 // draw a vertex buffer to the screen and clear the buffer (really only for dynamic buffers)
 resource* currentTexture = NULL;
+resource* currentFontRes = NULL;
 void flushVertexBuffer(vertexBuffer* buf) {
 	if(buf->mode == GL_STATIC_DRAW) {
 		return;
@@ -136,6 +137,9 @@ void flushVertexBuffer(vertexBuffer* buf) {
 	if(buf == &textureVertexBuffer) {
 		glBindTexture(GL_TEXTURE_2D, ((textureStruct*)currentTexture->pointer)->id);
 	}
+	if(buf == &textVertexBuffer) {
+		glBindTexture(GL_TEXTURE_2D, *((font*)currentFontRes->pointer)->texture);
+	}
 	glDrawElements(GL_TRIANGLES, buf->loadedVertices/4 * 6, GL_UNSIGNED_INT, 0);
 	buf->loadedVertices = 0;
 
@@ -145,6 +149,7 @@ void flushVertexBuffer(vertexBuffer* buf) {
 void flushAllVertexBuffers() {
 	flushVertexBuffer(&textureVertexBuffer);
 	flushVertexBuffer(&defaultVertexBuffer);
+	flushVertexBuffer(&textVertexBuffer);
 }
 
 void initRenderer(){
@@ -287,7 +292,7 @@ void drawFilledRect(rect drawnRect, colorRGBA color, float angle){
 		quad[i].color = color;
 	}
 
-	addQuadToVertexBuffer(&defaultVertexBuffer, &quad[0]);
+	addVerticesToVertexBuffer(&defaultVertexBuffer, &quad[0], 4);
 	
 	return;
 }
@@ -339,7 +344,7 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 		quad[i].color = color;
 	}
 
-	addQuadToVertexBuffer(&textureVertexBuffer, &quad[0]);
+	addVerticesToVertexBuffer(&textureVertexBuffer, &quad[0], 4);
 
 	if(textureVertexBuffer.loadedVertices >= MAX_QUADS * 4) {
 		glBindTexture(GL_TEXTURE_2D, ((textureStruct*)textureRes->pointer)->id);
@@ -394,6 +399,7 @@ void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color) 
 }
 
 void drawText(resource* fontRes, char* text, float size, colorRGBA color, float x, float y) {
+	currentFontRes = fontRes;
 #define currentFont ((font*)fontRes->pointer)
 	if(fontRes->type != RES_TYPE_FONT) {
 		debugLog(LOG_ERROR, "resource \"%s\" is not a font\n", fontRes->name);
@@ -454,11 +460,13 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 
 	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
 	
-	glBindTexture(GL_TEXTURE_2D, *currentFont->texture);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, 4*verticesLength*sizeof(vertex), textVertices);
-	glDrawElements(GL_TRIANGLES, verticesLength*6, GL_UNSIGNED_INT, 0);
+	// changing it to do this instead made it drop the framerate a bit with only a few calls to drawText, but it seems to be more efficient for more calls to drawText (like might be better when drawing UI elements)
+	addVerticesToVertexBuffer(&textVertexBuffer, textVertices, 4*verticesLength);
+//	glBindTexture(GL_TEXTURE_2D, *currentFont->texture);
+//	glBufferSubData(GL_ARRAY_BUFFER, 0, 4*verticesLength*sizeof(vertex), textVertices);
+//	glDrawElements(GL_TRIANGLES, verticesLength*6, GL_UNSIGNED_INT, 0);
 
-	switchVertexBuffer(&defaultVertexBuffer);
+	//switchVertexBuffer(&defaultVertexBuffer);
 
 	return;
 }

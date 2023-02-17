@@ -27,7 +27,7 @@ void initGameStateRunning(){
 
 	backgroundShader = loadShader("backgroundShader", "shaders/vertexShader.glsl", "shaders/backgroundFrag.glsl");
 	
-	changeClearScreenColor((colorRGBA){0.5f, 0.5f, 0.5f, 1.0f});
+	//changeClearScreenColor((colorRGBA){0.5f, 0.5f, 0.5f, 1.0f});
 
 	fpsStr = malloc(sizeof(char) * 32);
 	
@@ -76,7 +76,6 @@ int runGameStateRunning(double deltaTime){
 	sprintf(fpsStr, "%.2f", getEntityProperty(player, PROPERTY_POSITION, vec2f)->x);
 	useShader(fontShader);
 	drawText(defaultFont, fpsStr, 25.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 100);
-
 	
 	return 0;
 }
