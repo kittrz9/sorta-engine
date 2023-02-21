@@ -7,7 +7,7 @@
 
 #include "logging.h"
 
-#include "portaudio.h"
+#include <portaudio.h>
 
 #define SAMPLE_RATE 44100
 #define AUDIO_CHANNELS 8

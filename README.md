@@ -25,7 +25,7 @@ PortAudio : <http://portaudio.com/><br>
 
 ## Compiling
 All you should need to compile this on Linux is glew, glfw3, and PortAudio.<br>
-If you're on linux you should be able to get glew and glfw3 from whatever package manager you're using. Same probably goes for portaudio but idk, you might have to compile it from source (<https://github.com/PortAudio/portaudio>). A guide on compiling from source can be found at <http://portaudio.com/docs/v19-doxydocs/compile_linux.html><br> the `portaudio.h` file that is required is in this repository, but you'll need to copy the `libportaudio.a` file from wherever you have PortAudio installed.<br> 
+If you're on linux you should be able to get glew, glfw3, and portaudio from whatever package manager you're using. <br>
 Then all you'd need to do to compile this is run `make` and it should compile into the `build/` directory.<br>
 
 ---
@@ -47,10 +47,6 @@ Entities also have a list of properties for other things to access easier (such 
 
 #### logging.h and logging.c
 Lets you output to both the terminal and a log file with debug information.<br>
-
-#### portaudio.h
-Literally just from here <https://github.com/PortAudio/portaudio/blob/master/include/portaudio.h><br>
-It has to be here to use the PortAudio library I think.<br>
 
 #### renderer.h and renderer.c
 Has very basic functions for drawing rectangles and textures to the screen. I should add more functions like them but that's all there is for now.<br>

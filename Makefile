@@ -4,7 +4,7 @@ SHELL = /bin/bash
 # this needs to be changed if I ever need to use stuff that isn't a png lmao
 CFLAGS = $(shell pkg-config --cflags glfw3) -Wall -Wpedantic -O3
 INCLUDE = -Isrc/engine -Isrc/game -Isrc/game/gameStates
-LIBS = $(shell pkg-config --libs glew glfw3) -lm -lrt -lasound -ljack -pthread
+LIBS = $(shell pkg-config --libs glew glfw3) -lm -lrt -lasound -ljack -pthread -lportaudio
 NAME = openGL-Test
 SOURCES = $(wildcard src/engine/*.c) $(wildcard src/engine/resourceLoaders/*.c) $(wildcard src/game/*.c) $(wildcard src/game/gameStates/*.c)
 OBJS = ${subst src/, obj/, ${subst .c,.o,${SOURCES}}}
