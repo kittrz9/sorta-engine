@@ -5,6 +5,7 @@ typedef enum {
 	RES_TYPE_TEXTURE,
 	RES_TYPE_SHADER,
 	RES_TYPE_FONT,
+	RES_TYPE_SAMPLE,
 	RES_TYPE_ENUM_LENGTH,
 } RESOURCE_TYPE;
 
@@ -32,5 +33,6 @@ void clearResourceList();
 #include "resourceLoaders/textureLoader.h"
 #include "resourceLoaders/shaderLoader.h"
 #include "resourceLoaders/fontLoader.h"
+#include "resourceLoaders/wavLoader.h"
 
 #endif

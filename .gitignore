@@ -3,6 +3,4 @@ build/
 *.out
 *.a
 *.txt
-
-
-*.txt
+*.wav

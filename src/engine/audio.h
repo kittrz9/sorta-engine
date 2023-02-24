@@ -2,8 +2,12 @@
 #define AUDIO_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "portaudio.h"
+
+#define SAMPLE_RATE 44100
+#define AUDIO_CHANNELS 8
 
 // most of this is literally copied and pasted from the SDL Project Base thing I made that also had a synthesizer
 // probably should work on making a better synthesizer or maybe even just emulating an old sound chip lmao
@@ -31,6 +35,13 @@ typedef struct {
 } synthData;
 
 bool playSynth(synthData* data);
+
+typedef struct {
+	float* data;
+	uint32_t dataLength;
+} audioSample;
+
+bool playSample(audioSample* sample, float volume);
 
 // portaudio callback function
 int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);

@@ -121,3 +121,4 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Make log file get put into specific location instead of the current directory
  - Figure out why it crashes randomly if the shader files are renamed
  - Make animations be loaded in from a file
+ - Make wav support not as weird (like actually supporting different sampling rates and mono sounds)

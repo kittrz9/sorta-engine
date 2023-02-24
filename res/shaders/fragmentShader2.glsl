@@ -7,5 +7,5 @@ out vec4 fragColor;
 
 
 void main() {
-	fragColor = texture(inputTexture, texCoord) * color * (vec4(vec3(1-gl_FragCoord.x/(windowSize.x/4)),1.0));
+	fragColor = texture(inputTexture, texCoord) * color;
 }

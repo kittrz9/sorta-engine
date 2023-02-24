@@ -6,6 +6,7 @@
 #include "entity.h"
 #include "player.h"
 #include "controls.h"
+#include "audio.h"
 
 #include "renderer.h"
 
@@ -15,6 +16,7 @@ resource* fontShader;
 resource* fontShader2;
 resource* playerShader;
 resource* backgroundShader;
+//resource* testSample;
 char* fpsStr;
 
 void initGameStateRunning(){
@@ -30,6 +32,11 @@ void initGameStateRunning(){
 	//changeClearScreenColor((colorRGBA){0.5f, 0.5f, 0.5f, 1.0f});
 
 	fpsStr = malloc(sizeof(char) * 32);
+
+	// I can't think of a good sample to use that wouldn't risk copyright stuff so this isn't included in the git repo and commented out
+	//testSample = loadWav("sounds/24_Moonsong.wav");
+
+	//playSample(testSample->pointer, 0.1);
 	
 	return;
 }

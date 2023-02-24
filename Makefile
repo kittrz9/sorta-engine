@@ -11,11 +11,11 @@ OBJS = ${subst src/, obj/, ${subst .c,.o,${SOURCES}}}
 
 # creates the executable normally using object files
 ${NAME}: obj-dir build-dir ${OBJS}
-	${CC} ${CFLAGS} ${INCLUDE} ${LIBS} -g -pg -o build/${NAME} ${OBJS} libportaudio.a
+	${CC} ${CFLAGS} ${INCLUDE} ${LIBS} -g -pg -o build/${NAME} ${OBJS} 
 
 # creates an executable with debug symbols and stuff
 debug: build-dir ${SOURCES}
-	$(CC) $(CFLAGS) $(INCLUDE) -D EXECUTABLE_NAME=\"${NAME}\" -pg -g $(SOURCES) $(LDFLAGS) -o build/${NAME}-debug $(LIBS) libportaudio.a
+	$(CC) $(CFLAGS) $(INCLUDE) -D EXECUTABLE_NAME=\"${NAME}\" -pg -g $(SOURCES) $(LDFLAGS) -o build/${NAME}-debug $(LIBS)
 
 # removes all builds of the game
 clean:

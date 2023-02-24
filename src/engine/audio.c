@@ -9,8 +9,6 @@
 
 #include <portaudio.h>
 
-#define SAMPLE_RATE 44100
-#define AUDIO_CHANNELS 8
 
 // a lot of this is just based off the tutorial for portaudio lmao
 // http://files.portaudio.com/docs/v19-doxydocs/writing_a_callback.html
@@ -35,11 +33,17 @@ typedef struct {
 } synthListEntry;
 
 synthListEntry activeSynths[AUDIO_CHANNELS];
+audioSample* activeSamples[AUDIO_CHANNELS];
+uint32_t sampleOffsets[AUDIO_CHANNELS];
+float sampleVolumes[AUDIO_CHANNELS];
 
 void initAudio() {
-	// initialize the list of active synths
+	// initialize the list of active synths and samples
 	for(int i = 0; i < AUDIO_CHANNELS; i++){
 		activeSynths[i].data = NULL;
+		activeSamples[i] = NULL;
+		sampleOffsets[i] = 0;
+		sampleVolumes[i] = 0.0f;
 	}
 	
 	PaError error;
@@ -136,6 +140,22 @@ void uninitAudio() {
 	return;
 }
 
+bool playSample(audioSample* sample, float volume) {
+	int freeChannel = -1;
+	for(int i = 0; i < AUDIO_CHANNELS; ++i) {
+		if(activeSamples[i] == NULL) {
+			freeChannel = i;
+			break;
+		}
+	}
+	if(freeChannel == -1) {
+		return false;
+	}
+	activeSamples[freeChannel] = sample;
+	sampleOffsets[freeChannel] = 0;
+	sampleVolumes[freeChannel] = volume;
+	return true;
+}
 
 bool playSynth(synthData* data){
 	int freeChannel = -1;
@@ -185,38 +205,49 @@ int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long fra
 		
 		audioData->leftPhase = 0.0;
 		for(int i = 0; i < AUDIO_CHANNELS; i++){
-			if(activeSynths[i].data == NULL) { continue; }
-			synthData* data = activeSynths[i].data;
-			
-			if(data->endFreq != 0 && synthTime < data->length){
-				activeSynths[i].currentFreq += (data->endFreq - data->startFreq)/(data->length * SAMPLE_RATE*1.5);
-			} else if(data->endFreq != 0){
-				activeSynths[i].currentFreq = data->endFreq;
+			// process synths
+			if(activeSynths[i].data != NULL) {
+				synthData* data = activeSynths[i].data;
+				
+				if(data->endFreq != 0 && synthTime < data->length){
+					activeSynths[i].currentFreq += (data->endFreq - data->startFreq)/(data->length * SAMPLE_RATE*1.5);
+				} else if(data->endFreq != 0){
+					activeSynths[i].currentFreq = data->endFreq;
+				}
+				
+				if(synthTime <= envelope.attack){
+					amplitude = synthTime/envelope.attack;
+				} else if(synthTime <= envelope.attack + envelope.decay){
+					amplitude = (((envelope.sustain-1.0)*(synthTime - envelope.attack)))/(envelope.decay) + 1.0;
+				} else if(synthTime<= data->length){
+					amplitude = envelope.sustain;
+				} else {
+					amplitude = (((0 - envelope.sustain)/(envelope.release))*(synthTime - data->length)) + envelope.sustain;
+				}
+				
+				audioData->leftPhase += data->instrument->synth(activeSynths[i].functionTime) * amplitude * data->volume * (1.0/AUDIO_CHANNELS);
+				// I don't remember why these values work, I messed around with the values until they sounded right. Though 27.5 seems close to what SAMPLE_RATE/(frameCount * AUDIO_CHANNELS) would be (21.5) so idk maybe that's close
+				activeSynths[i].timeRemaining -= 1.0/(frameCount*frameCount);
+				activeSynths[i].functionTime += activeSynths[i].currentFreq/(frameCount*27.5);
+				// probably unnecessary to have it always stay between 0 to tau since most sounds wont be played long enough for like weird floating point shenanigans 
+				if(activeSynths[i].functionTime > PI2) { activeSynths[i].functionTime -= PI2; }
+				if(activeSynths[i].timeRemaining < 0) {
+					activeSynths[i].data = NULL;
+					activeSynths[i].currentFreq = 0;
+					continue;
+				}
 			}
+			audioData->rightPhase = audioData->leftPhase;
 			
-			if(synthTime <= envelope.attack){
-				amplitude = synthTime/envelope.attack;
-			} else if(synthTime <= envelope.attack + envelope.decay){
-				amplitude = (((envelope.sustain-1.0)*(synthTime - envelope.attack)))/(envelope.decay) + 1.0;
-			} else if(synthTime<= data->length){
-				amplitude = envelope.sustain;
-			} else {
-				amplitude = (((0 - envelope.sustain)/(envelope.release))*(synthTime - data->length)) + envelope.sustain;
-			}
-			
-			audioData->leftPhase += data->instrument->synth(activeSynths[i].functionTime) * amplitude * data->volume * (1.0/AUDIO_CHANNELS);
-			// I don't remember why these values work, I messed around with the values until they sounded right. Though 27.5 seems close to what SAMPLE_RATE/(frameCount * AUDIO_CHANNELS) would be (21.5) so idk maybe that's close
-			activeSynths[i].timeRemaining -= 1.0/(frameCount*frameCount);
-			activeSynths[i].functionTime += activeSynths[i].currentFreq/(frameCount*27.5);
-			// probably unnecessary to have it always stay between 0 to tau since most sounds wont be played long enough for like weird floating point shenanigans 
-			if(activeSynths[i].functionTime > PI2) { activeSynths[i].functionTime -= PI2; }
-			if(activeSynths[i].timeRemaining < 0) {
-				activeSynths[i].data = NULL;
-				activeSynths[i].currentFreq = 0;
-				continue;
+			// process samples
+			if(activeSamples[i] != NULL /*&& sampleOffsets[i] < activeSamples[i]->dataLength*/) {
+				audioData->leftPhase += *(activeSamples[i]->data + sampleOffsets[i]++) * sampleVolumes[i];
+				audioData->rightPhase += *(activeSamples[i]->data + sampleOffsets[i]++) * sampleVolumes[i];
+				if(sampleOffsets[i] > activeSamples[i]->dataLength) {
+					activeSamples[i] = NULL;
+				}
 			}
 		}
-		audioData->rightPhase = audioData->leftPhase;
 	}
 	
 	return 0;
