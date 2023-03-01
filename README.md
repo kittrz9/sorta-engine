@@ -40,6 +40,7 @@ Very basic animation handling things using spritesheets.<br>
 
 #### audio.h and audio.c
 A very basic audio synthesizer using PortAudio. You provide the ADSR envelope thing and pointer to the function used for the synthesizer in a synthInstrument structure, and then put that with the start and end frequencies, length and volume into a synthData structure and pass that to the playSynth function. It'd probably be better to just read the header and C files to understand how to use it since I can't really explain this well (though it would probably be best to read through all the files that you're going to be using).<br>
+You can also load samples using `loadWav` and play it using `playSample` too.<br>
 
 #### entity.h and entity.c
 Basically anything that gets updated and/or drawn on screen every frame is an entity. It has a pointer to another struct that has other properties (for sort of polymorphism), 2 function pointers that point to functions that will update and draw the entity that gets called every frame, and a function pointer to destroy any resources being used by the entity when the entity is removed. You can change these function pointers at any time to create a sort of finite state machine (for example you could have it switch from a function to move on the ground to a function to move in the air when jumping)<br>
@@ -114,11 +115,13 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Maybe add in 3D stuff
  - Controller support
  - Make the README file not terrible
- - Get the filesize of the executable down (it's getting close to 1MB and most of the size is just from stb_image.h, it also takes stb_image.h a while to actually compile)
+ - Get the filesize of the executable down (most of the size is just from stb_image.h, it also takes stb_image.h a while to actually compile but that's probably because I'm compiling with -O3)
  - Support for multiple rendering (and maybe audio) backends like vulkan
  - Reduce memory usage
  - Make portaudio not choose the pulseaudio device by default (probably mostly only relevant for if/when I make this able to compile for windows)
  - Make log file get put into specific location instead of the current directory
  - Figure out why it crashes randomly if the shader files are renamed
  - Make animations be loaded in from a file
- - Make wav support not as weird (like actually supporting different sampling rates and mono sounds)
+ - Add support for mono wav samples
+ - Add resampling for wav samples that aren't exactly the same sample rate
+ - Add pitch and time stretching for samples (requires weird calculus stuff I don't understand lmao)

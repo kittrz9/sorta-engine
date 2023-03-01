@@ -50,6 +50,18 @@ animationFrame idleAnimation[] = {
 	},
 };
 
+animationFrame jumpAnimation[] = {
+	{
+		.textureRect = {
+			.x = 326,
+			.y = 0,
+			.w = 326,
+			.h = 379,
+		},
+		.delay = -1.0f, // repeats
+	},
+};
+
 entity* createPlayer(vec2f pos, vec2f size){
 	entity* ent = malloc(sizeof(entity));
 	ent->object = malloc(sizeof(playerStruct));
@@ -198,16 +210,17 @@ void commonPhysicsCheck(entity* ent, double deltaTime){
 void updatePlayerOnGround(entity* ent, double deltaTime){
 	commonPhysicsCheck(ent, deltaTime);
 	
-	if(keys[UP].pressedTimer > 0.0f){
-		playSynth(&jumpSndData);
-		playerObj->vel.y = JUMP_FORCE;
-		ent->update = updatePlayerInAir;
-	}
-	
 	if(playerObj->animation->frames != runAnimation && playerObj->moving){
 		setAnimation(playerObj->animation, runAnimation, sizeof(runAnimation)/sizeof(animationFrame));
 	} else if(playerObj->animation->frames != idleAnimation && !playerObj->moving){
 		setAnimation(playerObj->animation, idleAnimation, sizeof(idleAnimation)/sizeof(animationFrame));
+	}
+	
+	if(keys[UP].pressedTimer > 0.0f){
+		playSynth(&jumpSndData);
+		playerObj->vel.y = JUMP_FORCE;
+		ent->update = updatePlayerInAir;
+		setAnimation(playerObj->animation, jumpAnimation, sizeof(runAnimation)/sizeof(animationFrame));
 	}
 	updateAnimation(playerObj->animation, deltaTime);
 	if(playerObj->animation->frames == runAnimation && playerObj->animation->index == 0 && playerObj->animation->timer == 0.0f){
@@ -227,11 +240,6 @@ void updatePlayerInAir(entity* ent, double deltaTime){
 		playerObj->jumpTimer = 0.05f;
 	}
 	
-	if(playerObj->animation->frames != runAnimation && playerObj->moving){
-		setAnimation(playerObj->animation, runAnimation, sizeof(runAnimation)/sizeof(animationFrame));
-	} else if(playerObj->animation->frames != idleAnimation && !playerObj->moving){
-		setAnimation(playerObj->animation, idleAnimation, sizeof(idleAnimation)/sizeof(animationFrame));
-	}
 	updateAnimation(playerObj->animation, deltaTime);
 	
 	// apply gravity and check for jump

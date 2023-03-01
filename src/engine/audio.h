@@ -42,6 +42,7 @@ typedef struct {
 } audioSample;
 
 bool playSample(audioSample* sample, float volume);
+bool stopSample(audioSample* sample);
 
 // portaudio callback function
 int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);

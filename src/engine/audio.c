@@ -157,6 +157,16 @@ bool playSample(audioSample* sample, float volume) {
 	return true;
 }
 
+bool stopSample(audioSample* sample) {
+	for(int i = 0; i < AUDIO_CHANNELS; ++i) {
+		if(activeSamples[i] == sample) {
+			activeSamples[i] = NULL;
+			return true;
+		}
+	}
+	return false;
+}
+
 bool playSynth(synthData* data){
 	int freeChannel = -1;
 	if(data->channel < 0){
