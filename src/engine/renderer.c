@@ -333,6 +333,13 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 
 	switchVertexBuffer(&textureVertexBuffer);
 
+	// make things not render around the center of the texture but to the top left corner
+	drawnRect.x += drawnRect.w;
+	drawnRect.y += drawnRect.h;
+	// things get rendered upside down if I don't do this
+	drawnRect.y *= -1;
+	drawnRect.h *= -1;
+
 	vertex quad[4];
 	for(unsigned int i = 0; i < 4; ++i) {
 		vertex point;

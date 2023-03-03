@@ -106,18 +106,22 @@ void destroyPlayer(entity* ent){
 }
 
 void drawPlayer(entity* ent){
-	// this is a hacked together mess that barely works
 	vec2f drawnPos = worldToScreenSpace(playerObj->pos);
 	vec2f drawnSize = worldToScreenSpace(playerObj->size);
-	drawnSize = (vec2f){(drawnSize.x+1)/2, ((drawnSize.y+1)/2)};
-	rect drawnRect = {
-		drawnPos.x + drawnSize.x,
-		-drawnPos.y - drawnSize.y,
-		drawnSize.x * (playerObj->facingLeft ? -1 : 1),
-		-drawnSize.y,
-	};
+	// drawn size needs to be 0 to 1 not -1 to 1
+	// I hate doing this lmao I should probably change stuff to use actual window coordinates
+	rect drawnRect = { drawnPos.x, drawnPos.y, (drawnSize.x+1)/2, (drawnSize.y+1)/2 };
 
-	drawTexture(drawnRect, playerObj->animation->frames[playerObj->animation->index].textureRect, (colorRGBA){1.0f,1.0f,1.0f,1.0f}, 0.0f, playerObj->animation->texture);
+	// flip the texture rect if facing left
+	// should probably move stuff to a "drawAnimation" function but I think that'd mess with me being able to do this
+	// this is also a bit more complex than it used to be since I think flipping drawnSize.x doesn't work anymore since some stuff was moved to renderer.c
+	rect textureRect = playerObj->animation->frames[playerObj->animation->index].textureRect;
+	if(playerObj->facingLeft) {
+		textureRect.w *= -1;
+		textureRect.x -= textureRect.w;
+	}
+
+	drawTexture(drawnRect, textureRect, (colorRGBA){1.0f,1.0f,1.0f,1.0f}, 0.0f, playerObj->animation->texture);
 	
 	return;
 }
