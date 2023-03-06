@@ -175,8 +175,7 @@ resource* loadWav(const char* filename) {
 	}
 
 	if(formatH.nSamplesPerSec != SAMPLE_RATE) {
-		debugLog(LOG_ERROR, "support for sample rate %i is not supported (only have support for %i)\n", formatH.nSamplesPerSec, SAMPLE_RATE);
-		return 0;
+		debugLog(LOG_WARN, "sample rate %i is not the same as the current playback rate %i, expect the sample to be mangled during playback\n", formatH.nSamplesPerSec, SAMPLE_RATE);
 	}
 
 	if(formatH.wBitsPerSample != 16) {
@@ -188,6 +187,7 @@ resource* loadWav(const char* filename) {
 	audioSample* sample = malloc(sizeof(audioSample));
 	sample->dataLength = dataLength;
 	sample->data = malloc(sizeof(float) * dataLength);
+	sample->sampleRate = formatH.nSamplesPerSec;
 	for(uint32_t i = 0; i < dataLength; ++i) {
 		sample->data[i] = ((float)audioData[i]/(float)INT16_MAX * 2.0);
 	}

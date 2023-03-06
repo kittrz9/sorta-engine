@@ -7,6 +7,7 @@ typedef enum {
 	LOG_NORMAL,
 	LOG_ERROR,
 	LOG_SUCCESS,
+	LOG_WARN,
 } LOG_TYPE;
 
 void initLogFile();

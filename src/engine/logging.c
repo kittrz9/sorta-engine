@@ -11,12 +11,14 @@ const char* logAnsiColorStrings[] = {
 	"\033[97m", // LOG_NORMAL
 	"\033[91m", // LOG_ERROR
 	"\033[92m", // LOG_SUCCESS
+	"\033[93m", // LOG_WARN
 };
 
 const char* logTypeStrings[] = {
 	"LOG: ",
 	"ERROR: ",
 	"SUCCESS: ",
+	"WARNING: ",
 };
 
 void initLogFile(){

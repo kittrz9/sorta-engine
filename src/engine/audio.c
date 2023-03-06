@@ -258,7 +258,7 @@ int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long fra
 				// a lot of this stuff feels really janky and I'm not sure if everything works fine yet, and resampling could also probably be done with linear interpolation stuff to not be as weird
 				// there was one bug that seemed to have to do with floating point imprecision and changing things to doubles *seemed* to have worked but I don't know for sure and it'll probably happen again with a long enough sample
 				// I have no clue what I'm doing lmao
-				uint64_t realOffset = (double)SAMPLE_RATE * activeSamples[i]->dataLength * sampleOffsets[i];
+				uint64_t realOffset = (double)activeSamples[i]->sampleRate * activeSamples[i]->dataLength * sampleOffsets[i];
 				if(realOffset >= activeSamples[i]->dataLength) {
 					activeSamples[i] = NULL;
 					continue;

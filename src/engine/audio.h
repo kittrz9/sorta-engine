@@ -39,6 +39,7 @@ bool playSynth(synthData* data);
 typedef struct {
 	float* data;
 	uint32_t dataLength;
+	uint32_t sampleRate;
 } audioSample;
 
 bool playSample(audioSample* sample, float volume, float resampleFactor);

@@ -123,5 +123,5 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Figure out why it crashes randomly if the shader files are renamed
  - Make animations be loaded in from a file
  - Add support for mono wav samples
- - Add resampling for wav samples that aren't exactly the same sample rate
  - Add pitch and time stretching for samples (requires weird calculus stuff I don't understand lmao)
+ - Fix the weird high pitched frequencies with resampled samples (happens for both playing back at a different sample rate or loading one with a different sample rate)
