@@ -34,8 +34,9 @@ typedef struct {
 
 synthListEntry activeSynths[AUDIO_CHANNELS];
 audioSample* activeSamples[AUDIO_CHANNELS];
-uint32_t sampleOffsets[AUDIO_CHANNELS];
+double sampleOffsets[AUDIO_CHANNELS];
 float sampleVolumes[AUDIO_CHANNELS];
+double resampleFactors[AUDIO_CHANNELS];
 
 void initAudio() {
 	// initialize the list of active synths and samples
@@ -140,7 +141,7 @@ void uninitAudio() {
 	return;
 }
 
-bool playSample(audioSample* sample, float volume) {
+bool playSample(audioSample* sample, float volume, float resampleFactor) {
 	int freeChannel = -1;
 	for(int i = 0; i < AUDIO_CHANNELS; ++i) {
 		if(activeSamples[i] == NULL) {
@@ -154,6 +155,7 @@ bool playSample(audioSample* sample, float volume) {
 	activeSamples[freeChannel] = sample;
 	sampleOffsets[freeChannel] = 0;
 	sampleVolumes[freeChannel] = volume;
+	resampleFactors[freeChannel] = resampleFactor;
 	return true;
 }
 
@@ -214,6 +216,7 @@ int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long fra
 		*output++ = audioData->rightPhase;
 		
 		audioData->leftPhase = 0.0;
+		audioData->rightPhase = 0.0;
 		for(int i = 0; i < AUDIO_CHANNELS; i++){
 			// process synths
 			if(activeSynths[i].data != NULL) {
@@ -234,8 +237,10 @@ int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long fra
 				} else {
 					amplitude = (((0 - envelope.sustain)/(envelope.release))*(synthTime - data->length)) + envelope.sustain;
 				}
-				
-				audioData->leftPhase += data->instrument->synth(activeSynths[i].functionTime) * amplitude * data->volume * (1.0/AUDIO_CHANNELS);
+				// this variable is here now so that it can be reused for both the left and right audio channels without recalculating, and also maybe later add in panning
+				float synthOutput = data->instrument->synth(activeSynths[i].functionTime) * amplitude * data->volume * (1.0/AUDIO_CHANNELS);
+				audioData->leftPhase += synthOutput;
+				audioData->rightPhase += synthOutput;
 				// I don't remember why these values work, I messed around with the values until they sounded right. Though 27.5 seems close to what SAMPLE_RATE/(frameCount * AUDIO_CHANNELS) would be (21.5) so idk maybe that's close
 				activeSynths[i].timeRemaining -= 1.0/(frameCount*frameCount);
 				activeSynths[i].functionTime += activeSynths[i].currentFreq/(frameCount*27.5);
@@ -247,13 +252,23 @@ int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long fra
 					continue;
 				}
 			}
-			audioData->rightPhase = audioData->leftPhase;
 			
 			// process samples
-			if(activeSamples[i] != NULL /*&& sampleOffsets[i] < activeSamples[i]->dataLength*/) {
-				audioData->leftPhase += *(activeSamples[i]->data + sampleOffsets[i]++) * sampleVolumes[i];
-				audioData->rightPhase += *(activeSamples[i]->data + sampleOffsets[i]++) * sampleVolumes[i];
-				if(sampleOffsets[i] > activeSamples[i]->dataLength) {
+			if(activeSamples[i] != NULL) {
+				// a lot of this stuff feels really janky and I'm not sure if everything works fine yet, and resampling could also probably be done with linear interpolation stuff to not be as weird
+				// there was one bug that seemed to have to do with floating point imprecision and changing things to doubles *seemed* to have worked but I don't know for sure and it'll probably happen again with a long enough sample
+				// I have no clue what I'm doing lmao
+				uint64_t realOffset = (double)SAMPLE_RATE * activeSamples[i]->dataLength * sampleOffsets[i];
+				if(realOffset >= activeSamples[i]->dataLength) {
+					activeSamples[i] = NULL;
+					continue;
+				}
+				audioData->leftPhase += *(activeSamples[i]->data + realOffset) * sampleVolumes[i];
+				audioData->rightPhase += *(activeSamples[i]->data + realOffset + 1) * sampleVolumes[i];
+				sampleOffsets[i] += 2.0/SAMPLE_RATE/activeSamples[i]->dataLength * resampleFactors[i];
+//				audioData->leftPhase += *(activeSamples[i]->data + sampleOffsets[i]++) * sampleVolumes[i];
+//				audioData->rightPhase += *(activeSamples[i]->data + sampleOffsets[i]++) * sampleVolumes[i];
+				if(sampleOffsets[i] >= 1.0f) {
 					activeSamples[i] = NULL;
 				}
 			}

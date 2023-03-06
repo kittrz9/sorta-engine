@@ -41,7 +41,7 @@ typedef struct {
 	uint32_t dataLength;
 } audioSample;
 
-bool playSample(audioSample* sample, float volume);
+bool playSample(audioSample* sample, float volume, float resampleFactor);
 bool stopSample(audioSample* sample);
 
 // portaudio callback function

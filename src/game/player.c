@@ -118,7 +118,7 @@ void drawPlayer(entity* ent){
 	rect textureRect = playerObj->animation->frames[playerObj->animation->index].textureRect;
 	if(playerObj->facingLeft) {
 		textureRect.w *= -1;
-		textureRect.x -= textureRect.w;
+		textureRect.x += textureRect.w;
 	}
 
 	drawTexture(drawnRect, textureRect, (colorRGBA){1.0f,1.0f,1.0f,1.0f}, 0.0f, playerObj->animation->texture);

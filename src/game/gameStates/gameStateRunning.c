@@ -34,9 +34,10 @@ void initGameStateRunning(){
 	fpsStr = malloc(sizeof(char) * 32);
 
 	// I can't think of a good sample to use that wouldn't risk copyright stuff so this isn't included in the git repo and commented out
-	//testSample = loadWav("sounds/24_Moonsong.wav");
+//	testSample = loadWav("sounds/24_Moonsong.wav");
 
-	//playSample(testSample->pointer, 0.1);
+//	playSample(testSample->pointer, 0.1, 0.5);
+//	playSample(testSample->pointer, 0.1, 1.0);
 	
 	return;
 }
