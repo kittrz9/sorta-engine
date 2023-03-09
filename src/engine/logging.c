@@ -67,6 +67,10 @@ void debugLog(LOG_TYPE type, const char* fmt, ...){
 	free(str);
 	
 	printf("%s", logAnsiColorStrings[LOG_NORMAL]);
+
+	if(type == LOG_ERROR) {
+		fflush(logFile);
+	}
 	
 	return;
 }
