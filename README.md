@@ -118,7 +118,6 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Get the filesize of the executable down (most of the size is just from stb_image.h, it also takes stb_image.h a while to actually compile but that's probably because I'm compiling with -O3)
  - Support for multiple rendering (and maybe audio) backends like vulkan
  - Reduce memory usage
- - Make portaudio not choose the pulseaudio device by default (probably mostly only relevant for if/when I make this able to compile for windows)
  - Make log file get put into specific location instead of the current directory
  - Figure out why it crashes randomly if the shader files are renamed
  - Make animations be loaded in from a file

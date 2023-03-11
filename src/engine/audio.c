@@ -71,8 +71,8 @@ void initAudio() {
 	for(int i = 0; i < numDevices; i++){
 		deviceInfo = Pa_GetDeviceInfo(i);
 		printf("Device %i: %i, %s, %i, %i\n", i, deviceInfo->structVersion, deviceInfo->name, deviceInfo->maxInputChannels, deviceInfo->maxOutputChannels);
-		// uses the pulseaudio device because using the default device just doesn't work well
-		if(strcmp(deviceInfo->name, "pulse") == 0){
+		// pick default device
+		if(strcmp(deviceInfo->name, "default") == 0){
 			outputParameters.device = i;
 		}
 	}
