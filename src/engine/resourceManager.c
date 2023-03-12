@@ -58,10 +58,10 @@ void initResourceManager(char* path) {
 		}
 		// get everything past the first character and put it after the current directory
 		strncpy(str2, path+1, i-1);
-		sprintf(str, "%s%s../res/", pwd, str2);
+		sprintf(str, "%s%s../../res/", pwd, str2);
 		setResourceDir(str);
 	} else {
-		sprintf(str2, "%s../res/", str);
+		sprintf(str2, "%s../../res/", str);
 		setResourceDir(str2);
 	}
 	return;
