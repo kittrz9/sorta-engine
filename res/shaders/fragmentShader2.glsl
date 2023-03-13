@@ -1,4 +1,4 @@
-#version 400
+#version 330
 in vec2 texCoord;
 in vec4 color;
 uniform sampler2D inputTexture;

@@ -72,12 +72,17 @@ void initAudio() {
 		deviceInfo = Pa_GetDeviceInfo(i);
 		printf("Device %i: %i, %s, %i, %i\n", i, deviceInfo->structVersion, deviceInfo->name, deviceInfo->maxInputChannels, deviceInfo->maxOutputChannels);
 		// pick default device
-		if(strcmp(deviceInfo->name, "default") == 0){
+#ifdef _WIN32
+		if(strcmp(deviceInfo->name, "Speakers (HD Audio Speaker)") == 0) {
+#endif
+#ifdef __linux__
+		if(strcmp(deviceInfo->name, "default") == 0) {
+#endif
 			outputParameters.device = i;
 		}
 	}
 	if(outputParameters.device == -1){
-		debugLog(LOG_ERROR, "could not find pulseaudio device\n");
+		debugLog(LOG_ERROR, "could not find default audio device\n");
 	}
 	
 	outputParameters.channelCount = 2;
