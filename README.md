@@ -29,7 +29,7 @@ All you should need to compile this on Linux is glew, glfw3, PortAudio, and prem
 If you're on linux you should be able to get glew, glfw3, portaudio and premake from whatever package manager you're using. <br>
 Then all you'd need to do to compile this is run `premake5 gmake` and then `make` and it should compile into the `build/` directory.<br>
 <br>
-Windows support is still very buggy and should not be expected to work. To build on windows you needto install (MSYS2)<https://www.msys2.org> and then install these packages: mingw-w64-x86\_64-gcc, mingw-w64-x86\_64-glew, mingw-w64-x86\_64-glfw, mingw-w64-x86\_64-portaudio, and mingw-w64-x86\_64-premake. thne you should be able to just follow the same commands for compiling on Linux.<br>
+Windows support is still very buggy and should not be expected to work. To build on windows you needto install [MSYS2](https://www.msys2.org) and then install these packages: mingw-w64-x86\_64-gcc, mingw-w64-x86\_64-glew, mingw-w64-x86\_64-glfw, mingw-w64-x86\_64-portaudio, and mingw-w64-x86\_64-premake. thne you should be able to just follow the same commands for compiling on Linux.<br>
 As I said, it is still VERY buggy and slow (though I have only been able to test in a virtual machine so that might be why it's slow) so don't expect it to work.<br>
 
 
