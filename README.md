@@ -20,13 +20,19 @@ If you want to contribute to this project I'd appreciate bug fixes but I don't r
 GLEW : <http://glew.sourceforge.net/><br>
 GLFW : <https://www.glfw.org/><br>
 PortAudio : <http://portaudio.com/><br>
+Premake: <https://premake.github.io/><br>
 
 ---
 
 ## Compiling
-All you should need to compile this on Linux is glew, glfw3, and PortAudio.<br>
-If you're on linux you should be able to get glew, glfw3, and portaudio from whatever package manager you're using. <br>
-Then all you'd need to do to compile this is run `make` and it should compile into the `build/` directory.<br>
+All you should need to compile this on Linux is glew, glfw3, PortAudio, and premake.<br>
+If you're on linux you should be able to get glew, glfw3, portaudio and premake from whatever package manager you're using. <br>
+Then all you'd need to do to compile this is run `premake5 gmake` and then `make` and it should compile into the `build/` directory.<br>
+<br>
+Windows support is still very buggy and should not be expected to work. To build on windows you needto install (MSYS2)<https://www.msys2.org> and then install these packages: mingw-w64-x86\_64-gcc, mingw-w64-x86\_64-glew, mingw-w64-x86\_64-glfw, mingw-w64-x86\_64-portaudio, and mingw-w64-x86\_64-premake. thne you should be able to just follow the same commands for compiling on Linux.<br>
+As I said, it is still VERY buggy and slow (though I have only been able to test in a virtual machine so that might be why it's slow) so don't expect it to work.<br>
+
+
 
 ---
 
@@ -111,7 +117,6 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - ciumgui integration (<https://github.com/cimgui/cimgui>)
  - Optimize stuff (the framerate goes down to about 130fps when there's only like 10000 quads of the same texture on screen)
  - Being able to read from a config file
- - Windows support
  - Maybe add in 3D stuff
  - Controller support
  - Make the README file not terrible
@@ -124,3 +129,5 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Add support for mono wav samples
  - Add pitch and time stretching for samples (requires weird calculus stuff I don't understand lmao)
  - Fix the weird high pitched frequencies with resampled samples (happens for both playing back at a different sample rate or loading one with a different sample rate)
+ - Fix crash on linux when exiting in debug mode
+ - Fix wavy font breaking on windows

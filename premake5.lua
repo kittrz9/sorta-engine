@@ -1,5 +1,6 @@
 workspace "openGL-test"
 	configurations { "Debug", "Release" }
+	platforms { "Windows", "Linux" }
 
 project "openGL-test"
 	kind "ConsoleApp"
@@ -8,7 +9,16 @@ project "openGL-test"
 
 	files { "src/**.h", "src/**.c" }
 
-	links { "GLEW", "EGL", "GL", "GLU", "OpenGL", "glfw", "portaudio", "m"}
+	filter { "platforms:Windows" }
+		architecture "x86_64"
+		defines { "WINDOWS" }
+		links { "glew32", "glu32", "opengl32", "glfw3", "portaudio", "m"}
+	
+	filter { "platforms:Linux" }
+		architecture "x86_64"
+		links { "GLEW", "EGL", "GL", "GLU", "OpenGL", "glfw", "portaudio", "m"}
+	
+	filter {}
 
 	includedirs { "src/engine/resourceLoaders/", "src/engine/", "src/game/", "src/game/gameStates"}
 
