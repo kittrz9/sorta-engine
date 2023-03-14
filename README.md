@@ -9,7 +9,7 @@ To make stuff you should be able to just edit stuff in the `src/game/` directory
 
 This is based off of the other thing I made that I'm not sure classifies as a game engine or not (<https://github.com/kittrz9/SDL_ProjectBase>)<br>
 
-As of now this only has support for Linux, though I'd assume it's not too hard to make things compile for windows.<br>
+As of now this only has support for Linux, this *can* be built for windows but it is currently in a buggy state.<br>
 
 This is pretty much just a project I'm doing for fun and to learn, and I doubt anyone actually would want to use this, though if for some strange reason you want to I'm fine with it. All I'd really want is just to be credited but I'm fine as long as you don't claim this stuff as your own. This project uses the Unlicense so whatever, I don't really care that much.<br>
 
@@ -27,9 +27,9 @@ Premake: <https://premake.github.io/><br>
 ## Compiling
 All you should need to compile this on Linux is glew, glfw3, PortAudio, and premake.<br>
 If you're on linux you should be able to get glew, glfw3, portaudio and premake from whatever package manager you're using. <br>
-Then all you'd need to do to compile this is run `premake5 gmake` and then `make` and it should compile into the `build/` directory.<br>
+Then all you'd need to do to compile this is run `premake5 gmake` and then `make config=release_linux` and it should compile into the `build/` directory.<br>
 <br>
-Windows support is still very buggy and should not be expected to work. To build on windows you needto install [MSYS2](https://www.msys2.org) and then install these packages: mingw-w64-x86\_64-gcc, mingw-w64-x86\_64-glew, mingw-w64-x86\_64-glfw, mingw-w64-x86\_64-portaudio, and mingw-w64-x86\_64-premake. thne you should be able to just follow the same commands for compiling on Linux.<br>
+Windows support is still very buggy and should not be expected to work. To build on windows you need to install [MSYS2](https://www.msys2.org) and then install these packages: mingw-w64-x86\_64-gcc, mingw-w64-x86\_64-glew, mingw-w64-x86\_64-glfw, mingw-w64-x86\_64-portaudio, and mingw-w64-x86\_64-premake. Then you should be able to just follow the same commands for compiling on Linux, but with the make command being `make config=release_windows`.<br>
 As I said, it is still VERY buggy and slow (though I have only been able to test in a virtual machine so that might be why it's slow) so don't expect it to work.<br>
 
 
@@ -120,11 +120,9 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Maybe add in 3D stuff
  - Controller support
  - Make the README file not terrible
- - Get the filesize of the executable down (most of the size is just from stb_image.h, it also takes stb_image.h a while to actually compile but that's probably because I'm compiling with -O3)
  - Support for multiple rendering (and maybe audio) backends like vulkan
  - Reduce memory usage
  - Make log file get put into specific location instead of the current directory
- - Figure out why it crashes randomly if the shader files are renamed
  - Make animations be loaded in from a file
  - Add support for mono wav samples
  - Add pitch and time stretching for samples (requires weird calculus stuff I don't understand lmao)

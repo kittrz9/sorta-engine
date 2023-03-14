@@ -1,6 +1,12 @@
 workspace "openGL-test"
 	configurations { "Debug", "Release" }
-	platforms { "Windows", "Linux" }
+	platforms { "Linux", "Windows" }
+
+	filter { "platforms:Windows" }
+		system "windows"
+	filter { "platforms:Windows" }
+		system "linux"
+	filter{}
 
 project "openGL-test"
 	kind "ConsoleApp"
@@ -9,9 +15,9 @@ project "openGL-test"
 
 	files { "src/**.h", "src/**.c" }
 
+	-- probably unnecessary to have it specify the architecture but idk maybe I want to make this compile for arm at some point
 	filter { "platforms:Windows" }
 		architecture "x86_64"
-		defines { "WINDOWS" }
 		links { "glew32", "glu32", "opengl32", "glfw3", "portaudio", "m"}
 	
 	filter { "platforms:Linux" }
@@ -28,4 +34,4 @@ project "openGL-test"
 		symbols "On"
 	
 	filter "configurations:Release"
-		optimize "On"
+		optimize "Speed"
