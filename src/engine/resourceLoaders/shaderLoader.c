@@ -74,12 +74,12 @@ resource* loadShader(const char* name, const char* vertexShaderPath, const char*
 	resource* res = malloc(sizeof(resource));
 
 	// compile vertex and fragment shader
-	char* fullResourcePath = malloc(resDirStrLen + strlen(vertexShaderPath));
+	char* fullResourcePath = malloc(resDirStrLen + strlen(vertexShaderPath) + 1);
 	sprintf(fullResourcePath, "%s%s", resourceDir, vertexShaderPath);
 
 	GLuint vertexShader = readAndCompileShader(fullResourcePath, GL_VERTEX_SHADER);
 	free(fullResourcePath);
-	fullResourcePath = malloc(resDirStrLen + strlen(fragmentShaderPath));
+	fullResourcePath = malloc(resDirStrLen + strlen(fragmentShaderPath) + 1);
 	sprintf(fullResourcePath, "%s%s", resourceDir, fragmentShaderPath);
 
 	GLuint fragmentShader = readAndCompileShader(fullResourcePath, GL_FRAGMENT_SHADER);

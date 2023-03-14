@@ -20,7 +20,7 @@ resource* loadTexture(const char* filename){
 
 	resource* res = malloc(sizeof(resource));
 
-	char* fullResourcePath = malloc(resDirStrLen + strlen(filename));
+	char* fullResourcePath = malloc(resDirStrLen + strlen(filename) + 1);
 	sprintf(fullResourcePath, "%s%s", resourceDir, filename);
 	
 	int width, height, nrChannels;

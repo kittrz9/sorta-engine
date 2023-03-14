@@ -108,7 +108,7 @@ void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res) {
 	loadedResources++;
 
 	resourceList[resourceIndex] = res;
-	resourceList[resourceIndex]->name = malloc(strlen(name) * sizeof(char));
+	resourceList[resourceIndex]->name = malloc(strlen(name)+1 * sizeof(char));
 	strcpy(resourceList[resourceIndex]->name, name);
 
 	debugLog(LOG_SUCCESS, "resource \"%s\" with type %s created at %p\n", name, typeStrings[type], (void*)res);

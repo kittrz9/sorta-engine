@@ -129,5 +129,4 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Add support for mono wav samples
  - Add pitch and time stretching for samples (requires weird calculus stuff I don't understand lmao)
  - Fix the weird high pitched frequencies with resampled samples (happens for both playing back at a different sample rate or loading one with a different sample rate)
- - Fix crash on linux when exiting in debug mode
  - Fix wavy font breaking on windows

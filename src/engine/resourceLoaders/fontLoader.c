@@ -20,7 +20,7 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 
 	// load font msdf texture
 	debugLog(LOG_NORMAL, "loading font texture \"%s\"\n", fontFilename);
-	char* fullResourcePath = malloc(resDirStrLen + strlen(fontFilename));
+	char* fullResourcePath = malloc(resDirStrLen + strlen(fontFilename) + 1);
 	sprintf(fullResourcePath, "%s%s", resourceDir, fontFilename);
 
 	int width, height, nrChannels;
@@ -57,7 +57,7 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 	
 	debugLog(LOG_NORMAL, "loading font data \"%s\"\n", fontDataFilename);
 	
-	fullResourcePath = malloc(resDirStrLen + strlen(fontDataFilename));
+	fullResourcePath = malloc(resDirStrLen + strlen(fontDataFilename) + 1);
 	sprintf(fullResourcePath, "%s%s", resourceDir, fontDataFilename);
 	filePointer = fopen(fullResourcePath, "r");
 	free(fullResourcePath);
@@ -92,7 +92,6 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 			if(currentLineLength > maxLineLength) {
 				maxLineLength = currentLineLength;
 			}
-			++lineCount;
 			break;
 		}
 		++currentLineLength;
@@ -100,7 +99,7 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 	char** lines = malloc(sizeof(char*) * lineCount);
 	for(unsigned int i = 0; i < lineCount; ++i) {
 		// this is probably dumb and allocates a ton of memory but should be fine if I just free that memory, hopefully
-		lines[i] = malloc(sizeof(char) * maxLineLength);
+		lines[i] = malloc(sizeof(char) * maxLineLength + 1);
 	}
 
 	debugLog(LOG_NORMAL, "reading data from lines\n");
