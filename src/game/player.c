@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "renderer.h"
 #include "controls.h"
@@ -202,7 +203,7 @@ void commonPhysicsCheck(entity* ent, double deltaTime){
 			playerObj->vel.x = MAX_RUN_SPEED;
 		}
 	} else {
-		if(abs(playerObj->vel.x) >= FRICTION * deltaTime) {
+		if(fabs(playerObj->vel.x) >= FRICTION * deltaTime) {
 			playerObj->vel.x += FRICTION * (playerObj->vel.x > 0 ? -1 : 1) * deltaTime;
 		} else {
 			playerObj->vel.x = 0.0f;

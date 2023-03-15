@@ -50,7 +50,7 @@ void setShaderUniform1ui(const char* name, unsigned int value) {
 	GLint location = glGetUniformLocation(currentShader, name);
 	glUniform1ui(location, value);
 }
-void glfwWindowSizeCallback(GLFWwindow* window, int width, int height){
+void glfwWindowSizeCallback(UNUSED GLFWwindow* window, int width, int height){
 	windowWidth = width;
 	windowHeight = height;
 	
@@ -63,7 +63,7 @@ void glfwWindowSizeCallback(GLFWwindow* window, int width, int height){
 }
 
 void glfwErrorCallback(int error, const char* description) {
-	debugLog(LOG_ERROR, "GLFW error: %s", description);
+	debugLog(LOG_ERROR, "GLFW error %i: %s", error, description);
 }
 
 const vertex points[] = {

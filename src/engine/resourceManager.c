@@ -87,7 +87,7 @@ void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res) {
 		}
 	}
 
-	unsigned int resourceIndex = -1; // used for checking for free entries
+	int resourceIndex = -1; // used for checking for free entries
 	for(unsigned int i = 0; i < resourceListSize; i++) {
 		if(resourceList[i] == NULL) {
 			resourceIndex = i;

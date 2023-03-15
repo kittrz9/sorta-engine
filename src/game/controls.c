@@ -35,7 +35,7 @@ key keys[CONTROLS_LENGTH] = {
 	},
 };
 
-void handleKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods) {
+void handleKeyEvent(UNUSED GLFWwindow* window, int key, UNUSED int scancode, int action, UNUSED int mods) {
 	for(int i = 0; i < CONTROLS_LENGTH; i++){
 		if(keys[i].keyCode == key){
 			//printf("key \"%s\" ", keys[i].name);

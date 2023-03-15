@@ -13,7 +13,7 @@
 #include "logging.h"
 #include "audio.h"
 
-int main(int argc, char** argv, char** envp){
+int main(UNUSED int argc, char** argv, UNUSED char** envp){
 	// initialize the log file
 	initLogFile();
 

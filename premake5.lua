@@ -1,6 +1,9 @@
 workspace "openGL-test"
 	configurations { "Debug", "Release" }
 	platforms { "Linux", "Windows" }
+	warnings "Extra"
+	-- defining this here so it's defined in every fine without including some header just for this
+	defines { "UNUSED=__attribute((unused))" }
 
 	filter { "platforms:Windows" }
 		system "windows"

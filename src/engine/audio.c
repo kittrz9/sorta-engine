@@ -207,7 +207,7 @@ bool playSynth(synthData* data){
 #define PI  M_PI
 #define PI2 (PI*2)
 
-int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData) {
+int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, UNUSED const PaStreamCallbackTimeInfo* timeInfo, UNUSED PaStreamCallbackFlags statusFlags, void* userData) {
 	paTestData* audioData = (paTestData*)userData;
 	float* output = (float*)outputBuffer;
 	(void)inputBuffer;
@@ -290,7 +290,7 @@ float synthSine(double time) {
 float synthSquare(double time) {
 	return (time < PI ? -1.0 : 1.0);
 }
-float synthNoise(double time) {
+float synthNoise(UNUSED double time) {
 	return ((float)rand()/RAND_MAX);
 }
 float synthSaw(double time) {
