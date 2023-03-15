@@ -57,7 +57,6 @@ void glfwWindowSizeCallback(UNUSED GLFWwindow* window, int width, int height){
 	glViewport(0,0,width,height);
 	
 	setShaderUniform2f("windowSize", width, height);
-	//printf("window resized to (%i, %i)\n", windowWidth, windowHeight);
 	
 	return;
 }

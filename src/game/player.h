@@ -12,7 +12,6 @@ typedef struct {
 	vec2f pos, size, vel;
 	float jumpTimer;
 	
-	//resource* texture;
 	animationStruct* animation;
 	
 	bool facingLeft;

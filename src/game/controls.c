@@ -38,13 +38,10 @@ key keys[CONTROLS_LENGTH] = {
 void handleKeyEvent(UNUSED GLFWwindow* window, int key, UNUSED int scancode, int action, UNUSED int mods) {
 	for(int i = 0; i < CONTROLS_LENGTH; i++){
 		if(keys[i].keyCode == key){
-			//printf("key \"%s\" ", keys[i].name);
 			if(action == GLFW_PRESS){
-				//printf("pressed\n");
 				keys[i].held = true;
 				keys[i].pressedTimer = 0.1f;
 			} else if(action == GLFW_RELEASE){
-				//printf("released\n");
 				keys[i].held = false;
 				keys[i].pressedTimer = 0.0f;
 			}

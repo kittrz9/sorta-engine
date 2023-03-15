@@ -74,16 +74,12 @@ size_t parseChunk(void* chunk, CHUNK_ID* outID) {
 			break;
 		}
 	}
-	if(id == CHUNK_UNKNOWN) {
-		//printf("unknown chunk \"%.4s\"\n", (char*)chunk);
-	}
 
 	*outID = id;
 
 	switch(id) {
 		case CHUNK_LIST:
 			size = ((listHeader*)chunk)->chunkSize;
-			//printf("%.4s\n", ((listHeader*)chunk)->listType);
 			size += *(int16_t*)((uint8_t*)chunk + 16) - 6;
 			break;
 		case CHUNK_INFO:
@@ -96,7 +92,6 @@ size_t parseChunk(void* chunk, CHUNK_ID* outID) {
 			break;
 	}
 
-	//printf("chunk: %.4s\nsize: %li\n", chunkIDStrings[id], size);
 
 	return size;
 }
