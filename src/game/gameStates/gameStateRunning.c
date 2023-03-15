@@ -17,7 +17,7 @@ resource* fontShader2;
 resource* playerShader;
 resource* backgroundShader;
 //resource* testSample;
-char* fpsStr;
+char fpsStr[32];
 
 void initGameStateRunning(){
 	player = createPlayer((vec2f){0,0}, (vec2f){175,175});
@@ -28,10 +28,6 @@ void initGameStateRunning(){
 	fontShader2 = loadShader("fontShader2", "shaders/fontVertexShader2.glsl", "shaders/fontFragmentShader.glsl");
 
 	backgroundShader = loadShader("backgroundShader", "shaders/vertexShader.glsl", "shaders/backgroundFrag.glsl");
-	
-	//changeClearScreenColor((colorRGBA){0.5f, 0.5f, 0.5f, 1.0f});
-
-	fpsStr = malloc(sizeof(char) * 32);
 
 	// I can't think of a good sample to use that wouldn't risk copyright stuff so this isn't included in the git repo and commented out
 //	testSample = loadWav("sounds/24_Moonsong.wav");
@@ -44,8 +40,6 @@ void initGameStateRunning(){
 
 void uninitGameStateRunning(){
 	removeEntity(player);
-	
-	free(fpsStr);
 
 	return;
 }
