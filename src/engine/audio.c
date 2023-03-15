@@ -254,7 +254,6 @@ int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long fra
 				if(activeSynths[i].timeRemaining < 0) {
 					activeSynths[i].data = NULL;
 					activeSynths[i].currentFreq = 0;
-					continue;
 				}
 			}
 			

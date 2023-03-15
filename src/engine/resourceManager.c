@@ -31,40 +31,22 @@ void setResourceDir(char* path) {
 }
 
 void initResourceManager(char* path) {
+	char str[256]; // just gotta hope the path is less than 255 chars (plus a null byte) long
 	// find where the executable is being ran from
-	char buildstr[] = EXECUTABLE_NAME; // defined in makefile
-	char* c = path;
-	unsigned int i = 0;
-	while(*c != '\0') {
-		if(strncmp(c, buildstr, strlen(buildstr)) == 0) {
-			break;
-		}
-		++i;
-		++c;
-	}
-	if(*c == '\0' || i == 0) {
-		debugLog(LOG_ERROR, "could not initialize resource manager\n");
-		return;
-	}
-	char str[256] = "";
-	char str2[256] = "";
-	strncpy(str, path, i);
-	// for some reason it randomly crashes if I use ./ at the beginning of the path
 	if(path[0] == '.') {
-		// this is a mess but it works
+		// if being ran with a relative path it's probably being ran from the project root
 		char* pwd = getenv("PWD");
 		if(pwd == NULL) {
 			debugLog(LOG_ERROR, "could not get current working directory\n");
+			exit(1);
 		}
-		// get everything past the first character and put it after the current directory
-		strncpy(str2, path+1, i-1);
-		sprintf(str, "%s%s../../res/", pwd, str2);
-		setResourceDir(str);
+		strcpy(str, pwd);
+		strcat(str, "/res/");
 	} else {
-		sprintf(str2, "%s../../res/", str);
-		setResourceDir(str2);
+		strcpy(str, path);
+		strcpy(strstr(str, "build"), "res/\0"); // really weird lmao
 	}
-	return;
+	setResourceDir(str);
 }
 
 resource* checkIfAlreadyLoaded(const char* filename) {
