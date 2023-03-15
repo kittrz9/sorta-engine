@@ -3,7 +3,7 @@ workspace "openGL-test"
 	platforms { "Linux", "Windows" }
 	warnings "Extra"
 	-- defining this here so it's defined in every fine without including some header just for this
-	defines { "UNUSED=__attribute((unused))" }
+	defines { "UNUSED=__attribute__((unused))" }
 
 	filter { "platforms:Windows" }
 		system "windows"
