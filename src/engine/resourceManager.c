@@ -31,7 +31,7 @@ void setResourceDir(char* path) {
 }
 
 void initResourceManager(char* path) {
-	char str[256]; // just gotta hope the path is less than 255 chars (plus a null byte) long
+	char str[256]; // I probably shouldn't hard code this to 255 chars long and make this dynamically allocated too but whatever
 	// find where the executable is being ran from
 	if(path[0] == '.') {
 		// if being ran with a relative path it's probably being ran from the project root
@@ -40,9 +40,18 @@ void initResourceManager(char* path) {
 			debugLog(LOG_ERROR, "could not get current working directory\n");
 			exit(1);
 		}
+		if(strlen(pwd) > 249) {
+			debugLog(LOG_ERROR, "pwd is too long (max is 249)\n");
+			exit(1);
+		}
+		// should probably do some extra error checking to make sure it's in the project root, but I'm probably the only one who's gonna run it like this
 		strcpy(str, pwd);
 		strcat(str, "/res/");
 	} else {
+		if(strlen(path) > 255) {
+			debugLog(LOG_ERROR, "resource path is too long (max is 255)\n"); 
+			exit(1);
+		}
 		strcpy(str, path);
 		strcpy(strstr(str, "build"), "res/\0"); // really weird lmao
 	}
