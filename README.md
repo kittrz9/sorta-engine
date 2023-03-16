@@ -25,14 +25,16 @@ Premake: <https://premake.github.io/><br>
 ---
 
 ## Compiling
+### Linux
 All you should need to compile this on Linux is glew, glfw3, PortAudio, and premake.<br>
 If you're on linux you should be able to get glew, glfw3, portaudio and premake from whatever package manager you're using. <br>
 Then all you'd need to do to compile this is run `premake5 gmake` and then `make config=release_linux` and it should compile into the `build/` directory.<br>
 <br>
+### Windows
 Windows support is still very buggy and should not be expected to work. To build on windows you need to install [MSYS2](https://www.msys2.org) and then install these packages: `mingw-w64-x86_64-gcc` `mingw-w64-x86_64-glew` `mingw-w64-x86_64-glfw` `mingw-w64-x86_64-portaudio` and `mingw-w64-x86_64-premake`. Then you should be able to just follow the same commands for compiling on Linux, but with the make command being `make config=release_windows`.<br>
 As I said, it is still VERY buggy and slow (though I have only been able to test in a virtual machine so that might be why it's slow) so don't expect it to work.<br>
 Another thing you'll want to do if you want to run it through the file browser in windows is to put need the files `glew32.dll`, `glfw3.dll`, `libportaudio.dll` and `libwinpthread-1.dll` in the same folder as the executable. I'd recommend getting the first 2 dlls from the sites for each library and get `libportaudio.dll` and `libwinpthread-1.dll` from `C:\msys64\mingw64\bin\`.<br>
-However the best solution is probably just to [get a better operating system.](https://www.debian.org)<br>
+However the best solution is probably just to [**get a better operating system.**](https://www.debian.org)<br>
 
 
 ---
