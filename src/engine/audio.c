@@ -73,7 +73,7 @@ void initAudio() {
 		printf("Device %i: %i, %s, %i, %i\n", i, deviceInfo->structVersion, deviceInfo->name, deviceInfo->maxInputChannels, deviceInfo->maxOutputChannels);
 		// pick default device
 #ifdef _WIN32
-		if(strcmp(deviceInfo->name, "Speakers (HD Audio Speaker)") == 0) {
+		if(strncmp(deviceInfo->name, "Speaker", 7) == 0) {
 #endif
 #ifdef __linux__
 		if(strcmp(deviceInfo->name, "default") == 0) {

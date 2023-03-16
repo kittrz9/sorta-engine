@@ -11,16 +11,17 @@ vec3 scalePoint(vec3 inputVec, vec2 scaling){
 }
 
 vec3 rotatePoint(vec3 inputVec, float angle2){
-	return vec3((cos(angle2)*inputVec.x)+(sin(angle2)*inputVec.y), (cos(angle2)*inputVec.y)-(sin(angle2)*inputVec.x), inputVec.z);
+	return vec3((cos(angle2)*inputVec.x)+(sin(angle2)*inputVec.y), (cos(angle2)*inputVec.y)-(sin(angle2)*inputVec.x), 1.0f);
 }
 
 vec3 translatePoint(vec3 inputVec, vec2 translation){
-	return vec3(inputVec.x + translation.x, inputVec.y + translation.y, 1.0);
+	return vec3(inputVec.x + translation.x, inputVec.y + translation.y, 1.0f);
 }
 
 void main() {
 	gl_Position = vec4(vp, 1.0, 1.0);
-	gl_Position.xyz = translatePoint(gl_Position.xyz, 0.02*rotatePoint(vec3(1.0), time*3.14159*2 + vp.x*10 + vp.y*10).xy);
+	// for some reason setting it to rotate vec3(0.1) fixes this on windows
+	gl_Position.xyz = translatePoint(gl_Position.xyz, 0.02f*rotatePoint(vec3(1.0f), time*3.14159f*2.0f + vp.x*10.0f + vp.y*10.0f).xy);
 
 	texCoord = textureCoords;
 }
