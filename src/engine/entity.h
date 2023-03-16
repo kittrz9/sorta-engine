@@ -10,11 +10,11 @@
 typedef enum {
 	// not actual properties, used when processing properties
 	EMPTY_PROPERTY_SLOT = 0, // not used anymore, but probably could be used later when removing properties (idk if you would even want to remove properties though lmao)
-	LAST_PROPERTY_SLOT = 0xffff,
 	// vec2f
 	PROPERTY_POSITION,
 	PROPERTY_VELOCITY,
 	PROPERTY_SIZE,
+	LAST_PROPERTY_SLOT = 0xffff, // also not actually a property, used when looping through properties to not go through every single slot
 } ENTITY_PROPERTY;
 
 typedef struct {
