@@ -60,7 +60,7 @@ int runGameStateRunning(double deltaTime){
 		(*entListCurrent->ent->update)(entListCurrent->ent, deltaTime);
 	}
 	
-	if(keys[EXIT].held){
+	if(keys[KEY_EXIT].held){
 		running = false;
 	}
 	

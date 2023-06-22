@@ -69,11 +69,11 @@ project "resourceLoaders"
 
 	filter { "platforms:Windows" }
 		architecture "x86_64"
-		links { "glew32", "glu32", "opengl32", "glfw3", "portaudio", "m", "stb_image" }
+		links { "glew32", "glu32", "opengl32", "glfw3","stb_image" }
 
 	filter { "platforms:Linux" }
 		architecture "x86_64"
-		links { "GLEW", "EGL", "GL", "GLU", "OpenGL", "glfw", "portaudio", "m", "stb_image"}
+		links { "GLEW", "EGL", "GL", "GLU", "OpenGL", "glfw", "m", "stb_image"}
 	
 	filter {}
 
@@ -125,7 +125,7 @@ project "game"
 
 	filter { "platforms:Linux" }
 		architecture "x86_64"
-		links { "GLEW", "EGL", "GL", "GLU", "OpenGL", "glfw", "portaudio", "m", "engine", "resourceLoaders" }
+		links { "GLEW", "EGL", "GL", "GLU", "OpenGL", "glfw", "m", "engine", "resourceLoaders" }
 	
 	filter {}
 

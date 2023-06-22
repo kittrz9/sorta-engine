@@ -186,7 +186,7 @@ void commonPhysicsCheck(entity* ent, double deltaTime){
 	
 	playerBoundaryCheck(ent);
 	
-	if(keys[LEFT].held) {
+	if(keys[KEY_LEFT].held) {
 		playerObj->facingLeft = true;
 		playerObj->moving = true;
 		if(playerObj->vel.x > -MAX_RUN_SPEED){
@@ -194,7 +194,7 @@ void commonPhysicsCheck(entity* ent, double deltaTime){
 		} else {
 			playerObj->vel.x = -MAX_RUN_SPEED;
 		}
-	} else if(keys[RIGHT].held) {
+	} else if(keys[KEY_RIGHT].held) {
 		playerObj->facingLeft = false;
 		playerObj->moving = true;
 		if(playerObj->vel.x < MAX_RUN_SPEED){
@@ -221,7 +221,7 @@ void updatePlayerOnGround(entity* ent, double deltaTime){
 		setAnimation(playerObj->animation, idleAnimation, sizeof(idleAnimation)/sizeof(animationFrame));
 	}
 	
-	if(keys[UP].pressedTimer > 0.0f){
+	if(keys[KEY_UP].pressedTimer > 0.0f){
 		playSynth(&jumpSndData);
 		playerObj->vel.y = JUMP_FORCE;
 		ent->update = updatePlayerInAir;
@@ -241,7 +241,7 @@ void updatePlayerInAir(entity* ent, double deltaTime){
 		playerObj->jumpTimer -= deltaTime;
 	}
 	
-	if(keys[UP].pressedTimer > 0.0f && playerObj->jumpTimer <= 0.0f){
+	if(keys[KEY_UP].pressedTimer > 0.0f && playerObj->jumpTimer <= 0.0f){
 		playerObj->jumpTimer = 0.05f;
 	}
 	

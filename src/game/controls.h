@@ -13,7 +13,7 @@ typedef struct {
 	const char* name;
 } key;
 
-enum CONTROLS{EXIT, UP, DOWN, LEFT, RIGHT, CONTROLS_LENGTH};
+enum CONTROLS{KEY_EXIT, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, CONTROLS_LENGTH};
 extern key keys[CONTROLS_LENGTH];
 
 // glfw key event callback

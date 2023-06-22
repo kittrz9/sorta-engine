@@ -56,12 +56,11 @@ char* chunkIDStrings[] = {
 };
 
 size_t chunkHeaderSizes[] = {
-	sizeof(RIFFHeader),
-	sizeof(fmtHeader),
-	sizeof(dataHeader),
-	0,
-	0,
-	0,
+	[CHUNK_RIFF] = sizeof(RIFFHeader),
+	[CHUNK_FMT]  = sizeof(fmtHeader),
+	[CHUNK_DATA] = sizeof(dataHeader),
+	[CHUNK_LIST] = 0,
+	[CHUNK_INFO] = 0,
 };
 
 // returns the size of the chunk

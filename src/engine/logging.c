@@ -6,19 +6,18 @@
 
 FILE* logFile;
 
-// in order of the LOG_TYPE enum
 const char* logAnsiColorStrings[] = {
-	"\033[97m", // LOG_NORMAL
-	"\033[91m", // LOG_ERROR
-	"\033[92m", // LOG_SUCCESS
-	"\033[93m", // LOG_WARN
+	[LOG_NORMAL]  = "\033[97m", // LOG_NORMAL
+	[LOG_ERROR]   = "\033[91m", // LOG_ERROR
+	[LOG_SUCCESS] = "\033[92m", // LOG_SUCCESS
+	[LOG_WARN]    = "\033[93m", // LOG_WARN
 };
 
 const char* logTypeStrings[] = {
-	"LOG: ",
-	"ERROR: ",
-	"SUCCESS: ",
-	"WARNING: ",
+	[LOG_NORMAL]  = "LOG: ",
+	[LOG_ERROR]   ="ERROR: ",
+	[LOG_SUCCESS] = "SUCCESS: ",
+	[LOG_WARN]    = "WARNING: ",
 };
 
 void initLogFile(){
