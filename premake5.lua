@@ -7,7 +7,7 @@ workspace "openGL-test"
 
 	filter { "platforms:Windows" }
 		system "windows"
-	filter { "platforms:Windows" }
+	filter { "platforms:Linux" }
 		system "linux"
 	filter{}
 
