@@ -55,6 +55,9 @@ You can also load samples using `loadWav` and play it using `playSample` too.<br
 Basically anything that gets updated and/or drawn on screen every frame is an entity. It has a pointer to another struct that has other properties (for sort of polymorphism), 2 function pointers that point to functions that will update and draw the entity that gets called every frame, and a function pointer to destroy any resources being used by the entity when the entity is removed. You can change these function pointers at any time to create a sort of finite state machine (for example you could have it switch from a function to move on the ground to a function to move in the air when jumping)<br>
 Entities also have a list of properties for other things to access easier (such as position), the list has property ids and pointers to where the data for the property is stored.<br>
 
+#### files.h and files.c
+Some very basic file handling for things that aren't considered resources, along with functions to read a gzip or bzip2 compressed file.<br>
+
 #### logging.h and logging.c
 Lets you output to both the terminal and a log file with debug information.<br>
 

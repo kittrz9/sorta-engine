@@ -25,7 +25,7 @@ gameFile testFile;
 void initGameStateRunning(){
 	player = createPlayer((vec2f){0,0}, (vec2f){175,175});
 
-	defaultFont = loadFont("Terminus", "fonts/Terminus.png", "fonts/Terminus.csv");
+	defaultFont = loadFont("Terminus", "fonts/Terminus.png", "fonts/Terminus.csv.bz2");
 	fontShader = loadShader("fontShader", "shaders/fontVertexShader.glsl", "shaders/fontFragmentShader.glsl");
 	playerShader = loadShader("playerShader", "shaders/vertexShader.glsl", "shaders/fragmentShader2.glsl");
 	fontShader2 = loadShader("fontShader2", "shaders/fontVertexShader2.glsl", "shaders/fontFragmentShader.glsl");

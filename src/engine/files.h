@@ -11,8 +11,7 @@ typedef struct {
 // need to free afterwards
 gameFile readGameFile(const char* filename);
 
-// TODO: implement reading gzip or bzip2 compressed files
-// gameFile readFileGZ(const char* filename);
-// gameFile readFileBZ2(const char* filename);
+gameFile readFileGZ(const char* filename);
+gameFile readFileBZ2(const char* filename);
 
 #endif

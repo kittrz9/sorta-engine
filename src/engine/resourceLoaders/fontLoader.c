@@ -7,6 +7,7 @@
 #include "logging.h"
 #include "resourceManager.h"
 #include "stb_image.h"
+#include "files.h"
 
 resource* loadFont(const char* name, const char* fontFilename, const char* fontDataFilename) {
 	resource* tempRes = checkIfAlreadyLoaded(name);
@@ -57,21 +58,31 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 	
 	debugLog(LOG_NORMAL, "loading font data \"%s\"\n", fontDataFilename);
 	
-	fullResourcePath = malloc(resDirStrLen + strlen(fontDataFilename) + 1);
-	sprintf(fullResourcePath, "%s%s", resourceDir, fontDataFilename);
-	filePointer = fopen(fullResourcePath, "r");
-	free(fullResourcePath);
-	if(!filePointer) {
-		debugLog(LOG_ERROR, "could not open font data \"%s\"\n", fontDataFilename);
-		return NULL;
-	}
-	fseek(filePointer, 0, SEEK_END);
-	fileSize = ftell(filePointer);
-	rewind(filePointer);
 
-	fontData = malloc((fileSize+1) * sizeof(char));
-	fread(fontData, fileSize, 1, filePointer);
-	fontData[fileSize] = '\0';
+	// compressing the csv file with gzip made it go from like 10kb to 1kb
+	if(strcmp(fontDataFilename + (strlen(fontDataFilename)-3), ".gz") == 0) {
+		gameFile file = readFileGZ(fontDataFilename);
+		fontData = file.buffer;
+	} else if (strcmp(fontDataFilename + (strlen(fontDataFilename)-4), ".bz2") == 0) {
+		gameFile file = readFileBZ2(fontDataFilename);
+		fontData = file.buffer;
+	} else {
+		fullResourcePath = malloc(resDirStrLen + strlen(fontDataFilename) + 1);
+		sprintf(fullResourcePath, "%s%s", resourceDir, fontDataFilename);
+		filePointer = fopen(fullResourcePath, "r");
+		free(fullResourcePath);
+		if(!filePointer) {
+			debugLog(LOG_ERROR, "could not open font data \"%s\"\n", fontDataFilename);
+			return NULL;
+		}
+		fseek(filePointer, 0, SEEK_END);
+		fileSize = ftell(filePointer);
+		rewind(filePointer);
+
+		fontData = malloc((fileSize+1) * sizeof(char));
+		fread(fontData, fileSize, 1, filePointer);
+		fontData[fileSize] = '\0';
+	}
 	
 	// parse font data
 	unsigned int lineCount = 0;

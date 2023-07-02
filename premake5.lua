@@ -5,6 +5,22 @@ workspace "openGL-test"
 	-- defining this here so it's defined in every fine without including some header just for this
 	defines { "UNUSED=__attribute__((unused))" }
 
+	newoption {
+		trigger = "nobzip2",
+		description = "Disables bzip2 decompression support"
+	}
+
+	newoption {
+		trigger = "nogzip",
+		description = "Disables gzip decompression support"
+	}
+
+	filter { "options:nobzip2" }
+		defines { "NO_BZIP2_SUPPORT" }
+
+	filter { "options:nogzip" }
+		defines { "NO_GZIP_SUPPORT" }
+
 	filter { "platforms:Windows" }
 		system "windows"
 	filter { "platforms:Linux" }
@@ -98,7 +114,13 @@ project "engine"
 
 	filter { "platforms:Linux" }
 		architecture "x86_64"
-		links { "GLEW", "EGL", "GL", "GLU", "OpenGL", "glfw", "portaudio", "m"}
+		links { "GLEW", "EGL", "GL", "GLU", "OpenGL", "glfw", "portaudio", "m" }
+
+	filter { "options:not nogzip" }
+		links { "z" }
+
+	filter { "options:not nobzip22" }
+		links { "bz2" }
 	
 	filter {}
 
@@ -126,6 +148,12 @@ project "game"
 	filter { "platforms:Linux" }
 		architecture "x86_64"
 		links { "GLEW", "EGL", "GL", "GLU", "OpenGL", "glfw", "m", "engine", "resourceLoaders" }
+
+	filter { "options:not nogzip" }
+		links { "z" }
+
+	filter { "options:not nobzip22" }
+		links { "bz2" }
 	
 	filter {}
 
