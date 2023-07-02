@@ -7,6 +7,7 @@
 #include "player.h"
 #include "controls.h"
 #include "audio.h"
+#include "files.h"
 
 #include "renderer.h"
 
@@ -19,6 +20,8 @@ resource* backgroundShader;
 //resource* testSample;
 char fpsStr[32];
 
+gameFile testFile;
+
 void initGameStateRunning(){
 	player = createPlayer((vec2f){0,0}, (vec2f){175,175});
 
@@ -28,6 +31,9 @@ void initGameStateRunning(){
 	fontShader2 = loadShader("fontShader2", "shaders/fontVertexShader2.glsl", "shaders/fontFragmentShader.glsl");
 
 	backgroundShader = loadShader("backgroundShader", "shaders/vertexShader.glsl", "shaders/backgroundFrag.glsl");
+
+	testFile = readGameFile("test.txt");
+
 
 	// I can't think of a good sample to use that wouldn't risk copyright stuff so this isn't included in the git repo and commented out
 //	testSample = loadWav("sounds/24_Moonsong.wav");
@@ -39,6 +45,7 @@ void initGameStateRunning(){
 }
 
 void uninitGameStateRunning(){
+	free(testFile.buffer);
 	removeEntity(player);
 
 	return;
@@ -71,7 +78,7 @@ int runGameStateRunning(double deltaTime){
 	static float fontTime = 0.0f;
 	useShader(fontShader2);
 	setShaderUniform1f("time", fontTime);
-	drawText(defaultFont, "balls", 100.0, (colorRGBA){1.0f, 0.0f, 1.0f, 1.0f}, windowWidth/2 - 130, windowHeight/2 - 50);
+	drawText(defaultFont, testFile.buffer, 100.0, (colorRGBA){1.0f, 0.0f, 1.0f, 1.0f}, windowWidth/2 - 130, windowHeight/2 - 50);
 	fontTime += deltaTime * 0.2;
 	if(fontTime >= 1.0f) { fontTime = 0.0f; }
 

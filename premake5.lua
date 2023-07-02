@@ -79,10 +79,10 @@ project "resourceLoaders"
 
 	includedirs { "src/engine/stb_image", "src/engine/resourceLoaders/", "src/engine/" }
 
-	filter "configurations:Debug"
+	filter { "configurations:Debug" }
 		symbols "On"
 	
-	filter "configurations:Release"
+	filter { "configurations:Release" }
 		optimize "Speed"
 
 project "engine"
@@ -104,10 +104,10 @@ project "engine"
 
 	includedirs { "src/engine/resourceLoaders/", "src/engine/", "src/game/" }
 
-	filter "configurations:Debug"
+	filter { "configurations:Debug" }
 		symbols "On"
 	
-	filter "configurations:Release"
+	filter { "configurations:Release" }
 		optimize "Speed"
 
 project "game"
@@ -131,9 +131,9 @@ project "game"
 
 	includedirs { "src/engine/", "src/game/", "src/game/gameStates" }
 
-	filter "configurations:Debug"
+	filter { "configurations:Debug" }
 		symbols "On"
 	
-	filter "configurations:Release"
+	filter { "configurations:Release" }
 		optimize "Speed"
 
