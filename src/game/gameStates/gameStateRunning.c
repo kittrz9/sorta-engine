@@ -32,7 +32,7 @@ void initGameStateRunning(){
 
 	backgroundShader = loadShader("backgroundShader", "shaders/vertexShader.glsl", "shaders/backgroundFrag.glsl");
 
-	testFile = readGameFile("test.txt");
+	testFile = readGameFile("test.txt", true);
 
 
 	// I can't think of a good sample to use that wouldn't risk copyright stuff so this isn't included in the git repo and commented out

@@ -7,6 +7,7 @@
 #include "logging.h"
 #include "resourceManager.h"
 #include "audio.h"
+#include "files.h"
 
 typedef struct {
 	char chunkID[4]; // "RIFF"
@@ -103,23 +104,9 @@ resource* loadWav(const char* filename) {
 
 	resource* res = malloc(sizeof(resource));
 
-	char* fullResourcePath = malloc(resDirStrLen + strlen(filename));
-	sprintf(fullResourcePath, "%s%s", resourceDir, filename);
 
-	FILE* fp;
-	fp = fopen(fullResourcePath, "rb");
-	if(!fp) {
-		debugLog(LOG_ERROR, "could not open wav file \"%s\"\n", filename);
-		return 0;
-	}
-	free(fullResourcePath);
-
-	fseek(fp, 0, SEEK_END);
-	size_t size = ftell(fp);
-	rewind(fp);
-
-	uint8_t* wavFile = malloc(size);
-	fread(wavFile, size, 1, fp);
+	gameFile file = readGameFile(filename, false);
+	uint8_t* wavFile = file.buffer;
 
 
 	// parse wav
@@ -156,7 +143,6 @@ resource* loadWav(const char* filename) {
 		offset += chunkSize;
 	} while(id != CHUNK_UNKNOWN);
 	free(wavFile);
-	fclose(fp);
 
 	if(audioData == NULL) {
 		debugLog(LOG_ERROR, "could not load audio data from \"%s\"\n", filename);

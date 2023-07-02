@@ -11,6 +11,7 @@
 #include "logging.h"
 #include "renderer.h"
 #include "resourceManager.h"
+#include "files.h"
 
 resource* loadTexture(const char* filename){
 	resource* tempRes = checkIfAlreadyLoaded(filename);
@@ -20,8 +21,7 @@ resource* loadTexture(const char* filename){
 
 	resource* res = malloc(sizeof(resource));
 
-	char* fullResourcePath = malloc(resDirStrLen + strlen(filename) + 1);
-	sprintf(fullResourcePath, "%s%s", resourceDir, filename);
+	gameFile textureFile = readGameFile(filename, false);
 	
 	int width, height, nrChannels;
 	textureStruct* texture = malloc(sizeof(textureStruct));
@@ -34,8 +34,7 @@ resource* loadTexture(const char* filename){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	
-	unsigned char* data = stbi_load(fullResourcePath, &width, &height, &nrChannels, 4);
-	free(fullResourcePath);
+	unsigned char* data = stbi_load_from_memory(textureFile.buffer, textureFile.size, &width, &height, &nrChannels, 4);
 	if(data){
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);

@@ -8,11 +8,9 @@
 
 #include "logging.h"
 #include "resourceManager.h"
+#include "files.h"
 
 GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
-	FILE* filePointer;
-	unsigned int fileSize;
-	char* shaderContents;
 	GLint  shaderCompiled = 1;
 	GLuint shader;
 
@@ -27,23 +25,12 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	}
 	
 	// read shader into string
-	filePointer = fopen(shaderFilePath, "r");
-	if(!filePointer) {
-		debugLog(LOG_ERROR, "could not open shader \"%s\"", shaderFilePath);
-		return 0;
-	}
-	fseek(filePointer, 0, SEEK_END);
-	fileSize = ftell(filePointer);
-	rewind(filePointer);
-	// string needs to be 1 char longer to have a null character to terminate the string
-	shaderContents = malloc((fileSize+1) * sizeof(char));
-	fread(shaderContents, fileSize, 1, filePointer);
-	shaderContents[fileSize] = '\0';
-	debugLog(LOG_NORMAL, "compiling %s shader \"%s\", size %i\n", shaderTypeString, shaderFilePath, fileSize);
+	gameFile shaderFile = readGameFile(shaderFilePath, true);
+	debugLog(LOG_NORMAL, "compiling %s shader \"%s\", size %i\n", shaderTypeString, shaderFilePath, shaderFile.size);
 	
 	// compile shader
 	shader = glCreateShader(shaderType);
-	glShaderSource(shader, 1, (const GLchar**)&shaderContents, NULL);
+	glShaderSource(shader, 1, (const GLchar**)&shaderFile.buffer, NULL);
 	glCompileShader(shader);
 	
 	// check if shader compiled successfully 
@@ -59,8 +46,6 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	}
 	
 	debugLog(LOG_SUCCESS, "%s shader \"%s\" compiled successfully\n", shaderTypeString, shaderFilePath);
-	fclose(filePointer);
-	free(shaderContents);
 	
 	return shader;
 }
@@ -74,16 +59,8 @@ resource* loadShader(const char* name, const char* vertexShaderPath, const char*
 	resource* res = malloc(sizeof(resource));
 
 	// compile vertex and fragment shader
-	char* fullResourcePath = malloc(resDirStrLen + strlen(vertexShaderPath) + 1);
-	sprintf(fullResourcePath, "%s%s", resourceDir, vertexShaderPath);
-
-	GLuint vertexShader = readAndCompileShader(fullResourcePath, GL_VERTEX_SHADER);
-	free(fullResourcePath);
-	fullResourcePath = malloc(resDirStrLen + strlen(fragmentShaderPath) + 1);
-	sprintf(fullResourcePath, "%s%s", resourceDir, fragmentShaderPath);
-
-	GLuint fragmentShader = readAndCompileShader(fullResourcePath, GL_FRAGMENT_SHADER);
-	free(fullResourcePath);
+	GLuint vertexShader = readAndCompileShader(vertexShaderPath, GL_VERTEX_SHADER);
+	GLuint fragmentShader = readAndCompileShader(fragmentShaderPath, GL_FRAGMENT_SHADER);
 	
 	// link them
 	GLuint shaderProgram = glCreateProgram();
