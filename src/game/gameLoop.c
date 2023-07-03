@@ -1,6 +1,7 @@
 #include "gameLoop.h"
 
 #include <stdio.h>
+#include <time.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -18,8 +19,12 @@
 int gameLoop(){
 	double lastTime = glfwGetTime();
 	double deltaTime = 0.0f;
+
+	uint32_t frameCap = 0;
 	
 	initGameState(&gameStateRunning);
+	struct timespec tim, tim2;
+	tim.tv_sec = 0;
 	
 	while(!glfwWindowShouldClose(window)){
 		for(int i = 0; i < CONTROLS_LENGTH; i++){
@@ -44,6 +49,11 @@ int gameLoop(){
 		// update delta time
 		deltaTime = glfwGetTime() - lastTime;
 		lastTime = glfwGetTime();
+
+		if(frameCap != 0) {
+			tim.tv_nsec = 1000000000L/frameCap - deltaTime*1000000000L;
+			nanosleep(&tim, &tim2);
+		}
 	}
 	
 	return 0;
