@@ -56,6 +56,8 @@ gameFile readFileGZ(const char* filename, bool isText) {
 	gzFile file;
 	char* fullResourcePath = malloc(resDirStrLen + strlen(filename) + 1);
 	uint32_t fileSize;
+	int readBytes;
+	int error;
 
 	sprintf(fullResourcePath, "%s%s", resourceDir, filename);
 	file = gzopen(fullResourcePath, "rb");
@@ -63,12 +65,40 @@ gameFile readFileGZ(const char* filename, bool isText) {
 		debugLog(LOG_ERROR, "could not open gzip file \"%s\"\n", filename);
 	}
 
-	uint8_t* buffer = malloc(1024*1024*100); // can't figure out how to get it to get the uncompressed size beforehand so I guess I need to have this allocated before hand. only 1MiB for now but should probably set to a higher value later
+	uint32_t bufferSize = 1024;
+	uint8_t* buffer = malloc(bufferSize); 
 	if(!buffer) {
-		debugLog(LOG_ERROR, "malloc error when trying to allocate 100MiB for the gzip decompression, probably ran out of memory somehow.");
+		debugLog(LOG_ERROR, "got a malloc error when trying to alloc 1KiB for gzip decompression, probably ran out of memory\n");
 	}
 
-	gzread(file, buffer, 1024*1024*100);
+	readBytes = gzread(file, buffer, bufferSize);
+	const char* errstr;
+	errstr = gzerror(file, &error);
+	
+	// really janky solution to not have to allocate a ton of space every time I want to decompress something
+	while(error == Z_OK) {
+		if(error != Z_OK && error != Z_BUF_ERROR) {
+			debugLog(LOG_ERROR, "gzip error: \"%s\"\n", errstr);
+			exit(1);
+		}
+
+		if(error == Z_BUF_ERROR) {
+			break;
+		}
+
+		bufferSize *= 2;
+		buffer = realloc(buffer, bufferSize);
+
+		if(!buffer) {
+			debugLog(LOG_ERROR, "got an error when trying to realloc while decompressing a gzip file, probably ran out of memory\n");
+		}
+
+		readBytes = gzread(file, buffer+bufferSize/2, bufferSize/2);
+		if(readBytes != bufferSize/2) {
+			break;
+		}
+		errstr = gzerror(file, &error);
+	}
 
 	gzseek(file, 0, SEEK_CUR);
 
@@ -102,7 +132,7 @@ gameFile readFileGZ(UNUSED const char* filename, UNUSED bool isText) {
 gameFile readFileBZ2(const char* filename, bool isText) {
 	FILE* file;
 	uint32_t fileSize;
-	int bzerror;
+	int bzerror = -1;
 
 	char* fullResourcePath = malloc(resDirStrLen + strlen(filename) + 1);
 	sprintf(fullResourcePath, "%s%s", resourceDir, filename);
@@ -120,15 +150,34 @@ gameFile readFileBZ2(const char* filename, bool isText) {
 		debugLog(LOG_ERROR, "bzip open error, %i\n", bzerror);
 	}
 
-	uint8_t* buffer = malloc(1024*1024*100);
+	uint32_t bufferSize = 1024;
+	uint8_t* buffer = malloc(bufferSize);
 	if(!buffer) {
-		debugLog(LOG_ERROR, "malloc error when trying to allocate 100MiB for the bzip2 decompression, probably ran out of memory somehow.");
+		debugLog(LOG_ERROR, "malloc error when trying to allocate 1KiB for the bzip2 decompression, probably ran out of memory somehow.");
 	}
 
-	fileSize = BZ2_bzRead(&bzerror, bzFile, buffer, 1024*1024*100);
+	fileSize = BZ2_bzRead(&bzerror, bzFile, buffer, bufferSize);
 	if(bzerror < BZ_OK) {
 		debugLog(LOG_ERROR, "bzip read error, %i\n", bzerror);
 		exit(1);
+	}
+	if(bzerror == BZ_OK) {
+		bufferSize *= 2;
+		buffer = realloc(buffer, bufferSize);
+	}
+	while(bzerror != BZ_STREAM_END) {
+		fileSize += BZ2_bzRead(&bzerror, bzFile, buffer+bufferSize/2, bufferSize/2);
+		if(bzerror < BZ_OK) {
+			debugLog(LOG_ERROR, "bzip read error, %i\n", bzerror);
+			exit(1);
+		}
+		if(bzerror == BZ_OK) {
+			bufferSize *= 2;
+			buffer = realloc(buffer, bufferSize);
+			if(!buffer) {
+				debugLog(LOG_ERROR, "got an error when trying to realloc while decompressing a gzip file, probably ran out of memory\n");
+			}
+		}
 	}
 
 	BZ2_bzReadClose(NULL, bzFile);
