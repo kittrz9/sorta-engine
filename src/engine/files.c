@@ -143,6 +143,8 @@ gameFile readFileBZ2(const char* filename, bool isText) {
 
 	memcpy(allocatedBuf, buffer, fileSize);
 
+	free(buffer);
+
 
 	return (gameFile){.buffer=allocatedBuf, .size=fileSize};
 }
