@@ -130,7 +130,6 @@ gameFile readFileBZ2(const char* filename, bool isText) {
 		debugLog(LOG_ERROR, "bzip read error, %i\n", bzerror);
 		exit(1);
 	}
-	printf("%i\n", fileSize);
 
 	BZ2_bzReadClose(NULL, bzFile);
 

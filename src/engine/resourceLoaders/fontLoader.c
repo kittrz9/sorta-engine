@@ -21,8 +21,7 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 
 	// load font msdf texture
 	debugLog(LOG_NORMAL, "loading font texture \"%s\"\n", fontFilename);
-	char* fullResourcePath = malloc(resDirStrLen + strlen(fontFilename) + 1);
-	sprintf(fullResourcePath, "%s%s", resourceDir, fontFilename);
+	gameFile fontTextureFile = readGameFile(fontFilename, false);
 
 	int width, height, nrChannels;
 	GLuint* texture = malloc(sizeof(GLuint));
@@ -35,7 +34,7 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	unsigned char* data = stbi_load(fullResourcePath, &width, &height, &nrChannels, 4);
+	unsigned char* data = stbi_load_from_memory(fontTextureFile.buffer, fontTextureFile.size, &width, &height, &nrChannels, 4);
 	if(data) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
@@ -48,12 +47,9 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 		free(data);
 		return NULL;
 	}
-	free(fullResourcePath);
 	stbi_image_free(data);
 
 	// load msdf font data
-	FILE* filePointer;
-	unsigned int fileSize;
 	char* fontData;
 	
 	debugLog(LOG_NORMAL, "loading font data \"%s\"\n", fontDataFilename);
@@ -62,7 +58,6 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 	// compressing the csv file with gzip made it go from like 10kb to 1kb
 	gameFile fontDataFile = readGameFile(fontDataFilename, true);
 	fontData = fontDataFile.buffer;
-	fileSize = fontDataFile.size;
 	
 	// parse font data
 	unsigned int lineCount = 0;
