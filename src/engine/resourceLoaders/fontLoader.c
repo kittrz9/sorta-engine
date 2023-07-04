@@ -23,6 +23,10 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 	debugLog(LOG_NORMAL, "loading font texture \"%s\"\n", fontFilename);
 	gameFile fontTextureFile = readGameFile(fontFilename, false);
 
+	if(fontTextureFile.buffer == NULL) {
+		exit(1);
+	}
+
 	int width, height, nrChannels;
 	GLuint* texture = malloc(sizeof(GLuint));
 
@@ -58,6 +62,9 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 	// compressing the csv file with gzip made it go from like 10kb to 1kb
 	gameFile fontDataFile = readGameFile(fontDataFilename, true);
 	fontData = fontDataFile.buffer;
+	if(fontData == NULL) {
+		exit(1);
+	}
 	
 	// parse font data
 	unsigned int lineCount = 0;

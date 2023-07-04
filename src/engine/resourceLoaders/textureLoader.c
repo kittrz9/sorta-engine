@@ -34,14 +34,15 @@ resource* loadTexture(const char* filename){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	
-	unsigned char* data = stbi_load_from_memory(textureFile.buffer, textureFile.size, &width, &height, &nrChannels, 4);
-	if(data){
+	if(textureFile.buffer != NULL){
+		unsigned char* data = stbi_load_from_memory(textureFile.buffer, textureFile.size, &width, &height, &nrChannels, 4);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		// I think this will work since the GLuint is used as sort of a pointer I think???
 		// you'd just need to cast the void* to a GLuint when used
 		texture->size = (vec2f){(float)width, (float)height};
 		res->pointer = texture;
+		stbi_image_free(data);
 	} else {
 		debugLog(LOG_ERROR, "could not load texture at %s, using fallback texture\n", filename);
 		free(res);
@@ -49,7 +50,6 @@ resource* loadTexture(const char* filename){
 		free(texture);
 		return fallbackTexture;
 	}
-	stbi_image_free(data);
 
 	addResourceToList(RES_TYPE_TEXTURE, filename, res);
 	

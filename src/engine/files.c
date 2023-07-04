@@ -63,12 +63,14 @@ gameFile readFileGZ(const char* filename, bool isText) {
 	file = gzopen(fullResourcePath, "rb");
 	if(!file) {
 		debugLog(LOG_ERROR, "could not open gzip file \"%s\"\n", filename);
+		return (gameFile){.buffer=NULL,.size=0};
 	}
 
 	uint32_t bufferSize = 1024;
 	uint8_t* buffer = malloc(bufferSize); 
 	if(!buffer) {
 		debugLog(LOG_ERROR, "got a malloc error when trying to alloc 1KiB for gzip decompression, probably ran out of memory\n");
+		return (gameFile){.buffer=NULL,.size=0};
 	}
 
 	readBytes = gzread(file, buffer, bufferSize);
@@ -79,7 +81,7 @@ gameFile readFileGZ(const char* filename, bool isText) {
 	while(error == Z_OK) {
 		if(error != Z_OK && error != Z_BUF_ERROR) {
 			debugLog(LOG_ERROR, "gzip error: \"%s\"\n", errstr);
-			exit(1);
+			return (gameFile){.buffer=NULL,.size=0};
 		}
 
 		if(error == Z_BUF_ERROR) {
@@ -91,6 +93,7 @@ gameFile readFileGZ(const char* filename, bool isText) {
 
 		if(!buffer) {
 			debugLog(LOG_ERROR, "got an error when trying to realloc while decompressing a gzip file, probably ran out of memory\n");
+			return (gameFile){.buffer=NULL,.size=0};
 		}
 
 		readBytes = gzread(file, buffer+bufferSize/2, bufferSize/2);
@@ -140,6 +143,7 @@ gameFile readFileBZ2(const char* filename, bool isText) {
 	file = fopen(fullResourcePath, "rb");
 	if(!file) {
 		debugLog(LOG_ERROR, "could not open bzip2 file \"%s\"\n", filename);
+		return (gameFile){.buffer=NULL,.size=0};
 	}
 
 	free(fullResourcePath);
@@ -159,7 +163,7 @@ gameFile readFileBZ2(const char* filename, bool isText) {
 	fileSize = BZ2_bzRead(&bzerror, bzFile, buffer, bufferSize);
 	if(bzerror < BZ_OK) {
 		debugLog(LOG_ERROR, "bzip read error, %i\n", bzerror);
-		exit(1);
+		return (gameFile){.buffer=NULL,.size=0};
 	}
 	if(bzerror == BZ_OK) {
 		bufferSize *= 2;
@@ -169,7 +173,7 @@ gameFile readFileBZ2(const char* filename, bool isText) {
 		fileSize += BZ2_bzRead(&bzerror, bzFile, buffer+bufferSize/2, bufferSize/2);
 		if(bzerror < BZ_OK) {
 			debugLog(LOG_ERROR, "bzip read error, %i\n", bzerror);
-			exit(1);
+			return (gameFile){.buffer=NULL,.size=0};
 		}
 		if(bzerror == BZ_OK) {
 			bufferSize *= 2;

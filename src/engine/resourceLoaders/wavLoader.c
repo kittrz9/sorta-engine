@@ -107,6 +107,9 @@ resource* loadWav(const char* filename) {
 
 	gameFile file = readGameFile(filename, false);
 	uint8_t* wavFile = file.buffer;
+	if(wavFile == NULL) {
+		exit(1);
+	}
 
 
 	// parse wav

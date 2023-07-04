@@ -26,6 +26,9 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	
 	// read shader into string
 	gameFile shaderFile = readGameFile(shaderFilePath, true);
+	if(shaderFile.buffer == NULL) {
+		exit(1);
+	}
 	debugLog(LOG_NORMAL, "compiling %s shader \"%s\", size %i\n", shaderTypeString, shaderFilePath, shaderFile.size);
 	
 	// compile shader
