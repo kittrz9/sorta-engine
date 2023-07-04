@@ -12,6 +12,8 @@
 
 #define playerObj ((playerStruct*)(ent->object))
 
+entity* player = NULL;
+
 const vec2f worldSize = {1333.3f, 1000.0f};
 
 vec2f worldToScreenSpace(vec2f inputVector){
@@ -64,6 +66,9 @@ animationFrame jumpAnimation[] = {
 };
 
 entity* createPlayer(vec2f pos, vec2f size){
+	if(player != NULL) {
+		return player;
+	}
 	entity* ent = malloc(sizeof(entity));
 	ent->object = malloc(sizeof(playerStruct));
 
@@ -96,12 +101,16 @@ entity* createPlayer(vec2f pos, vec2f size){
 	ent->destructor = destroyPlayer;
 	
 	pushToEntityList(ent);
+
+	player = ent;
 	
 	return ent;
 }
 
 void destroyPlayer(entity* ent){
 	free(playerObj->animation);
+
+	player = NULL;
 	
 	return;
 }

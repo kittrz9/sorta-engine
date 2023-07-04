@@ -11,48 +11,48 @@
 
 #include "renderer.h"
 
-entity* player;
-resource* defaultFont;
-resource* fontShader;
-resource* fontShader2;
-resource* playerShader;
-resource* backgroundShader;
-//resource* testSample;
-char fpsStr[32];
+struct {
+	resource* defaultFont;
+	resource* fontShader;
+	resource* fontShader2;
+	resource* playerShader;
+	resource* backgroundShader;
+	gameFile testFile;
+	//resource* testSample;
+} gsRunningData; // to avoid scope shenanigans with other game states that might use names like this (though this leads to long struct stuff any time you need this data)
 
-gameFile testFile;
 
 void initGameStateRunning(){
 	player = createPlayer((vec2f){0,0}, (vec2f){175,175});
 
-	defaultFont = loadFont("Terminus", "fonts/Terminus.png", "fonts/Terminus.csv.bz2");
-	fontShader = loadShader("fontShader", "shaders/fontVertexShader.glsl", "shaders/fontFragmentShader.glsl");
-	playerShader = loadShader("playerShader", "shaders/vertexShader.glsl", "shaders/fragmentShader2.glsl");
-	fontShader2 = loadShader("fontShader2", "shaders/fontVertexShader2.glsl", "shaders/fontFragmentShader.glsl");
+	gsRunningData.defaultFont = loadFont("Terminus", "fonts/Terminus.png", "fonts/Terminus.csv.bz2");
+	gsRunningData.fontShader = loadShader("fontShader", "shaders/fontVertexShader.glsl", "shaders/fontFragmentShader.glsl");
+	gsRunningData.playerShader = loadShader("playerShader", "shaders/vertexShader.glsl", "shaders/fragmentShader2.glsl");
+	gsRunningData.fontShader2 = loadShader("fontShader2", "shaders/fontVertexShader2.glsl", "shaders/fontFragmentShader.glsl");
 
-	backgroundShader = loadShader("backgroundShader", "shaders/vertexShader.glsl", "shaders/backgroundFrag.glsl");
+	gsRunningData.backgroundShader = loadShader("backgroundShader", "shaders/vertexShader.glsl", "shaders/backgroundFrag.glsl");
 
-	testFile = readGameFile("test.txt", true);
+	gsRunningData.testFile = readGameFile("test.txt", true);
 
 
 	// I can't think of a good sample to use that wouldn't risk copyright stuff so this isn't included in the git repo and commented out
-//	testSample = loadWav("sounds/24_Moonsong.wav");
+//	gsRunningData.testSample = loadWav("sounds/24_Moonsong.wav");
 
-//	playSample(testSample->pointer, 0.1, 0.5);
-//	playSample(testSample->pointer, 0.1, 1.0);
+//	playSample(gsRunningData.testSample->pointer, 0.1, 0.5);
+//	playSample(gsRunningData.testSample->pointer, 0.1, 1.0);
 	
 	return;
 }
 
 void uninitGameStateRunning(){
-	free(testFile.buffer);
+	free(gsRunningData.testFile.buffer);
 	removeEntity(player);
 
 	return;
 }
 
 int runGameStateRunning(double deltaTime){
-	useShader(backgroundShader);
+	useShader(gsRunningData.backgroundShader);
 	static float backgroundTimer = 0.0f;
 	setShaderUniform1f("time", backgroundTimer);
 	drawFilledRect((rect){0,0,windowWidth,windowHeight}, (colorRGBA){1.0f, 1.0f, 1.0f, 1.0f}, 0.0f);
@@ -60,7 +60,7 @@ int runGameStateRunning(double deltaTime){
 	backgroundTimer += deltaTime;
 	if(backgroundTimer >= 3.1415926535 * 2) { backgroundTimer = 0.0f; }
 
-	useShader(playerShader);
+	useShader(gsRunningData.playerShader);
 	for(entListCurrent = entListHead; entListCurrent != NULL; entListCurrent = entListCurrent->next){
 		// call the entities draw and update functions
 		(*entListCurrent->ent->draw)(entListCurrent->ent);
@@ -71,20 +71,21 @@ int runGameStateRunning(double deltaTime){
 		running = false;
 	}
 	
+	char fpsStr[32];
 	sprintf(fpsStr, "fps: %.2f", 1/deltaTime);
-	useShader(fontShader);
-	drawText(defaultFont, fpsStr, 25.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 0);
+	useShader(gsRunningData.fontShader);
+	drawText(gsRunningData.defaultFont, fpsStr, 25.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 0);
 
 	static float fontTime = 0.0f;
-	useShader(fontShader2);
+	useShader(gsRunningData.fontShader2);
 	setShaderUniform1f("time", fontTime);
-	drawText(defaultFont, testFile.buffer, 100.0, (colorRGBA){1.0f, 0.0f, 1.0f, 1.0f}, windowWidth/2 - 130, windowHeight/2 - 50);
+	drawText(gsRunningData.defaultFont, gsRunningData.testFile.buffer, 100.0, (colorRGBA){1.0f, 0.0f, 1.0f, 1.0f}, windowWidth/2 - 130, windowHeight/2 - 50);
 	fontTime += deltaTime * 0.2;
 	if(fontTime >= 1.0f) { fontTime = 0.0f; }
 
 	sprintf(fpsStr, "%.2f", getEntityProperty(player, PROPERTY_POSITION, vec2f)->x);
-	useShader(fontShader);
-	drawText(defaultFont, fpsStr, 25.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 100);
+	useShader(gsRunningData.fontShader);
+	drawText(gsRunningData.defaultFont, fpsStr, 25.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 100);
 	
 	return 0;
 }

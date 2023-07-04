@@ -8,6 +8,8 @@
 #include "entity.h"
 #include "animation.h"
 
+extern entity* player;
+
 typedef struct {
 	vec2f pos, size, vel;
 	float jumpTimer;
