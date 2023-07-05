@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "resourceManager.h"
 #include "portaudio.h"
 
 #define SAMPLE_RATE 44100
@@ -42,8 +43,8 @@ typedef struct {
 	uint32_t sampleRate;
 } audioSample;
 
-bool playSample(audioSample* sample, float volume, float resampleFactor);
-bool stopSample(audioSample* sample);
+bool playSample(resource* sample, float volume, float resampleFactor);
+bool stopSample(resource* sample);
 
 // portaudio callback function
 int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);

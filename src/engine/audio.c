@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #include "logging.h"
+#include "resourceManager.h"
 
 #include <portaudio.h>
 
@@ -33,18 +34,20 @@ typedef struct {
 } synthListEntry;
 
 synthListEntry activeSynths[AUDIO_CHANNELS];
-audioSample* activeSamples[AUDIO_CHANNELS];
-double sampleOffsets[AUDIO_CHANNELS];
-float sampleVolumes[AUDIO_CHANNELS];
-double resampleFactors[AUDIO_CHANNELS];
+
+typedef struct {
+	audioSample* sample;
+	double offset;
+	float volume;
+	double resampleFactor;
+} sampleListEntry;
+sampleListEntry activeSamples[AUDIO_CHANNELS];
 
 void initAudio() {
 	// initialize the list of active synths and samples
 	for(int i = 0; i < AUDIO_CHANNELS; i++){
 		activeSynths[i].data = NULL;
-		activeSamples[i] = NULL;
-		sampleOffsets[i] = 0;
-		sampleVolumes[i] = 0.0f;
+		activeSamples[i].sample = NULL;
 	}
 	
 	PaError error;
@@ -146,10 +149,10 @@ void uninitAudio() {
 	return;
 }
 
-bool playSample(audioSample* sample, float volume, float resampleFactor) {
+bool playSample(resource* sample, float volume, float resampleFactor) {
 	int freeChannel = -1;
 	for(int i = 0; i < AUDIO_CHANNELS; ++i) {
-		if(activeSamples[i] == NULL) {
+		if(activeSamples[i].sample == NULL) {
 			freeChannel = i;
 			break;
 		}
@@ -157,17 +160,17 @@ bool playSample(audioSample* sample, float volume, float resampleFactor) {
 	if(freeChannel == -1) {
 		return false;
 	}
-	activeSamples[freeChannel] = sample;
-	sampleOffsets[freeChannel] = 0;
-	sampleVolumes[freeChannel] = volume;
-	resampleFactors[freeChannel] = resampleFactor;
+	activeSamples[freeChannel].sample = sample->pointer;
+	activeSamples[freeChannel].offset = 0;
+	activeSamples[freeChannel].volume = volume;
+	activeSamples[freeChannel].resampleFactor = resampleFactor;
 	return true;
 }
 
-bool stopSample(audioSample* sample) {
+bool stopSample(resource* sample) {
 	for(int i = 0; i < AUDIO_CHANNELS; ++i) {
-		if(activeSamples[i] == sample) {
-			activeSamples[i] = NULL;
+		if(activeSamples[i].sample == sample->pointer) {
+			activeSamples[i].sample = NULL;
 			return true;
 		}
 	}
@@ -258,22 +261,22 @@ int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long fra
 			}
 			
 			// process samples
-			if(activeSamples[i] != NULL) {
+			if(activeSamples[i].sample != NULL) {
 				// a lot of this stuff feels really janky and I'm not sure if everything works fine yet, and resampling could also probably be done with linear interpolation stuff to not be as weird
 				// there was one bug that seemed to have to do with floating point imprecision and changing things to doubles *seemed* to have worked but I don't know for sure and it'll probably happen again with a long enough sample
 				// I have no clue what I'm doing lmao
-				uint64_t realOffset = (double)activeSamples[i]->sampleRate * activeSamples[i]->dataLength * sampleOffsets[i];
-				if(realOffset >= activeSamples[i]->dataLength) {
-					activeSamples[i] = NULL;
+				uint64_t realOffset = (double)activeSamples[i].sample->sampleRate * activeSamples[i].sample->dataLength * activeSamples[i].offset;
+				if(realOffset >= activeSamples[i].sample->dataLength) {
+					activeSamples[i].sample = NULL;
 					continue;
 				}
-				audioData->leftPhase += *(activeSamples[i]->data + realOffset) * sampleVolumes[i];
-				audioData->rightPhase += *(activeSamples[i]->data + realOffset + 1) * sampleVolumes[i];
-				sampleOffsets[i] += 2.0/SAMPLE_RATE/activeSamples[i]->dataLength * resampleFactors[i];
-//				audioData->leftPhase += *(activeSamples[i]->data + sampleOffsets[i]++) * sampleVolumes[i];
-//				audioData->rightPhase += *(activeSamples[i]->data + sampleOffsets[i]++) * sampleVolumes[i];
-				if(sampleOffsets[i] >= 1.0f) {
-					activeSamples[i] = NULL;
+				audioData->leftPhase += *(activeSamples[i].sample->data + realOffset) * activeSamples[i].volume;
+				audioData->rightPhase += *(activeSamples[i].sample->data + realOffset + 1) * activeSamples[i].volume;
+				activeSamples[i].offset += 2.0/SAMPLE_RATE/activeSamples[i].sample->dataLength * activeSamples[i].resampleFactor;
+				//audioData->leftPhase += *(activeSamples[i]->data + sampleOffsets[i]++) * sampleVolumes[i];
+				//audioData->rightPhase += *(activeSamples[i]->data + sampleOffsets[i]++) * sampleVolumes[i];
+				if(activeSamples[i].offset >= 1.0f) {
+					activeSamples[i].sample = NULL;
 				}
 			}
 		}
