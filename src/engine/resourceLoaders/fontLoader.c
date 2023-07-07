@@ -45,10 +45,12 @@ resource* loadFont(const char* name, const char* fontFilename, const char* fontD
 		resFont->texture = texture;
 		resFont->textureWidth = width;
 		resFont->textureHeight = height;
+		free(fontTextureFile.buffer);
 	} else {
 		debugLog(LOG_ERROR, "couldn't load font \"%s\" with msdf \"%s\"", name, fontFilename);
 		free(texture);
 		free(data);
+		free(fontTextureFile.buffer);
 		return NULL;
 	}
 	stbi_image_free(data);

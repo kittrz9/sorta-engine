@@ -73,8 +73,8 @@ project "stb_image"
 
 	includedirs { "src/engine/stb_image/", "src/engine/" }
 
-	filter "configurations:Release"
-		optimize "Speed"
+	-- probably best to optimize for size since it takes up a ton of space
+	optimize "Size"
 
 project "resourceLoaders"
 	kind "SharedLib"

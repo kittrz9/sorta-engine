@@ -35,6 +35,7 @@ GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	shader = glCreateShader(shaderType);
 	glShaderSource(shader, 1, (const GLchar**)&shaderFile.buffer, NULL);
 	glCompileShader(shader);
+	free(shaderFile.buffer);
 	
 	// check if shader compiled successfully 
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &shaderCompiled);
