@@ -19,9 +19,10 @@ typedef struct {
 	float timer; // to check if enough time has passed to go to the next frame
 	
 	animationFrame* nextAnim; // the animation to be played after this one is finished (repeats if NULL)
-	uint16_t nextAnimLength; // length of next animation in frames
+	uint16_t nextAnimSize; // length of next animation in frames
 } animationStruct;
 
+animationStruct* createAnimationStruct(resource* texture, animationFrame* anim, uint16_t animSize, animationFrame* nextAnim, uint16_t nextAnimSize);
 void setAnimation(animationStruct* anim, animationFrame* frames, uint16_t length);
 void updateAnimation(animationStruct* anim, double deltaTime);
 

@@ -1,6 +1,21 @@
 #include "animation.h"
 
+#include <stdlib.h>
+
 #include "renderer.h"
+
+animationStruct* createAnimationStruct(resource* texture, animationFrame* anim, uint16_t animSize, animationFrame* nextAnim, uint16_t nextAnimSize) {
+	animationStruct* animStruct = malloc(sizeof(animationStruct));
+	animStruct->texture = texture;
+	animStruct->frames = anim;
+	animStruct->length = animSize;
+	animStruct->nextAnim = nextAnim;
+	animStruct->nextAnimSize = nextAnimSize;
+	animStruct->timer = 0.0f;
+	animStruct->index = 0;
+
+	return animStruct;
+}
 
 void setAnimation(animationStruct* anim, animationFrame* frames, uint16_t length){
 	anim->frames = frames;
@@ -24,7 +39,7 @@ void updateAnimation(animationStruct* anim, double deltaTime){
 		if(anim->index >= anim->length){
 			anim->index = 0;
 			if(anim->nextAnim != NULL){
-				setAnimation(anim, anim->nextAnim, anim->nextAnimLength);
+				setAnimation(anim, anim->nextAnim, anim->nextAnimSize);
 			}
 		}
 	}

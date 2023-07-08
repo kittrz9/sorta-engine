@@ -84,13 +84,7 @@ entity* createPlayer(vec2f pos, vec2f size){
 	
 	playerObj->jumpTimer = 0.0f;
 	
-	playerObj->animation = malloc(sizeof(animationStruct));
-	playerObj->animation->texture = loadTexture("test.png");
-	playerObj->animation->timer = 0.0f;
-	playerObj->animation->index = 0;
-	playerObj->animation->frames = idleAnimation;
-	playerObj->animation->length = sizeof(idleAnimation)/sizeof(animationFrame);
-	playerObj->animation->nextAnim = NULL;
+	playerObj->animation = createAnimationStruct(loadTexture("test.png"), idleAnimation, sizeof(idleAnimation)/sizeof(animationFrame), NULL, 0);
 	
 	playerObj->moving = false;
 	playerObj->facingLeft = false;
