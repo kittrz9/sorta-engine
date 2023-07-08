@@ -6,3 +6,4 @@ build/
 *.wav
 Makefile
 *.make
+massif*

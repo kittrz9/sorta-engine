@@ -76,4 +76,9 @@ void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color);
 
 void drawText(resource* fontRes, char* text, float size, colorRGBA color, float x, float y);
 
+#define COLOR_RGBA_WHITE (colorRGBA){1.0f,1.0f,1.0f,1.0f}
+#define COLOR_RGBA_RED   (colorRGBA){1.0f,0.0f,0.0f,1.0f}
+#define COLOR_RGBA_GREEN (colorRGBA){0.0f,1.0f,0.0f,1.0f}
+#define COLOR_RGBA_BLUE  (colorRGBA){0.0f,0.0f,1.0f,1.0f}
+
 #endif

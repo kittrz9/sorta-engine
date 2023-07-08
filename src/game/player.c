@@ -122,16 +122,8 @@ void drawPlayer(entity* ent){
 	// I hate doing this lmao I should probably change stuff to use actual window coordinates
 	rect drawnRect = { drawnPos.x, drawnPos.y, (drawnSize.x+1)/2, (drawnSize.y+1)/2 };
 
-	// flip the texture rect if facing left
-	// should probably move stuff to a "drawAnimation" function but I think that'd mess with me being able to do this
-	// this is also a bit more complex than it used to be since I think flipping drawnSize.x doesn't work anymore since some stuff was moved to renderer.c
-	rect textureRect = playerObj->animation->frames[playerObj->animation->index].textureRect;
-	if(playerObj->facingLeft) {
-		textureRect.w *= -1;
-		textureRect.x += textureRect.w;
-	}
-
-	drawTexture(drawnRect, textureRect, (colorRGBA){1.0f,1.0f,1.0f,1.0f}, 0.0f, playerObj->animation->texture);
+	// the weird ANIM_FLIP_X * playerObj->facingLeft is probably dumb since it'd probably get compiled like that if it was just an if statement, it works because multiplying by a bool is the same as (boolVar ? value : 0)
+	drawAnimation(playerObj->animation, drawnRect, ANIM_FLIP_X * playerObj->facingLeft, COLOR_RGBA_WHITE);
 	
 	return;
 }

@@ -25,4 +25,10 @@ typedef struct {
 void setAnimation(animationStruct* anim, animationFrame* frames, uint16_t length);
 void updateAnimation(animationStruct* anim, double deltaTime);
 
+typedef enum {
+	ANIM_FLIP_X = 1 << 0,
+	ANIM_FLIP_Y = 1 << 1,
+} flipAnim;
+
+void drawAnimation(animationStruct* anim, rect drawnRect, flipAnim flip, colorRGBA color);
 #endif

@@ -1,5 +1,7 @@
 #include "animation.h"
 
+#include "renderer.h"
+
 void setAnimation(animationStruct* anim, animationFrame* frames, uint16_t length){
 	anim->frames = frames;
 	anim->length = length;
@@ -27,5 +29,20 @@ void updateAnimation(animationStruct* anim, double deltaTime){
 		}
 	}
 	
+	return;
+}
+
+void drawAnimation(animationStruct* anim, rect drawnRect, flipAnim flip, colorRGBA color) {
+	rect textureRect = anim->frames[anim->index].textureRect;
+	if(flip & ANIM_FLIP_X) {
+		textureRect.w *= -1;
+		textureRect.x += textureRect.w;
+	}
+	if(flip & ANIM_FLIP_Y) {
+		textureRect.h *= -1;
+		textureRect.y += textureRect.h;
+	}
+
+	drawTexture(drawnRect, textureRect, color, 0, anim->texture);
 	return;
 }
