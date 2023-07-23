@@ -61,11 +61,7 @@ int runGameStateRunning(double deltaTime){
 	if(backgroundTimer >= 3.1415926535 * 2) { backgroundTimer = 0.0f; }
 
 	useShader(gsRunningData.playerShader);
-	for(entListCurrent = entListHead; entListCurrent != NULL; entListCurrent = entListCurrent->next){
-		// call the entities draw and update functions
-		(*entListCurrent->ent->draw)(entListCurrent->ent);
-		(*entListCurrent->ent->update)(entListCurrent->ent, deltaTime);
-	}
+	processEntities(deltaTime);
 	
 	if(keys[KEY_EXIT].held){
 		running = false;

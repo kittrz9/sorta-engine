@@ -51,6 +51,8 @@ extern entListNode* entListCurrent;
 void pushToEntityList(entity* ent);
 void removeEntity(entity* ent);
 
+void processEntities(double deltaTime);
+
 void destroyEntityList();
 
 void initializeEntityPropertyList(entity* ent);

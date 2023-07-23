@@ -85,6 +85,14 @@ void removeEntity(entity* ent){
 	debugLog(LOG_ERROR, "could not find entity at %p in the list\n", (void*)ent);
 }
 
+void processEntities(double deltaTime) {
+	for(entListCurrent = entListHead; entListCurrent != NULL; entListCurrent = entListCurrent->next){
+		// call the entities draw and update functions
+		(*entListCurrent->ent->draw)(entListCurrent->ent);
+		(*entListCurrent->ent->update)(entListCurrent->ent, deltaTime);
+	}
+}
+
 void destroyEntityList(){
 	entListNode* temp;
 	
