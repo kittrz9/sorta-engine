@@ -318,9 +318,9 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 	// really need to change this so I can use multiple textures per batch but for now this will work
 	if(textureRes != currentTexture) {
 		switchVertexBuffer(&textureVertexBuffer);
+		flushVertexBuffer(&textureVertexBuffer);
 		currentTexture = textureRes;
 		glBindTexture(GL_TEXTURE_2D, ((textureStruct*)textureRes->pointer)->id);
-		flushVertexBuffer(&textureVertexBuffer);
 	}
 
 	if(textureRes == fallbackTexture) {
