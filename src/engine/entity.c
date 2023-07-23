@@ -49,7 +49,7 @@ void removeEntity(entity* ent){
 	}
 	
 	// loop through the entire list to find the entity to be removed
-	for(entListCurrent = entListHead; entListCurrent != NULL; entListCurrent = entListHead){
+	for(entListCurrent = entListHead; entListCurrent != NULL; entListCurrent = entListCurrent->next){
 		if(entListCurrent->ent == ent){
 			// free entity
 			(*ent->destructor)();
