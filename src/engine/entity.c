@@ -86,10 +86,17 @@ void removeEntity(entity* ent){
 }
 
 void processEntities(double deltaTime) {
-	for(entListCurrent = entListHead; entListCurrent != NULL; entListCurrent = entListCurrent->next){
-		// call the entities draw and update functions
-		(*entListCurrent->ent->draw)(entListCurrent->ent);
-		(*entListCurrent->ent->update)(entListCurrent->ent, deltaTime);
+	entListNode* e = entListHead; // avoiding using entListCurrent since removeEntity also uses that, idk why I have it set to only use that specific variable
+	while(e != NULL) {
+		(*e->ent->draw)(e->ent);
+		(*e->ent->update)(e->ent, deltaTime);
+
+		// temp variable so that if it does delete itself it can still move on
+		entListNode* nextNode = e->next;
+		if(e->ent->markedForDeletion) {
+			removeEntity(e->ent);
+		}
+		e = nextNode;
 	}
 }
 

@@ -2,6 +2,7 @@
 #define ENTITY_H
 
 #include <stddef.h>
+#include <stdbool.h>
 
 #define MAX_PROPERTIES 128
 
@@ -36,6 +37,9 @@ typedef struct entity {
 	void (*destructor)();
 	
 	// having a pointer to the specific node in the entity list the entity is in would probably speed up things a lot since you wouldn't need to have to loop through the list to find it but the entListNode type requires the entity struct to be defined while also having the entity struct need to have the entListNode type defined
+	
+
+	bool markedForDeletion;
 } entity;
 
 typedef struct entListNode {
