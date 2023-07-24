@@ -74,7 +74,13 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 void drawLines(const float* linePoints, unsigned int count, colorRGBA color);
 void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color);
 
-void drawText(resource* fontRes, char* text, float size, colorRGBA color, float x, float y);
+typedef enum {
+	TEXT_ALIGN_LEFT,
+	TEXT_ALIGN_CENTER,
+	TEXT_ALIGN_RIGHT,
+} TEXT_ALIGN;
+void drawText(resource* fontRes, char* text, float size, colorRGBA color, float x, float y, TEXT_ALIGN align);
+float getTextWidth(resource* fontRes, char* text, float size);
 
 #define COLOR_RGBA_WHITE (colorRGBA){1.0f,1.0f,1.0f,1.0f}
 #define COLOR_RGBA_RED   (colorRGBA){1.0f,0.0f,0.0f,1.0f}

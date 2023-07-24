@@ -404,9 +404,9 @@ void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color) 
 	return;
 }
 
-void drawText(resource* fontRes, char* text, float size, colorRGBA color, float x, float y) {
+void drawText(resource* fontRes, char* text, float size, colorRGBA color, float x, float y, TEXT_ALIGN align) {
 	currentFontRes = fontRes;
-#define currentFont ((font*)fontRes->pointer)
+	font* currentFont = ((font*)fontRes->pointer);
 	if(fontRes->type != RES_TYPE_FONT) {
 		debugLog(LOG_ERROR, "resource \"%s\" is not a font\n", fontRes->name);
 		exit(1);
@@ -419,6 +419,17 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 	unsigned int verticesLength = 0;
 
 	vertex textVertices[MAX_QUADS * 4];
+
+	switch(align) {
+		case TEXT_ALIGN_CENTER:
+			x -= getTextWidth(fontRes, text, size)/2.0f;
+			break;
+		case TEXT_ALIGN_RIGHT:
+			x += getTextWidth(fontRes, text, size)/2.0f;
+			break;
+		default:
+			break;
+	}
 	
 	float xPos = x;
 	float yPos = y;
@@ -475,4 +486,16 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 	//switchVertexBuffer(&defaultVertexBuffer);
 
 	return;
+}
+
+float getTextWidth(resource* fontRes, char* text, float size) {
+	float width = 0.0f;
+	font* currentFont = ((font*)fontRes->pointer);
+	// could probably do something to make you not need to loop throught the string twice but whatever
+	for(size_t i = 0; i < strlen(text); ++i) {
+		fontChar currentCharData = currentFont->chars[(unsigned int)text[i]];
+		width += currentCharData.advance * size;
+	}
+
+	return width;
 }
