@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "logging.h"
 
@@ -35,30 +37,27 @@ void setResourceDir(char* path) {
 	return;
 }
 
-void initResourceManager(char* path) {
+void initResourceManager() {
 	char str[256]; // I probably shouldn't hard code this to 255 chars long and make this dynamically allocated too but whatever
-	// find where the executable is being ran from
-	if(path[0] == '.') {
-		// if being ran with a relative path it's probably being ran from the project root
-		char* pwd = getenv("PWD");
-		if(pwd == NULL) {
-			debugLog(LOG_ERROR, "could not get current working directory\n");
-			exit(1);
-		}
-		if(strlen(pwd) > 249) {
-			debugLog(LOG_ERROR, "pwd is too long (max is 249)\n");
-			exit(1);
-		}
-		// should probably do some extra error checking to make sure it's in the project root, but I'm probably the only one who's gonna run it like this
-		strcpy(str, pwd);
+	struct stat sb;
+	getcwd(str, 256);
+	// only does this 3 times since going until it reaches / seems weird
+	for(uint8_t i = 0; i < 3; ++i) {
+		printf("%s\n", str);
 		strcat(str, "/res/");
-	} else {
-		if(strlen(path) > 255) {
-			debugLog(LOG_ERROR, "resource path is too long (max is 255)\n"); 
-			exit(1);
+		if(stat(str,&sb) == 0 && S_ISDIR(sb.st_mode)) {
+			break;
 		}
-		strcpy(str, path);
-		strcpy(strstr(str, "build"), "res/\0"); // really weird lmao
+		char* c = strstr(str, "/res/");
+		do {
+			--c;
+		}while(*c != '/' && *c != '\\');// probably bad if anyone runs this in windows or in a folder with either of these characters 
+		
+		*c = '\0';
+	}
+	if(stat(str,&sb) != 0 || !S_ISDIR(sb.st_mode)) {
+		debugLog(LOG_ERROR, "could not find resource path (failed with \"%s\")\n", str);
+		exit(1);
 	}
 	setResourceDir(str);
 }

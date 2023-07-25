@@ -13,12 +13,12 @@
 #include "logging.h"
 #include "audio.h"
 
-int main(UNUSED int argc, char** argv, UNUSED char** envp){
+int main(UNUSED int argc, UNUSED char** argv, UNUSED char** envp){
 	// initialize the log file
 	initLogFile();
 
 	// initialize the resource manager
-	initResourceManager(argv[0]);
+	initResourceManager();
 	
 	// initialize the renderer
 	initRenderer();
