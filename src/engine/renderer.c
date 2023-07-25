@@ -425,7 +425,7 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 			x -= getTextWidth(fontRes, text, size)/2.0f;
 			break;
 		case TEXT_ALIGN_RIGHT:
-			x += getTextWidth(fontRes, text, size)/2.0f;
+			x -= getTextWidth(fontRes, text, size);
 			break;
 		default:
 			break;
