@@ -46,6 +46,8 @@ gameFile readGameFile(const char* filename, bool isText) {
 	}
 	fread(buffer, fileSize, 1, filePointer);
 
+	fclose(filePointer);
+
 	return (gameFile){.buffer = buffer, .size = fileSize+1};
 }
 
@@ -186,6 +188,8 @@ gameFile readFileBZ2(const char* filename, bool isText) {
 
 	BZ2_bzReadClose(NULL, bzFile);
 
+	fclose(file);
+
 	void* allocatedBuf;
 	if(isText) {
 		allocatedBuf = malloc(fileSize+1);
@@ -197,7 +201,6 @@ gameFile readFileBZ2(const char* filename, bool isText) {
 	memcpy(allocatedBuf, buffer, fileSize);
 
 	free(buffer);
-
 
 	return (gameFile){.buffer=allocatedBuf, .size=fileSize};
 }
