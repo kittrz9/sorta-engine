@@ -49,8 +49,8 @@ bool stopSample(resource* sample);
 // portaudio callback function
 int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData);
 
-void initAudio();
-void uninitAudio();
+void initAudio(void);
+void uninitAudio(void);
 
 float synthSine(double time);
 float synthSquare(double time);

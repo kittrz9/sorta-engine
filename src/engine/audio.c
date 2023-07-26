@@ -43,7 +43,7 @@ typedef struct {
 } sampleListEntry;
 sampleListEntry activeSamples[AUDIO_CHANNELS];
 
-void initAudio() {
+void initAudio(void) {
 	// initialize the list of active synths and samples
 	for(int i = 0; i < AUDIO_CHANNELS; i++){
 		activeSynths[i].data = NULL;
@@ -118,7 +118,7 @@ void initAudio() {
 	return;
 }
 
-void uninitAudio() {
+void uninitAudio(void) {
 	PaError error;
 	
 	debugLog(LOG_NORMAL, "uninitializing audio\n");

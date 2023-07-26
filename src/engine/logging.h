@@ -10,8 +10,8 @@ typedef enum {
 	LOG_WARN,
 } LOG_TYPE;
 
-void initLogFile();
-void closeLogFile();
+void initLogFile(void);
+void closeLogFile(void);
 
 // naming it this so it doesn't conflict with the log fucntion from math.h
 void debugLog(LOG_TYPE type, const char* fmt, ...);

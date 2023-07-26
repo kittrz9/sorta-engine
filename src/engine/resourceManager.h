@@ -10,8 +10,8 @@ typedef enum {
 } RESOURCE_TYPE;
 
 void setResourceDir(char* path);
-void initResourceManager();
-void uninitResourceManager();
+void initResourceManager(void);
+void uninitResourceManager(void);
 extern char* resourceDir;
 extern unsigned int resDirStrLen;
 
@@ -27,7 +27,7 @@ resource* checkIfAlreadyLoaded(const char* filename);
 void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res);
 
 // destroys every resource
-void clearResourceList();
+void clearResourceList(void);
 
 // include the header for every resource loader here
 #include "resourceLoaders/textureLoader.h"

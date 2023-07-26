@@ -22,7 +22,7 @@ struct {
 } gsRunningData; // to avoid scope shenanigans with other game states that might use names like this (though this leads to long struct stuff any time you need this data)
 
 
-void initGameStateRunning(){
+void initGameStateRunning(void){
 	player = createPlayer((vec2f){0,0}, (vec2f){175,175});
 
 	gsRunningData.defaultFont = loadFont("Terminus", "fonts/Terminus.png", "fonts/Terminus.csv.bz2");
@@ -44,7 +44,7 @@ void initGameStateRunning(){
 	return;
 }
 
-void uninitGameStateRunning(){
+void uninitGameStateRunning(void){
 	free(gsRunningData.testFile.buffer);
 	removeEntity(player);
 

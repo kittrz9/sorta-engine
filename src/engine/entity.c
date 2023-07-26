@@ -100,7 +100,7 @@ void processEntities(double deltaTime) {
 	}
 }
 
-void destroyEntityList(){
+void destroyEntityList(void){
 	entListNode* temp;
 	
 	for(entListCurrent = entListHead; entListCurrent != NULL;  ){

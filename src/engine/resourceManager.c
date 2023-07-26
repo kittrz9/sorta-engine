@@ -37,7 +37,7 @@ void setResourceDir(char* path) {
 	return;
 }
 
-void initResourceManager() {
+void initResourceManager(void) {
 	char str[256]; // I probably shouldn't hard code this to 255 chars long and make this dynamically allocated too but whatever
 	struct stat sb;
 	getcwd(str, 256);
@@ -141,7 +141,7 @@ void destroyResource(resource* res){
 	return;
 }
 
-void clearResourceList(){
+void clearResourceList(void){
 	if(loadedResources < 1){
 		debugLog(LOG_ERROR, "no resources loaded\n");
 		return;
@@ -163,7 +163,7 @@ void clearResourceList(){
 	return;
 }
 
-void uninitResourceManager() {
+void uninitResourceManager(void) {
 	clearResourceList();
 
 	free(resourceDir);

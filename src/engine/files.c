@@ -99,7 +99,7 @@ gameFile readFileGZ(const char* filename, bool isText) {
 		}
 
 		readBytes = gzread(file, buffer+bufferSize/2, bufferSize/2);
-		if(readBytes != bufferSize/2) {
+		if((uint32_t)readBytes != bufferSize/2) {
 			break;
 		}
 		errstr = gzerror(file, &error);

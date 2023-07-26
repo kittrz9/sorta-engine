@@ -20,7 +20,7 @@ const char* logTypeStrings[] = {
 	[LOG_WARN]    = "WARNING: ",
 };
 
-void initLogFile(){
+void initLogFile(void){
 	logFile = fopen("log-file.txt", "w");
 	
 	if(!logFile){
@@ -30,7 +30,7 @@ void initLogFile(){
 	return;
 }
 
-void closeLogFile(){
+void closeLogFile(void){
 	debugLog(LOG_NORMAL, "closing log file\n");
 	fclose(logFile);
 	

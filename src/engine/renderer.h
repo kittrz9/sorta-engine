@@ -36,13 +36,13 @@ typedef struct {
 // draw a vertex buffer to the screen and clear the buffer (really only for dynamic buffers)
 void flushVertexBuffer(vertexBuffer* buf);
 // called at the end of the frame
-void flushAllVertexBuffers();
+void flushAllVertexBuffers(void);
 
 // color that the screen will be clear to
 extern colorRGBA screenClearColor;
 
-void initRenderer();
-void uninitRenderer();
+void initRenderer(void);
+void uninitRenderer(void);
 
 // location of the uniform things in the shaders
 extern GLint vertexAngleLocation;
@@ -60,7 +60,7 @@ void setShaderUniform4f(const char* name, float value1, float value2, float valu
 void setShaderUniform1ui(const char* name, unsigned int value);
 
 void changeClearScreenColor(colorRGBA color);
-void clearScreen();
+void clearScreen(void);
 
 void useShader(resource* shaderRes);
 

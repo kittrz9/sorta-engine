@@ -145,13 +145,13 @@ void flushVertexBuffer(vertexBuffer* buf) {
 	return;
 }
 // called at the end of the frame
-void flushAllVertexBuffers() {
+void flushAllVertexBuffers(void) {
 	flushVertexBuffer(&textureVertexBuffer);
 	flushVertexBuffer(&defaultVertexBuffer);
 	flushVertexBuffer(&textVertexBuffer);
 }
 
-void initRenderer(){
+void initRenderer(void){
 	debugLog(LOG_NORMAL, "initializing renderer\n"); 
 	// init GLFW
 	debugLog(LOG_NORMAL, "initializing GLFW\n");
@@ -236,7 +236,7 @@ void initRenderer(){
 	return;
 }
 
-void uninitRenderer(){
+void uninitRenderer(void){
 	glDeleteVertexArrays(1, &vertexArrayObject);
 	glDeleteBuffers(1, &defaultVertexBuffer.bufferID);
 	glDeleteBuffers(1, &textVertexBuffer.bufferID);
@@ -250,7 +250,7 @@ void changeClearScreenColor(colorRGBA color) {
 	screenClearColor = color;
 }
 
-void clearScreen() {
+void clearScreen(void) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glClearColor(screenClearColor.r, screenClearColor.g, screenClearColor.b, screenClearColor.a);
 }

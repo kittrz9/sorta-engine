@@ -16,7 +16,7 @@
 #include "gameStates.h"
 #include "gameStateRunning.h"
 
-int gameLoop(){
+int gameLoop(void){
 	double lastTime = glfwGetTime();
 	double deltaTime = 0.0f;
 

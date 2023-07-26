@@ -61,7 +61,7 @@ project "openGL-test"
 	filter { "configurations:Release" }
 		optimize "Speed"
 
--- commented out because dynamic linking this stuff right now because I probably wont actually do whatever I was thinking about
+-- commented out because I probably wont actually do whatever I was thinking about with dynamic linking
 -- maybe later I'll try doing weird shenanigans with hot code reloading like in this: https://www.youtube.com/watch?v=Y57ruDOwH1g
 
 --project "stb_image"

@@ -4,8 +4,8 @@
 #include <stdbool.h>
 
 typedef struct {
-	void (*initState)(); // function pointer to function that initializes the game state
-	void (*uninitState)(); // function pointer to function that uninitializes the game state 
+	void (*initState)(void); // function pointer to function that initializes the game state
+	void (*uninitState)(void); // function pointer to function that uninitializes the game state 
 	
 	int (*stateLoop)(double); // function pointer called every game loop 
 } gameState;

@@ -57,7 +57,7 @@ void removeEntity(entity* ent);
 
 void processEntities(double deltaTime);
 
-void destroyEntityList();
+void destroyEntityList(void);
 
 void initializeEntityPropertyList(entity* ent);
 entityProperty* createEntityProperty(entity* ent, ENTITY_PROPERTY property, size_t bytes);

@@ -3,8 +3,8 @@
 
 #include "gameStates.h"
 
-void initGameStateRunning();
-void uninitGameStateRunning();
+void initGameStateRunning(void);
+void uninitGameStateRunning(void);
 int runGameStateRunning(double deltaTime);
 
 static const gameState gameStateRunning = {
