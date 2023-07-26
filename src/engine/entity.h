@@ -34,7 +34,7 @@ typedef struct entity {
 	void (*update)(struct entity*, double);
 	
 	// used when freeing the entity to like free resources that aren't being used anymore
-	void (*destructor)();
+	void (*destructor)(struct entity*);
 	
 	// having a pointer to the specific node in the entity list the entity is in would probably speed up things a lot since you wouldn't need to have to loop through the list to find it but the entListNode type requires the entity struct to be defined while also having the entity struct need to have the entListNode type defined
 	

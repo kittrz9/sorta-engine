@@ -52,7 +52,7 @@ void removeEntity(entity* ent){
 	for(entListCurrent = entListHead; entListCurrent != NULL; entListCurrent = entListCurrent->next){
 		if(entListCurrent->ent == ent){
 			// free entity
-			(*ent->destructor)();
+			(*ent->destructor)(ent);
 			free(ent->object);
 			free(ent);
 			

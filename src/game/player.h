@@ -27,6 +27,6 @@ void drawPlayer(entity* ent);
 void updatePlayerInAir(entity* ent, double deltaTime);
 void updatePlayerOnGround(entity* ent, double deltaTime);
 
-void destroyPlayer();
+void destroyPlayer(entity* ent);
 
 #endif

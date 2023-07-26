@@ -293,7 +293,7 @@ float synthSquare(double time) {
 	return (time < PI ? -1.0 : 1.0);
 }
 float synthNoise(UNUSED double time) {
-	return ((float)rand()/RAND_MAX);
+	return ((float)rand()/(float)RAND_MAX);
 }
 float synthSaw(double time) {
 	return (time/PI) - 1; // input is never above 2pi
