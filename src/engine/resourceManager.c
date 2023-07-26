@@ -43,7 +43,6 @@ void initResourceManager() {
 	getcwd(str, 256);
 	// only does this 3 times since going until it reaches / seems weird
 	for(uint8_t i = 0; i < 3; ++i) {
-		printf("%s\n", str);
 		strcat(str, "/res/");
 		if(stat(str,&sb) == 0 && S_ISDIR(sb.st_mode)) {
 			break;
@@ -51,7 +50,9 @@ void initResourceManager() {
 		char* c = strstr(str, "/res/");
 		do {
 			--c;
-		}while(*c != '/' && *c != '\\');// probably bad if anyone runs this in windows or in a folder with either of these characters 
+		}while(*c != '/' && *c != '\\' && c > str);// probably bad if anyone runs this in windows or in a folder with either of these characters 
+
+		if(c <= str) { break; } // just in case it gets below /
 		
 		*c = '\0';
 	}
