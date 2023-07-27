@@ -37,7 +37,7 @@ done
 # Compile
 for d in ${DIRS[@]}; do
 	for f in src/"$d"/*.c; do
-		$CC $CFLAGS $DEFINES $INCLUDES -o $(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") -c $f
+		$CC $CFLAGS $DEFINES $INCLUDES -o $(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") -c $f &
 		OBJS+="$(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") "
 	done
 done
