@@ -21,10 +21,10 @@ int gameLoop(void){
 	double deltaTime = 0.0f;
 
 	uint32_t frameCap = 0;
-	
-	initGameState(&gameStateRunning);
 	struct timespec tim, tim2;
 	tim.tv_sec = 0;
+	
+	initGameState(&gameStateRunning);
 	
 	while(!glfwWindowShouldClose(window)){
 		for(int i = 0; i < CONTROLS_LENGTH; i++){

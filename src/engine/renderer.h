@@ -82,9 +82,9 @@ typedef enum {
 void drawText(resource* fontRes, char* text, float size, colorRGBA color, float x, float y, TEXT_ALIGN align);
 float getTextWidth(resource* fontRes, char* text, float size);
 
-#define COLOR_RGBA_WHITE (colorRGBA){1.0f,1.0f,1.0f,1.0f}
-#define COLOR_RGBA_RED   (colorRGBA){1.0f,0.0f,0.0f,1.0f}
-#define COLOR_RGBA_GREEN (colorRGBA){0.0f,1.0f,0.0f,1.0f}
-#define COLOR_RGBA_BLUE  (colorRGBA){0.0f,0.0f,1.0f,1.0f}
+static const colorRGBA COLOR_RGBA_WHITE  = {1.0f,1.0f,1.0f,1.0f};
+static const colorRGBA COLOR_RGBA_RED    = {1.0f,0.0f,0.0f,1.0f};
+static const colorRGBA COLOR_RGBA_GREEN  = {0.0f,1.0f,0.0f,1.0f};
+static const colorRGBA COLOR_RGBA_BLUE   = {0.0f,0.0f,1.0f,1.0f};
 
 #endif

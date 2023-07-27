@@ -1,8 +1,10 @@
 #version 330
 layout (location = 0) in vec2 vp;
 layout (location = 1) in vec2 textureCoords;
+layout (location = 2) in vec4 inColor;
 
 out vec2 texCoord;
+out vec4 color;
 uniform vec2 windowSize;
 uniform float time;
 
@@ -24,4 +26,5 @@ void main() {
 	gl_Position.xyz = translatePoint(gl_Position.xyz, 0.02f*rotatePoint(vec3(1.0f), time*3.14159f*2.0f + vp.x*10.0f + vp.y*10.0f).xy);
 
 	texCoord = textureCoords;
+	color = inColor;
 }

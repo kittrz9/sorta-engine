@@ -78,10 +78,6 @@ int runGameStateRunning(double deltaTime){
 	drawText(gsRunningData.defaultFont, gsRunningData.testFile.buffer, 100.0, (colorRGBA){1.0f, 0.0f, 1.0f, 1.0f}, windowWidth/2, windowHeight/2 - 50, TEXT_ALIGN_CENTER);
 	fontTime += deltaTime * 0.2;
 	if(fontTime >= 1.0f) { fontTime = 0.0f; }
-
-	sprintf(fpsStr, "%.2f", getEntityProperty(player, PROPERTY_POSITION, vec2f)->x);
-	useShader(gsRunningData.fontShader);
-	drawText(gsRunningData.defaultFont, fpsStr, 25.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 100, TEXT_ALIGN_LEFT);
 	
 	return 0;
 }

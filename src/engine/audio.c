@@ -207,7 +207,14 @@ bool playSynth(synthData* data){
 #define _USE_MATH_DEFINES
 #endif
 
+// M_PI isn't standard apparently 
+// https://en.wikibooks.org/wiki/C_Programming/math.h#Mathematical_constants_(not_standard)
+#ifndef M_PI
+#define PI 3.14159265358979323846f
+#else
 #define PI  M_PI
+#endif
+
 #define PI2 (PI*2)
 
 int audioCallback(const void* inputBuffer, void* outputBuffer, unsigned long frameCount, UNUSED const PaStreamCallbackTimeInfo* timeInfo, UNUSED PaStreamCallbackFlags statusFlags, void* userData) {

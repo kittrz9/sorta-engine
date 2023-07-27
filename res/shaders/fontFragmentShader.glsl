@@ -1,7 +1,7 @@
 #version 330
 
 in vec2 texCoord;
-uniform vec4 inputColor;
+in vec4 color;
 uniform sampler2D inputTexture;
 uniform vec2 windowSize;
 
@@ -26,5 +26,5 @@ void main() {
 	float sd = median(msd.r, msd.g, msd.b);
 	float screenPxDistance = screenPxRange()*(sd - 0.5);
 	float opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);
-	fragColor = inputColor * vec4(1.0,1.0,1.0,opacity);
+	fragColor = color * vec4(1.0,1.0,1.0,opacity);
 }

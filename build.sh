@@ -11,7 +11,7 @@ set -xe
 
 LIBS="-lGLEW -lEGL -lGL -lGLU -lOpenGL -lglfw -lportaudio -lm -lz -lbz2"
 INCLUDES="-Isrc/engine/stb_image -Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates"
-CFLAGS="-m64 -g -Wall -Wextra -Wpedantic"
+CFLAGS="-g -Wall -Wextra -Wpedantic"
 DEFINES="-DUNUSED=__attribute__((unused))"
 
 [ "$CC" == tcc ] && DEFINES="$DEFINES -DSTBI_NO_SIMD"
@@ -37,7 +37,7 @@ done
 # Compile
 for d in ${DIRS[@]}; do
 	for f in src/"$d"/*.c; do
-		$CC $CFLAGS $DEFINES $INCLUDES -o $(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") -c $f &
+		$CC $CFLAGS $DEFINES $INCLUDES -o $(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") -c $f
 		OBJS+="$(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") "
 	done
 done

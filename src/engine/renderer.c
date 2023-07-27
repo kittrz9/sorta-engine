@@ -404,7 +404,20 @@ void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color) 
 	return;
 }
 
-void drawText(resource* fontRes, char* text, float size, colorRGBA color, float x, float y, TEXT_ALIGN align) {
+void drawText(resource* fontRes, char* text, float size, const colorRGBA color, float x, float y, TEXT_ALIGN align) {
+#ifdef __TINYC__
+	// setting the alpha to always be 1.0f fixes text not rendering at all when compiled with tcc
+	// but COLOR_RGBA_BLUE specifically seems to always break and always setting alpha to 1 isn't ideal.
+	// it also seems like it's specifically calling this function that breaks it??? 
+	// the values of the color are fine before and after this is called
+	// but printf debugging here shows that it will just get everything set to 0.0f for some reason.
+	//
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!
+	// !!THIS NEEDS TO BE FIXED!!
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!
+	//
+	color.a = 1.0f; 
+#endif
 	currentFontRes = fontRes;
 	font* currentFont = ((font*)fontRes->pointer);
 	if(fontRes->type != RES_TYPE_FONT) {
@@ -468,14 +481,13 @@ void drawText(resource* fontRes, char* text, float size, colorRGBA color, float 
 				textVertices[(j*4)+k].position.y = (points[k].position.y * drawnH) + drawnY;
 				textVertices[(j*4)+k].texCoords.x = charAtlasX + (points[k].texCoords.x * charAtlasW);
 				textVertices[(j*4)+k].texCoords.y = charAtlasY + ((1.0f -points[k].texCoords.y) * charAtlasH); // characters get rendered upside down unless I do this
+				textVertices[(j*4)+k].color = color;
 			}
 
 			++j;
 		}
 		xPos += currentCharData.advance * size;
 	}
-
-	setShaderUniform4f("inputColor", color.r, color.g, color.b, color.a);
 	
 	// changing it to do this instead made it drop the framerate a bit with only a few calls to drawText, but it seems to be more efficient for more calls to drawText (like might be better when drawing UI elements)
 	addVerticesToVertexBuffer(&textVertexBuffer, textVertices, 4*verticesLength);
