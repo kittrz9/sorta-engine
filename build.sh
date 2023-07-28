@@ -35,12 +35,23 @@ for d in ${DIRS[@]}; do
 done
 
 # Compile
+
+# just define DEBUG in any way to make sure it exits on compilation error
+if [ -z $DEBUG ]; then
 for d in ${DIRS[@]}; do
 	for f in src/"$d"/*.c; do
 		$CC $CFLAGS $DEFINES $INCLUDES -o $(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") -c $f &
 		OBJS+="$(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") "
 	done
 done
+else
+for d in ${DIRS[@]}; do
+	for f in src/"$d"/*.c; do
+		$CC $CFLAGS $DEFINES $INCLUDES -o $(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") -c $f
+		OBJS+="$(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") "
+	done
+done
+fi
 
 wait
 

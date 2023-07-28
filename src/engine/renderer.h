@@ -17,8 +17,19 @@ typedef struct {
 	float x,y,w,h;
 } rect;
 
+// WARNING: INCREDIBLE JANKINESS
+//
+// tinycc will just sometimes decide certain colors just don't get passed into drawText,
+//
+// BUT IF IT IS A DOUBLE IT WORKS??????
+//
+// either the compiler or this entire project is cursed.
 typedef struct {
+#ifdef __TINYC__
+	double r,g,b,a;
+#else
 	float r,g,b,a;
+#endif
 } colorRGBA;
 
 typedef struct {

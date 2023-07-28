@@ -104,7 +104,12 @@ void switchVertexBuffer(vertexBuffer* buf) {
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, texCoords));
 	glEnableVertexAttribArray(1);
+	// more of the incredible jankiness mentioned in renderer.h
+#ifdef __TINYC__
+	glVertexAttribPointer(2, 4, GL_DOUBLE, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, color));
+#else
 	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)offsetof(vertex, color));
+#endif
 	glEnableVertexAttribArray(2);
 
 	currentVertexBuffer = buf;
@@ -404,20 +409,7 @@ void drawTriangles(const float* triPoints, unsigned int count, colorRGBA color) 
 	return;
 }
 
-void drawText(resource* fontRes, char* text, float size, const colorRGBA color, float x, float y, TEXT_ALIGN align) {
-#ifdef __TINYC__
-	// setting the alpha to always be 1.0f fixes text not rendering at all when compiled with tcc
-	// but COLOR_RGBA_BLUE specifically seems to always break and always setting alpha to 1 isn't ideal.
-	// it also seems like it's specifically calling this function that breaks it??? 
-	// the values of the color are fine before and after this is called
-	// but printf debugging here shows that it will just get everything set to 0.0f for some reason.
-	//
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!
-	// !!THIS NEEDS TO BE FIXED!!
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!
-	//
-	color.a = 1.0f; 
-#endif
+void drawText(resource* fontRes, char* text, float size, colorRGBA color, float x, float y, TEXT_ALIGN align) {
 	currentFontRes = fontRes;
 	font* currentFont = ((font*)fontRes->pointer);
 	if(fontRes->type != RES_TYPE_FONT) {
