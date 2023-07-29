@@ -14,7 +14,7 @@ INCLUDES="-Isrc/engine/stb_image -Isrc/engine/resourceLoaders -Isrc/engine -Isrc
 CFLAGS="$CFLAGS -Wall -Wextra -Wpedantic"
 DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"
 
-[ "$CC" == tcc ] && DEFINES="$DEFINES -DSTBI_NO_SIMD"
+[ "$CC" = tcc ] && DEFINES="$DEFINES -DSTBI_NO_SIMD"
 
 # has to be disabled when compiled with clang because it will scream about the macro using a GNU C extension
 [ "$DEBUG_EXTRA" ] && [ "$CC" != clang ] && DEFINES="$DEFINES -DDEBUG_EXTRA" DEBUG=on
@@ -35,27 +35,27 @@ game/gameStates \
 rm -rf build/ obj/
 mkdir -p build/ obj/
 
-for d in ${DIRS[@]}; do
+for d in $DIRS; do
 	mkdir obj/"$d"
 done
 
 # Compile
 
 # just define DEBUG in any way to make sure it exits on compilation error
-if [ -z $DEBUG ]; then
-for d in ${DIRS[@]}; do
+if [ -z "$DEBUG" ]; then
+for d in $DIRS; do
 	for f in src/"$d"/*.c; do
-		OBJNAME=$(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/")
-		$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c $f &
-		OBJS+="$OBJNAME "
+		OBJNAME=$(echo "$f" | sed -e "s/\.c/\.o/" -e "s/src/obj/")
+		$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c "$f" &
+		OBJS="$OBJS $OBJNAME "
 	done
 done
 else
-for d in ${DIRS[@]}; do
+for d in $DIRS; do
 	for f in src/"$d"/*.c; do
-		OBJNAME=$(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/")
+		OBJNAME=$(echo "$f" | sed -e "s/\.c/\.o/" -e "s/src/obj/")
 		$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c $f
-		OBJS+="$OBJNAME "
+		OBJS="$OBJS $OBJNAME "
 	done
 done
 fi
