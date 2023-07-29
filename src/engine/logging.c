@@ -6,6 +6,8 @@
 
 FILE* logFile;
 
+LOG_TYPE logMode = LOG_NORMAL;
+
 const char* logAnsiColorStrings[] = {
 	[LOG_NORMAL]  = "\033[97m", // LOG_NORMAL
 	[LOG_ERROR]   = "\033[91m", // LOG_ERROR
@@ -39,6 +41,7 @@ void closeLogFile(void){
 
 // variadic functions are weird
 void debugLog(LOG_TYPE type, const char* fmt, ...){
+	if(type < logMode) { return; }
 	va_list args;
 	va_start(args,fmt);
 	va_list args2;
