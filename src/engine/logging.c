@@ -40,7 +40,11 @@ void closeLogFile(void){
 }
 
 // variadic functions are weird
-void debugLog(LOG_TYPE type, const char* fmt, ...){
+#ifdef DEBUG_EXTRA
+void debugLogFunc(const char* file, const char* func, const int line, LOG_TYPE type, const char* fmt, ...) {
+#else
+void debugLog(LOG_TYPE type, const char* fmt, ...) {
+#endif
 	if(type < logMode) { return; }
 	va_list args;
 	va_start(args,fmt);
@@ -67,6 +71,15 @@ void debugLog(LOG_TYPE type, const char* fmt, ...){
 	}
 	free(tempStr);
 	free(str);
+
+#ifdef DEBUG_EXTRA
+	if(type > LOG_SUCCESS) { // only print out extra info if a warning or error
+		printf("FILE \"%s\", FUNCTION \"%s\", LINE %i\n", file, func, line);
+		if(logFile) {
+			fprintf(logFile, "FILE \"%s\", FUNCTION \"%s\", LINE %i\n", file, func, line);
+		}
+	}
+#endif
 	
 	printf("%s", logAnsiColorStrings[LOG_NORMAL]);
 

@@ -6,15 +6,20 @@
 set -xe
 
 # takes ~0.6 seconds with gcc, ~0.45 seconds with clang, and ~0.075 seconds with tcc on my computer
-# (tcc requires -DSTBI_NO_SIMD in DEFINES to compile, and text is broken when compiling with tcc)
+# (tcc requires -DSTBI_NO_SIMD in DEFINES to compile)
 [ "$CC" ] || CC="clang"
 
 LIBS="-lGLEW -lEGL -lGL -lGLU -lOpenGL -lglfw -lportaudio -lm -lz -lbz2"
 INCLUDES="-Isrc/engine/stb_image -Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates"
-CFLAGS="-g -Wall -Wextra -Wpedantic"
-DEFINES="-DUNUSED=__attribute__((unused))"
+CFLAGS="$CFLAGS -Wall -Wextra -Wpedantic"
+DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"
 
 [ "$CC" == tcc ] && DEFINES="$DEFINES -DSTBI_NO_SIMD"
+
+# has to be disabled when compiled with clang because it will scream about the macro using a GNU C extension
+[ "$DEBUG_EXTRA" ] && [ "$CC" != clang ] && DEFINES="$DEFINES -DDEBUG_EXTRA" DEBUG=on
+
+[ "$DEBUG" ] && CFLAGS="$CFLAGS -g"
 
 OBJS=""
 
@@ -40,15 +45,17 @@ done
 if [ -z $DEBUG ]; then
 for d in ${DIRS[@]}; do
 	for f in src/"$d"/*.c; do
-		$CC $CFLAGS $DEFINES $INCLUDES -o $(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") -c $f &
-		OBJS+="$(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") "
+		OBJNAME=$(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/")
+		$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c $f &
+		OBJS+="$OBJNAME "
 	done
 done
 else
 for d in ${DIRS[@]}; do
 	for f in src/"$d"/*.c; do
-		$CC $CFLAGS $DEFINES $INCLUDES -o $(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") -c $f
-		OBJS+="$(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/") "
+		OBJNAME=$(echo $f | sed -e "s/\.c/\.o/" -e "s/src/obj/")
+		$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c $f
+		OBJS+="$OBJNAME "
 	done
 done
 fi
