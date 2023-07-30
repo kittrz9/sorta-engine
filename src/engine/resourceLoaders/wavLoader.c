@@ -118,9 +118,11 @@ resource* loadWav(const char* filename) {
 	// initializing these values so the compiler doesn't yell about it
 	fmtHeader formatH = {.nSamplesPerSec = 0, .wBitsPerSample = 0};
 	RIFFHeader riffh;
-	dataHeader dataH;
-	int16_t* audioData = NULL;
+	int16_t* audioData = NULL; // audio data to be returned
 	uint32_t dataLength = 0;
+	size_t dataSize = 0;
+	int16_t* dataPointer = NULL; // pointer to the data in the file in memory before converted to stereo
+	uint8_t stride = 1;
 	do {
 		size_t chunkSize = parseChunk(wavFile+offset, &id);
 		switch(id) {
@@ -135,10 +137,26 @@ resource* loadWav(const char* filename) {
 				formatH = *(fmtHeader*)(wavFile+offset);
 				break;
 			case CHUNK_DATA:
-				dataH = *(dataHeader*)(wavFile+offset);
-				audioData = malloc(dataH.chunkSize - sizeof(dataHeader));
-				memcpy(audioData, wavFile+offset+sizeof(dataHeader), chunkSize-sizeof(dataHeader));
-				dataLength = (chunkSize-sizeof(dataHeader))/sizeof(int16_t);
+				dataPointer = (int16_t*)((uint8_t*)wavFile+offset+sizeof(dataHeader));
+				dataSize = chunkSize - sizeof(dataHeader);
+				stride = 1;
+
+				// copy each sample point twice if mono to get stereo
+				if(formatH.nChannels == 1) { stride = 2; }
+				dataSize *= stride;
+
+				audioData = malloc(sizeof(int16_t)*dataSize);
+				size_t i = 0;
+				while(i < dataSize / sizeof(int16_t)) {
+					int16_t input = *(dataPointer + i/stride);
+					for(uint8_t j = 0; j < stride; ++j) {
+						*(audioData + i + j) = input;
+						i += stride;
+					}
+				}
+
+				//memcpy(audioData, wavFile+offset+sizeof(dataHeader), dataSize);
+				dataLength = dataSize/sizeof(int16_t);
 				break;
 			default:
 				break;
@@ -149,11 +167,6 @@ resource* loadWav(const char* filename) {
 
 	if(audioData == NULL) {
 		debugLog(LOG_ERROR, "could not load audio data from \"%s\"\n", filename);
-		return 0;
-	}
-
-	if(formatH.nChannels != 2) {
-		debugLog(LOG_ERROR, "support for non-stereo samples is not added yet\n");
 		return 0;
 	}
 

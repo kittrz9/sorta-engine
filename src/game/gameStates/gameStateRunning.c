@@ -38,7 +38,6 @@ void initGameStateRunning(void){
 	// I can't think of a good sample to use that wouldn't risk copyright stuff so this isn't included in the git repo and commented out
 	//gsRunningData.testSample = loadWav("sounds/24_Moonsong.wav");
 
-	//playSample(gsRunningData.testSample, 0.1, 0.5);
 	//playSample(gsRunningData.testSample, 0.1, 1.0);
 	
 	return;

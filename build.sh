@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# disables warning about variables being split intentionally
+# shellcheck disable=SC2086
+
 # mainly just in case I want to build this without going through premake or just not depend on it
 # probably wont ever both to make this script work on windows though
 
