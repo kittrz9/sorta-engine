@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <GL/glew.h>
+#include "glad/gl.h"
 
 #include "logging.h"
 #include "resourceManager.h"

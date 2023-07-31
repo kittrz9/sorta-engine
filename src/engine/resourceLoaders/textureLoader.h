@@ -3,7 +3,8 @@
 
 #include "resourceManager.h"
 #include "vectors.h"
-#include <GL/glew.h>
+
+#include "glad/gl.h"
 
 typedef struct {
 	GLuint id;

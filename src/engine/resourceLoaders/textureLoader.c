@@ -4,9 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <GL/glew.h>
-
-#include "stb_image.h"
+#include "glad/gl.h"
+#include "stb_image/stb_image.h"
 
 #include "logging.h"
 #include "renderer.h"

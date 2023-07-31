@@ -17,7 +17,7 @@ If you want to contribute to this project I'd appreciate bug fixes but I don't r
 
 ---
 ## Dependencies
-GLEW : <http://glew.sourceforge.net/><br>
+GLAD (already in project) : <https://github.com/Dav1dde/glad/tree/glad2><br>
 GLFW : <https://www.glfw.org/><br>
 PortAudio : <http://portaudio.com/><br>
 Premake (optional): <https://premake.github.io/><br>
@@ -26,16 +26,16 @@ Premake (optional): <https://premake.github.io/><br>
 
 ## Compiling
 ### Linux
-All you should need to compile this on Linux is glew, glfw3, PortAudio, and premake.<br>
-If you're on linux you should be able to get glew, glfw3, portaudio and premake from whatever package manager you're using. <br>
+All you should need to compile this on Linux is glfw3, PortAudio, and premake.<br>
+If you're on linux you should be able to get glfw3, portaudio and premake from whatever package manager you're using. <br>
 Then all you'd need to do to compile this is run `premake5 gmake` and then `make config=release_linux` and it should compile into the `build/` directory.<br>
 <br>
 You also have the option to compile with `./build.sh` if you do not want to use Premake.<br>
 <br>
 ### Windows
-Windows support is still very buggy and should not be expected to work. To build on windows you need to install [MSYS2](https://www.msys2.org) and then install these packages: `mingw-w64-x86_64-gcc` `mingw-w64-x86_64-glew` `mingw-w64-x86_64-glfw` `mingw-w64-x86_64-portaudio` and `mingw-w64-x86_64-premake`. Then you should be able to just follow the same commands for compiling on Linux, but with the make command being `make config=release_windows`.<br>
+Windows support is still very buggy and should not be expected to work. To build on windows you need to install [MSYS2](https://www.msys2.org) and then install these packages: `mingw-w64-x86_64-gcc` `mingw-w64-x86_64-glfw` `mingw-w64-x86_64-portaudio` and `mingw-w64-x86_64-premake`. Then you should be able to just follow the same commands for compiling on Linux, but with the make command being `make config=release_windows`.<br>
 As I said, it is still VERY buggy and slow (though I have only been able to test in a virtual machine so that might be why it's slow) so don't expect it to work.<br>
-Another thing you'll want to do if you want to run it through the file browser in windows is to put need the files `glew32.dll`, `glfw3.dll`, `libportaudio.dll` and `libwinpthread-1.dll` in the same folder as the executable. I'd recommend getting the first 2 dlls from the sites for each library and get `libportaudio.dll` and `libwinpthread-1.dll` from `C:\msys64\mingw64\bin\`.<br>
+Another thing you'll want to do if you want to run it through the file browser in windows is to put need the files `glfw3.dll`, `libportaudio.dll` and `libwinpthread-1.dll` in the same folder as the executable. I'd recommend getting the first 2 dlls from the sites for each library and get `libportaudio.dll` and `libwinpthread-1.dll` from `C:\msys64\mingw64\bin\`.<br>
 However the best solution is probably just to [**get a better operating system.**](https://www.debian.org)<br>
 
 
@@ -69,10 +69,6 @@ Has very basic functions for drawing rectangles and textures to the screen. I sh
 #### resourceManager.h and resourceManager.c
 This lets you load resources. If you try to load a resource you've already loaded it will return the pointer to the already loaded resource.<br>
 
-#### stb_image.h
-Not written by me. It's a public domain image library gotten from here: <https://github.com/nothings/stb/blob/master/stb_image.h><br>
-It's here so I can load textures easily.<br>
-
 #### vectors.h and vectors.c
 Just defines a bunch of vector types and has a few functions for doing stuff with 2d vectors.<br>
 
@@ -81,6 +77,11 @@ The entry point of the program. All that's done here is just initializing a bunc
 
 #### src/engine/resourceLoaders/ directory
 Where every resource loading and destroying function is defined, you have to update the arrays in `resourceManager.h` and `resourceManager.c`. Currently has support for loading textures and shaders.<br>
+
+<br>
+
+### src/external directory
+Contains all the parts of the engine that it depends on that aren't dynamically linked. Currently only has GLAD and stb\_image.h
 
 <br>
 
@@ -133,5 +134,4 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Add pitch and time stretching for samples (requires weird calculus stuff I don't understand lmao)
  - Fix the weird high pitched frequencies with resampled samples (happens for both playing back at a different sample rate or loading one with a different sample rate)
  - Fix wavy font breaking on windows
- - Move to GLAD instead of GLEW
- - Maybe start compiling GLAD/GLEW, Portaudio and GLFW into the project to not need to dynamically link with other libraries (would probably make it easier to compile on windows)
+ - Maybe start compiling GLAD Portaudio and GLFW into the project to not need to dynamically link with other libraries (would probably make it easier to compile on windows)

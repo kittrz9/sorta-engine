@@ -4,9 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "stb_image/stb_image.h"
+
 #include "logging.h"
 #include "resourceManager.h"
-#include "stb_image.h"
 #include "files.h"
 
 resource* loadFont(const char* name, const char* fontFilename, const char* fontDataFilename) {

@@ -8,7 +8,7 @@
 #include "controls.h"
 #include "vectors.h"
 
-#include <GL/glew.h>
+#include "glad/gl.h"
 #include <GLFW/glfw3.h>
 
 #include "resourceManager.h"
@@ -179,15 +179,9 @@ void initRenderer(void){
 	glfwMakeContextCurrent(window);
 	debugLog(LOG_SUCCESS, "window successfully created\n");
 
-	// init glew
-	debugLog(LOG_NORMAL, "initializing glew\n");
-	glewExperimental = GL_TRUE;
-	GLenum error = glewInit();
-	if(error != GLEW_OK) {
-		debugLog(LOG_ERROR, "could not initialize glew, %s\n", glewGetErrorString(error));
-		exit(-1);
-	}
-	debugLog(LOG_SUCCESS, "glew successfully initialized\n");
+	debugLog(LOG_NORMAL, "initializing glad\n");
+	int gladVersion = gladLoadGL(glfwGetProcAddress);
+	debugLog(LOG_NORMAL, "using glad version: %d.%d\n", GLAD_VERSION_MAJOR(gladVersion), GLAD_VERSION_MINOR(gladVersion));
 
 	// enable blending
 	glEnable(GL_BLEND);

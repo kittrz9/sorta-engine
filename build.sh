@@ -8,12 +8,12 @@
 
 set -xe
 
-# takes ~0.6 seconds with gcc, ~0.45 seconds with clang, and ~0.075 seconds with tcc on my computer
+# takes ~0.54 seconds with gcc, ~0.35 seconds with clang, and ~0.06 seconds with tcc on my computer
 # (tcc requires -DSTBI_NO_SIMD in DEFINES to compile)
 [ "$CC" ] || CC="clang"
 
-LIBS="-lGLEW -lEGL -lGL -lGLU -lOpenGL -lglfw -lportaudio -lm -lz -lbz2"
-INCLUDES="-Isrc/engine/stb_image -Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates"
+LIBS="-lglfw -lportaudio -lm -lz -lbz2"
+INCLUDES="-Isrc/engine/stb_image -Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates -Isrc/external"
 CFLAGS="$CFLAGS -Wall -Wextra -Wpedantic"
 DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"
 
@@ -29,7 +29,8 @@ OBJS=""
 DIRS="\
 engine \
 engine/resourceLoaders \
-engine/stb_image \
+external/stb_image \
+external/glad \
 game \
 game/gameStates \
 "
@@ -39,7 +40,7 @@ rm -rf build/ obj/
 mkdir -p build/ obj/
 
 for d in $DIRS; do
-	mkdir obj/"$d"
+	mkdir -p obj/"$d"
 done
 
 # Compile
