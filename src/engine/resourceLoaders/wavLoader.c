@@ -135,6 +135,15 @@ resource* loadWav(const char* filename) {
 				break;
 			case CHUNK_FMT:
 				formatH = *(fmtHeader*)(wavFile+offset);
+				if(formatH.nSamplesPerSec != SAMPLE_RATE) {
+					debugLog(LOG_WARN, "sample rate %i is not the same as the current playback rate %i, expect the sample to be mangled during playback\n", formatH.nSamplesPerSec, SAMPLE_RATE);
+				}
+
+				if(formatH.wBitsPerSample != 16) {
+					debugLog(LOG_ERROR, "wavs with formats other than int16 are not supported\n");
+					return 0;
+				}
+
 				break;
 			case CHUNK_DATA:
 				dataPointer = (int16_t*)((uint8_t*)wavFile+offset+sizeof(dataHeader));
@@ -167,15 +176,6 @@ resource* loadWav(const char* filename) {
 
 	if(audioData == NULL) {
 		debugLog(LOG_ERROR, "could not load audio data from \"%s\"\n", filename);
-		return 0;
-	}
-
-	if(formatH.nSamplesPerSec != SAMPLE_RATE) {
-		debugLog(LOG_WARN, "sample rate %i is not the same as the current playback rate %i, expect the sample to be mangled during playback\n", formatH.nSamplesPerSec, SAMPLE_RATE);
-	}
-
-	if(formatH.wBitsPerSample != 16) {
-		debugLog(LOG_ERROR, "wavs with formats other than int16 are not supported\n");
 		return 0;
 	}
 

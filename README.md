@@ -20,7 +20,7 @@ If you want to contribute to this project I'd appreciate bug fixes but I don't r
 GLEW : <http://glew.sourceforge.net/><br>
 GLFW : <https://www.glfw.org/><br>
 PortAudio : <http://portaudio.com/><br>
-Premake: <https://premake.github.io/><br>
+Premake (optional): <https://premake.github.io/><br>
 
 ---
 
@@ -29,6 +29,8 @@ Premake: <https://premake.github.io/><br>
 All you should need to compile this on Linux is glew, glfw3, PortAudio, and premake.<br>
 If you're on linux you should be able to get glew, glfw3, portaudio and premake from whatever package manager you're using. <br>
 Then all you'd need to do to compile this is run `premake5 gmake` and then `make config=release_linux` and it should compile into the `build/` directory.<br>
+<br>
+You also have the option to compile with `./build.sh` if you do not want to use Premake.<br>
 <br>
 ### Windows
 Windows support is still very buggy and should not be expected to work. To build on windows you need to install [MSYS2](https://www.msys2.org) and then install these packages: `mingw-w64-x86_64-gcc` `mingw-w64-x86_64-glew` `mingw-w64-x86_64-glfw` `mingw-w64-x86_64-portaudio` and `mingw-w64-x86_64-premake`. Then you should be able to just follow the same commands for compiling on Linux, but with the make command being `make config=release_windows`.<br>
@@ -115,14 +117,12 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
 
 ## Major things to do (in no particular order):
 
- - Batch rendering for things other than textures
  - Make it not need to start a whole new batch when switching textures
- - Better synthesizer
+ - Completely rewrite the audio system
  - Music playback (probably using amiga mod files since [libopenmpt](https://lib.openmpt.org/libopenmpt/) is a thing)
- - More rendering functions
- - ciumgui integration (<https://github.com/cimgui/cimgui>)
+ - Fix some of the older rendering functions
+ - [ciumgui](https://github.com/cimgui/cimgui) integration (requires cmake though)
  - Optimize stuff (the framerate goes down to about 130fps when there's only like 10000 quads of the same texture on screen)
- - Being able to read from a config file
  - Maybe add in 3D stuff
  - Controller support
  - Make the README file not terrible
@@ -130,7 +130,8 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Reduce memory usage
  - Make log file get put into specific location instead of the current directory
  - Make animations be loaded in from a file
- - Add support for mono wav samples
  - Add pitch and time stretching for samples (requires weird calculus stuff I don't understand lmao)
  - Fix the weird high pitched frequencies with resampled samples (happens for both playing back at a different sample rate or loading one with a different sample rate)
  - Fix wavy font breaking on windows
+ - Move to GLAD instead of GLEW
+ - Maybe start compiling GLAD/GLEW, Portaudio and GLFW into the project to not need to dynamically link with other libraries (would probably make it easier to compile on windows)
