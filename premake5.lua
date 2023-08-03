@@ -36,15 +36,6 @@ project "openGL-test"
 
 	files { "src/**.h", "src/**.c" }
 
-	-- probably unnecessary to have it specify the architecture but idk maybe I want to make this compile for arm at some point
---	filter { "platforms:Windows" }
---		architecture "x86_64"
---		links { "glew32", "glu32", "opengl32", "glfw3", "portaudio", "m"}
---	
---	filter { "platforms:Linux" }
---		architecture "x86_64"
---		links { "GLEW", "EGL", "GL", "GLU", "OpenGL", "glfw", "portaudio", "m"}
-
 	links { "glfw", "portaudio", "m" }
 
 	filter { "options:not nogzip" }
@@ -55,7 +46,7 @@ project "openGL-test"
 	
 	filter {}
 
-	includedirs { "src/engine/stb_image/", "src/engine/resourceLoaders/", "src/engine/", "src/game/", "src/game/gameStates", "src/external" }
+	includedirs { "src/engine/resourceLoaders/", "src/engine/", "src/game/", "src/game/gameStates", "src/external" }
 
 	filter { "configurations:Debug" }
 		symbols "On"

@@ -127,10 +127,9 @@ void destroyResource(resource* res){
 		if(resourceList[i] == res){
 			debugLog(LOG_NORMAL, "Destroying resource \"%s\" with type %s at %p\n", resourceList[i]->name, typeStrings[res->type], (void*)resourceList[i]);
 			(resourceDestroyingFunctions[res->type])(res);
-			// set these to NULL to be able to check for free entries in the list
-			resourceList[i] = NULL;
 			free(resourceList[i]->name);
-			resourceList[i]->name = NULL;
+			// set this to NULL to be able to check for free entries in the list
+			resourceList[i] = NULL;
 			free(res);
 			return;
 		}
