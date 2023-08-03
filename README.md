@@ -124,14 +124,11 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Fix some of the older rendering functions
  - [ciumgui](https://github.com/cimgui/cimgui) integration (requires cmake though)
  - Optimize stuff (the framerate goes down to about 130fps when there's only like 10000 quads of the same texture on screen)
- - Maybe add in 3D stuff
  - Controller support
  - Make the README file not terrible
  - Support for multiple rendering (and maybe audio) backends like vulkan
- - Reduce memory usage
- - Make log file get put into specific location instead of the current directory
- - Make animations be loaded in from a file
+ - Figure out why btop says it's using over 100MB of memory (valgrind seems to say it's only like 30MB)
  - Add pitch and time stretching for samples (requires weird calculus stuff I don't understand lmao)
  - Fix the weird high pitched frequencies with resampled samples (happens for both playing back at a different sample rate or loading one with a different sample rate)
  - Fix wavy font breaking on windows
- - Maybe start compiling GLAD Portaudio and GLFW into the project to not need to dynamically link with other libraries (would probably make it easier to compile on windows)
+ - Maybe start compiling Portaudio and GLFW into the project to not need to dynamically link with other libraries (would probably make it easier to compile on windows, although GLFW uses cmake)
