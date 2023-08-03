@@ -19,7 +19,6 @@ static const char* typeStrings[RES_TYPE_ENUM_LENGTH] = {
 };
 
 resource** resourceList;
-unsigned int loadedResources = 0;
 unsigned int resourceListSize = 0;
 
 char* resourceDir = NULL;
@@ -65,8 +64,8 @@ void initResourceManager(void) {
 
 resource* checkIfAlreadyLoaded(const char* filename) {
 	// probably would be a good idea to just have something to hash the filename and use that in a hash map or whatever but idk, I've literally never used a hash map before
-	for(unsigned int i = 0; i < loadedResources; i++) {
-		if(strcmp(resourceList[i]->name, filename) == 0) {
+	for(unsigned int i = 0; i < resourceListSize; i++) {
+		if(resourceList[i] != NULL && strcmp(resourceList[i]->name, filename) == 0) {
 			debugLog(LOG_NORMAL, "resource \"%s\" is already loaded, returning that\n", resourceList[i]->name);
 			return resourceList[i];
 		}
@@ -101,7 +100,6 @@ void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res) {
 			resourceList[i] = NULL;
 		}
 	}
-	loadedResources++;
 
 	resourceList[resourceIndex] = res;
 	resourceList[resourceIndex]->name = malloc(strlen(name)+1 * sizeof(char));
@@ -123,7 +121,7 @@ void (*resourceDestroyingFunctions[RES_TYPE_ENUM_LENGTH]) (resource* res) = {
 };
 
 void destroyResource(resource* res){
-	for(unsigned int i = 0; i < loadedResources; i++){
+	for(unsigned int i = 0; i < resourceListSize; i++){
 		if(resourceList[i] == res){
 			debugLog(LOG_NORMAL, "Destroying resource \"%s\" with type %s at %p\n", resourceList[i]->name, typeStrings[res->type], (void*)resourceList[i]);
 			(resourceDestroyingFunctions[res->type])(res);
@@ -141,12 +139,12 @@ void destroyResource(resource* res){
 }
 
 void clearResourceList(void){
-	if(loadedResources < 1){
+	if(resourceListSize < 1){
 		debugLog(LOG_ERROR, "no resources loaded\n");
 		return;
 	}
 	
-	for(unsigned int i = 0; i < loadedResources; i++){
+	for(unsigned int i = 0; i < resourceListSize; i++){
 		if(resourceList[i] == NULL){
 			continue;
 		}
@@ -158,6 +156,8 @@ void clearResourceList(void){
 	}
 	
 	free(resourceList);
+
+	resourceListSize = 0;
 	
 	return;
 }
