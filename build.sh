@@ -8,12 +8,14 @@
 
 set -xe
 
+cd "`dirname $0`"
+
 # takes ~0.54 seconds with gcc, ~0.35 seconds with clang, and ~0.06 seconds with tcc on my computer
 # though when compiling with portaudio it takes ~18 seconds with clang 
 # (tcc requires -DSTBI_NO_SIMD in DEFINES to compile)
 [ "$CC" ] || CC="clang"
 
-LIBS="-lglfw -lm -lz -lbz2"
+LIBS="-lglfw -lm"
 INCLUDES="-Isrc/engine/stb_image -Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates -Isrc/external"
 CFLAGS="$CFLAGS -Wall -Wextra -Wpedantic"
 DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"
@@ -26,6 +28,9 @@ DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"
 [ "$DEBUG" ] && CFLAGS="$CFLAGS -g"
 
 OBJS=""
+
+[ "$NO_ZLIB" ] && DEFINES="$DEFINES -DNO_GZIP_SUPPORT" || LIBS="$LIBS -lz"
+[ "$NO_BZLIB2" ] && DEFINES="$DEFINES -DNO_BZIP2_SUPPORT" || LIBS="$LIBS -lbz2"
 
 # build portaudio if not using it externally
 if [ ! "$PORTAUDIO_EXTERNAL" ]; then
