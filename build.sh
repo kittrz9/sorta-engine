@@ -29,6 +29,10 @@ OBJS=""
 
 # build portaudio if not using it externally
 if [ ! "$PORTAUDIO_EXTERNAL" ]; then
+	if [ ! -f "src/external/portaudio/configure" ]; then
+		echo -e "\n\nThe PortAudio submodule was not found, yet PORTAUDIO_EXTERNAL was not set!\nIf you have PortAudio installed elsewhere as a library, please set the PORTAUDIO_EXTERNAL environment variable.\nIf you still want to compile it in with the project, please do \`git submodule update --init\` to clone it into the correct place.\n\n"
+		exit 1
+	fi
 	PORTAUDIO_OBJ="src/external/portaudio/lib/.libs/libportaudio.a"
 	if [ ! -f "$PORTAUDIO_OBJ" ]; then
 		cd src/external/portaudio
