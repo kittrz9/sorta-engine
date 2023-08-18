@@ -9,10 +9,11 @@
 set -xe
 
 # takes ~0.54 seconds with gcc, ~0.35 seconds with clang, and ~0.06 seconds with tcc on my computer
+# though when compiling with portaudio it takes ~18 seconds with clang 
 # (tcc requires -DSTBI_NO_SIMD in DEFINES to compile)
 [ "$CC" ] || CC="clang"
 
-LIBS="-lglfw -lportaudio -lm -lz -lbz2"
+LIBS="-lglfw -lm -lz -lbz2"
 INCLUDES="-Isrc/engine/stb_image -Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates -Isrc/external"
 CFLAGS="$CFLAGS -Wall -Wextra -Wpedantic"
 DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"
@@ -25,6 +26,21 @@ DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"
 [ "$DEBUG" ] && CFLAGS="$CFLAGS -g"
 
 OBJS=""
+
+# build portaudio if not using it externally
+if [ ! "$PORTAUDIO_EXTERNAL" ]; then
+	PORTAUDIO_OBJ="src/external/portaudio/lib/.libs/libportaudio.a"
+	if [ ! -f "$PORTAUDIO_OBJ" ]; then
+		cd src/external/portaudio
+		./configure
+		make -j12
+		cd -
+	fi
+	#OBJS="$OBJS $PORTAUDIO_OBJ"
+	LIBS="$LIBS -ljack -lasound" # might need to be changed depending on platform, idk
+else
+	LIBS="$LIBS -lportaudio"
+fi
 
 DIRS="\
 engine \
@@ -67,4 +83,5 @@ fi
 wait
 
 # Link
-$CC $CFLAGS -o build/openGL-test $OBJS $LIBS
+# PORTAUDIO_OBJ should be empty when it's not being compiled into the project
+$CC $CFLAGS -o build/openGL-test $OBJS $PORTAUDIO_OBJ $LIBS
