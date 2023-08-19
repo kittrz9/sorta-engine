@@ -8,7 +8,7 @@
 
 set -xe
 
-cd "`dirname $0`"
+cd "$(dirname $0)"
 
 # takes ~0.54 seconds with gcc, ~0.35 seconds with clang, and ~0.06 seconds with tcc on my computer
 # though when compiling with portaudio it takes ~18 seconds with clang 
@@ -35,7 +35,7 @@ OBJS=""
 # build portaudio if not using it externally
 if [ ! "$PORTAUDIO_EXTERNAL" ]; then
 	if [ ! -f "src/external/portaudio/configure" ]; then
-		echo -e "\n\nThe PortAudio submodule was not found, yet PORTAUDIO_EXTERNAL was not set!\nIf you have PortAudio installed elsewhere as a library, please set the PORTAUDIO_EXTERNAL environment variable.\nIf you still want to compile it in with the project, please do \`git submodule update --init\` to clone it into the correct place.\n\n"
+		printf "\n\nThe PortAudio submodule was not found, yet PORTAUDIO_EXTERNAL was not set.\nIf you have PortAudio installed elsewhere as a library, please set the PORTAUDIO_EXTERNAL environment variable.\nIf you still want to compile it in with the project, please do \`git submodule update --init\` to clone it into the correct place.\n\n"
 		exit 1
 	fi
 	PORTAUDIO_OBJ="src/external/portaudio/lib/.libs/libportaudio.a"
