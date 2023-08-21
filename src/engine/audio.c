@@ -8,7 +8,7 @@
 #include "logging.h"
 #include "resourceManager.h"
 
-#include <portaudio.h>
+#include "portaudio.h"
 
 
 // a lot of this is just based off the tutorial for portaudio lmao

@@ -32,6 +32,53 @@ OBJS=""
 [ "$NO_ZLIB" ] && DEFINES="$DEFINES -DNO_GZIP_SUPPORT" || LIBS="$LIBS -lz"
 [ "$NO_BZLIB2" ] && DEFINES="$DEFINES -DNO_BZIP2_SUPPORT" || LIBS="$LIBS -lbz2"
 
+if [ ! "$PORTAUDIO_EXTERNAL" ]; then
+	if [ ! -f "src/external/portaudio/configure" ]; then
+		printf "\n\nThe PortAudio submodule was not found, yet PORTAUDIO_EXTERNAL was not set.\nIf you have PortAudio installed elsewhere as a library, please set the PORTAUDIO_EXTERNAL environment variable.\nIf you still want to compile it in with the project, please do \`git submodule update --init\` to clone it into the correct place.\n\n"
+		exit 1
+	fi
+	# since src/engine/audio.c will use `#include "portaudio.h"` just doing this in case portaudio isn't installed
+	INCLUDES="$INCLUDES -Isrc/external/portaudio/include"
+fi
+
+# Set up dirs
+DIRS="\
+engine \
+engine/resourceLoaders \
+external/stb_image \
+external/glad \
+game \
+game/gameStates \
+"
+
+rm -rf build/ obj/
+mkdir -p build/ obj/
+
+for d in $DIRS; do
+	mkdir -p obj/"$d"
+done
+
+# Compile
+
+# just define DEBUG in any way to make sure it exits on compilation error
+if [ -z "$DEBUG" ]; then
+	for d in $DIRS; do
+		for f in src/"$d"/*.c; do
+			OBJNAME=$(echo "$f" | sed -e "s/\.c/\.o/" -e "s/src/obj/")
+			$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c "$f" &
+			OBJS="$OBJS $OBJNAME "
+		done
+	done
+else
+	for d in $DIRS; do
+		for f in src/"$d"/*.c; do
+			OBJNAME=$(echo "$f" | sed -e "s/\.c/\.o/" -e "s/src/obj/")
+			$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c $f
+			OBJS="$OBJS $OBJNAME "
+		done
+	done
+fi
+
 # build portaudio if not using it externally
 if [ ! "$PORTAUDIO_EXTERNAL" ]; then
 	if [ ! -f "src/external/portaudio/configure" ]; then
@@ -49,44 +96,6 @@ if [ ! "$PORTAUDIO_EXTERNAL" ]; then
 	LIBS="$LIBS -ljack -lasound" # might need to be changed depending on platform, idk
 else
 	LIBS="$LIBS -lportaudio"
-fi
-
-DIRS="\
-engine \
-engine/resourceLoaders \
-external/stb_image \
-external/glad \
-game \
-game/gameStates \
-"
-
-# Set up dirs
-rm -rf build/ obj/
-mkdir -p build/ obj/
-
-for d in $DIRS; do
-	mkdir -p obj/"$d"
-done
-
-# Compile
-
-# just define DEBUG in any way to make sure it exits on compilation error
-if [ -z "$DEBUG" ]; then
-for d in $DIRS; do
-	for f in src/"$d"/*.c; do
-		OBJNAME=$(echo "$f" | sed -e "s/\.c/\.o/" -e "s/src/obj/")
-		$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c "$f" &
-		OBJS="$OBJS $OBJNAME "
-	done
-done
-else
-for d in $DIRS; do
-	for f in src/"$d"/*.c; do
-		OBJNAME=$(echo "$f" | sed -e "s/\.c/\.o/" -e "s/src/obj/")
-		$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c $f
-		OBJS="$OBJS $OBJNAME "
-	done
-done
 fi
 
 wait
