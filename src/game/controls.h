@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include <GLFW/glfw3.h>
+#include "GLFW/glfw3.h"
 
 typedef struct {
 	bool held;

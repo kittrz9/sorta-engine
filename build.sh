@@ -15,7 +15,7 @@ cd "$(dirname $0)"
 # (tcc requires -DSTBI_NO_SIMD in DEFINES to compile)
 [ "$CC" ] || CC="clang"
 
-LIBS="-lglfw -lm"
+LIBS="-lm"
 INCLUDES="-Isrc/engine/stb_image -Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates -Isrc/external"
 CFLAGS="$CFLAGS -Wall -Wextra -Wpedantic"
 DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"
@@ -41,12 +41,24 @@ if [ ! "$PORTAUDIO_EXTERNAL" ]; then
 	INCLUDES="$INCLUDES -Isrc/external/portaudio/include"
 fi
 
+if [ ! "$GLFW_EXTERNAL" ]; then
+	if [ ! -f "src/external/glfw/README.md" ]; then
+		printf "\n\nThe GLFW submodule was not found, yet GLFW_EXTERNAL was not set.\nIf you have GLFW installed elsewhere as a library, please set the GLFW_EXTERNAL environment variable.\nIf you still want to compile it in with the project, please do \`git submodule update --init\` to clone it into the correct place.\n\n"
+		exit 1
+	fi
+	DIRS="$DIRS external/glfw/src"
+	INCLUDES="$INCLUDES -Isrc/external/glfw/include"
+	DEFINES="$DEFINES -D_GLFW_X11" # this need to be changed per platform https://www.glfw.org/docs/latest/compile.html#compile_manual
+else
+	LIBS="$LIBS -lglfw"
+fi
+
 # Set up dirs
-DIRS="\
-engine \
-engine/resourceLoaders \
+DIRS="$DIRS \
 external/stb_image \
 external/glad \
+engine \
+engine/resourceLoaders \
 game \
 game/gameStates \
 "

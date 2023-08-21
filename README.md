@@ -134,4 +134,3 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
  - Add pitch and time stretching for samples (requires weird calculus stuff I don't understand lmao)
  - Fix the weird high pitched frequencies with resampled samples (happens for both playing back at a different sample rate or loading one with a different sample rate)
  - Fix wavy font breaking on windows
- - Maybe start compiling GLFW into the project to not need to dynamically link with other libraries (would probably make it easier to compile on windows, although GLFW uses cmake)
