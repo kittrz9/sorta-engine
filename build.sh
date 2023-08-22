@@ -10,16 +10,15 @@ set -xe
 
 cd "$(dirname $0)"
 
-# takes ~0.54 seconds with gcc, ~0.35 seconds with clang, and ~0.06 seconds with tcc on my computer
-# though when compiling with portaudio it takes ~18 seconds with clang 
-# (tcc requires -DSTBI_NO_SIMD in DEFINES to compile)
 [ "$CC" ] || CC="clang"
 
 LIBS="-lm"
 INCLUDES="-Isrc/engine/stb_image -Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates -Isrc/external"
-CFLAGS="$CFLAGS -Wall -Wextra -Wpedantic"
+CFLAGS="$CFLAGS -Os -Wall -Wextra -Wpedantic"
+LDFLAGS="$LDFLAGS -Os"
 DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"
 
+# tcc requires -DSTBI_NO_SIMD in DEFINES to compile for some reason
 [ "$CC" = tcc ] && DEFINES="$DEFINES -DSTBI_NO_SIMD"
 
 # has to be disabled when compiled with clang because it will scream about the macro using a GNU C extension
@@ -63,7 +62,7 @@ game \
 game/gameStates \
 "
 
-rm -rf build/ obj/
+rm -rf build/
 mkdir -p build/ obj/
 
 for d in $DIRS; do
@@ -73,23 +72,20 @@ done
 # Compile
 
 # just define DEBUG in any way to make sure it exits on compilation error
-if [ -z "$DEBUG" ]; then
-	for d in $DIRS; do
-		for f in src/"$d"/*.c; do
-			OBJNAME=$(echo "$f" | sed -e "s/\.c/\.o/" -e "s/src/obj/")
-			$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c "$f" &
-			OBJS="$OBJS $OBJNAME "
-		done
+for d in $DIRS; do
+	for f in src/"$d"/*.c; do
+		OBJNAME=$(echo "$f" | sed -e "s/\.c/\.o/" -e "s/src/obj/")
+		if [ ! -e "$OBJNAME" ] || [ $(stat "$OBJNAME" -c %Y) -lt $(stat "$f" -c %Y) ]; then
+			# should probably find a better way to make it not multithreaded when debugging
+			if [ -z "$DEBUG" ]; then
+				$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c "$f" &
+			else
+				$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c $f
+			fi
+		fi
+		OBJS="$OBJS $OBJNAME "
 	done
-else
-	for d in $DIRS; do
-		for f in src/"$d"/*.c; do
-			OBJNAME=$(echo "$f" | sed -e "s/\.c/\.o/" -e "s/src/obj/")
-			$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c $f
-			OBJS="$OBJS $OBJNAME "
-		done
-	done
-fi
+done
 
 # build portaudio if not using it externally
 if [ ! "$PORTAUDIO_EXTERNAL" ]; then
@@ -104,7 +100,7 @@ if [ ! "$PORTAUDIO_EXTERNAL" ]; then
 		make -j12
 		cd -
 	fi
-	#OBJS="$OBJS $PORTAUDIO_OBJ"
+	OBJS="$OBJS $PORTAUDIO_OBJ"
 	LIBS="$LIBS -ljack -lasound" # might need to be changed depending on platform, idk
 else
 	LIBS="$LIBS -lportaudio"
@@ -113,5 +109,4 @@ fi
 wait
 
 # Link
-# PORTAUDIO_OBJ should be empty when it's not being compiled into the project
-$CC $CFLAGS -o build/openGL-test $OBJS $PORTAUDIO_OBJ $LIBS
+$CC $LDFLAGS -o build/openGL-test $OBJS $LIBS
