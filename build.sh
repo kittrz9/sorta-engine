@@ -12,6 +12,7 @@ cd "$(dirname $0)"
 
 [ "$CC" ] || CC="clang"
 
+EXE_NAME="openGL-test"
 LIBS="-lm"
 INCLUDES="-Isrc/engine/stb_image -Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates -Isrc/external"
 CFLAGS="$CFLAGS -Os -Wall -Wextra -Wpedantic"
@@ -75,7 +76,8 @@ done
 for d in $DIRS; do
 	for f in src/"$d"/*.c; do
 		OBJNAME=$(echo "$f" | sed -e "s/\.c/\.o/" -e "s/src/obj/")
-		if [ ! -e "$OBJNAME" ] || [ $(stat "$OBJNAME" -c %Y) -lt $(stat "$f" -c %Y) ]; then
+		# stat might not be standard according to https://pubs.opengroup.org/onlinepubs/9699919799/
+		if [ ! -e "$OBJNAME" ] || [ "$(stat "$OBJNAME" -c %Y)" -lt "$(stat "$f" -c %Y)" ]; then
 			# should probably find a better way to make it not multithreaded when debugging
 			if [ -z "$DEBUG" ]; then
 				$CC $CFLAGS $DEFINES $INCLUDES -o $OBJNAME -c "$f" &
@@ -109,4 +111,4 @@ fi
 wait
 
 # Link
-$CC $LDFLAGS -o build/openGL-test $OBJS $LIBS
+$CC $LDFLAGS -o build/$EXE_NAME $OBJS $LIBS
