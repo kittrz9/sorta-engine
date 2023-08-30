@@ -14,7 +14,7 @@ cd "$(dirname $0)"
 
 EXE_NAME="openGL-test"
 LIBS="-lm"
-INCLUDES="-Isrc/engine/stb_image -Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates -Isrc/external"
+INCLUDES="-Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates -Isrc/external"
 CFLAGS="$CFLAGS -Os -Wall -Wextra -Wpedantic"
 LDFLAGS="$LDFLAGS -Os"
 DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"
