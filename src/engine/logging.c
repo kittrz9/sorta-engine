@@ -9,15 +9,15 @@ FILE* logFile;
 LOG_TYPE logMode = LOG_NORMAL;
 
 const char* logAnsiColorStrings[] = {
-	[LOG_NORMAL]  = "\033[97m", // LOG_NORMAL
-	[LOG_ERROR]   = "\033[91m", // LOG_ERROR
-	[LOG_SUCCESS] = "\033[92m", // LOG_SUCCESS
-	[LOG_WARN]    = "\033[93m", // LOG_WARN
+	[LOG_NORMAL]  = "\e[97m", // LOG_NORMAL
+	[LOG_ERROR]   = "\e[91m", // LOG_ERROR
+	[LOG_SUCCESS] = "\e[92m", // LOG_SUCCESS
+	[LOG_WARN]    = "\e[93m", // LOG_WARN
 };
 
 const char* logTypeStrings[] = {
 	[LOG_NORMAL]  = "LOG: ",
-	[LOG_ERROR]   ="ERROR: ",
+	[LOG_ERROR]   = "ERROR: ",
 	[LOG_SUCCESS] = "SUCCESS: ",
 	[LOG_WARN]    = "WARNING: ",
 };

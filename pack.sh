@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# just packs and compresses everything into a tar file
+
 set -xe
 
 cd "$(dirname "$0")"
