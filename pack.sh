@@ -14,6 +14,7 @@ fi
 GIT_HASH="$(git log -n 1 --pretty=format:%h)"
 PACKED_NAME=sortaEngine-"$GIT_HASH"
 # compression name has to be abbreviated since it's relying on tar to compress it
-COMPRESSION=gz
+# it can be defined as an environment variable when this script is ran
+[ "$COMPRESSION" ] || COMPRESSION=gz
 
 tar -cavf "$PACKED_NAME.tar.$COMPRESSION" res/ build/
