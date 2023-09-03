@@ -1,9 +1,10 @@
 #!/bin/sh
 
 
-# this has not been fully tested. I'm able to build this on linux with mingw,
-# but it crashes due to not being able to choose the right audio device.
-# I assume it should work fine on windows, but I cannot guarentee it.
+# this probably wont work on windows.
+# I have tested it a bit on linux with wine and it seems to work,
+# but I don't want to waste any more time on setting up a windows
+# virtual machine and dealing with such a slow and annoyning OS
 
 
 # disables warning about variables being split intentionally
@@ -118,6 +119,12 @@ fi
 
 wait
 
+KERNEL="$(uname -s)"
+if [ echo "$KERNEL" == "Linux" ]; then
+	LIB_DIR="/usr/x86_64-w64-mingw32/bin"
+else
+	LIB_DIR="/mingw32/bin"
+fi
 for f in $DLLS; do
 	cp /usr/x86_64-w64-mingw32/bin/$f build/$f
 done

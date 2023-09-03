@@ -71,17 +71,23 @@ void initAudio(void) {
 	
 	outputParameters.device = -1;
 	const PaDeviceInfo* deviceInfo;
-	for(int i = 0; i < numDevices; i++){
-		deviceInfo = Pa_GetDeviceInfo(i);
-		printf("Device %i: %i, %s, %i, %i\n", i, deviceInfo->structVersion, deviceInfo->name, deviceInfo->maxInputChannels, deviceInfo->maxOutputChannels);
-		// pick default device
-#ifdef _WIN32
-		if(strncmp(deviceInfo->name, "Speaker", 7) == 0) {
-#endif
-#ifdef __linux__
-		if(strcmp(deviceInfo->name, "default") == 0) {
-#endif
-			outputParameters.device = i;
+	const char* audioDevices[] = {
+		"default",
+		"Speaker",
+		"Primary", // I can't figure out how to actually get the right audio device for wine, but this makes it not crash at least
+	};
+	for(uint8_t d = 0; d < sizeof(audioDevices)/sizeof(audioDevices[0]); ++d) {
+		for(int i = 0; i < numDevices; i++){
+			deviceInfo = Pa_GetDeviceInfo(i);
+			printf("Device %i: %i, %s, %i, %i\n", i, deviceInfo->structVersion, deviceInfo->name, deviceInfo->maxInputChannels, deviceInfo->maxOutputChannels);
+			// pick default device
+			if(strncmp(deviceInfo->name, audioDevices[d], 7) == 0) {
+				outputParameters.device = i;
+				break;
+			}
+		}
+		if(outputParameters.device != -1) {
+			break;
 		}
 	}
 	if(outputParameters.device == -1){
