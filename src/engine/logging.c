@@ -57,7 +57,9 @@ void debugLog(LOG_TYPE type, const char* fmt, ...) {
 	char* str = malloc(sizeof(char) * (strlen(logTypeStrings[type]) + length + 1));
 	str[0] = '\0';
 	
+#if !defined(WIN32) && !defined(_WIN32)
 	printf("%s", logAnsiColorStrings[type]);
+#endif
 	
 	char* tempStr = malloc(sizeof(char)*(length+1));
 	vsprintf(tempStr, fmt, args2);
@@ -80,8 +82,10 @@ void debugLog(LOG_TYPE type, const char* fmt, ...) {
 		}
 	}
 #endif
-	
+
+#if !defined(WIN32) && !defined(_WIN32)
 	printf("%s", logAnsiColorStrings[LOG_NORMAL]);
+#endif
 
 	if(type == LOG_ERROR) {
 		fflush(logFile);

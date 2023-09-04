@@ -120,13 +120,13 @@ fi
 wait
 
 KERNEL="$(uname -s)"
-if [ echo "$KERNEL" == "Linux" ]; then
+if [ "$KERNEL" = "Linux" ]; then
 	LIB_DIR="/usr/x86_64-w64-mingw32/bin"
 else
 	LIB_DIR="/mingw32/bin"
 fi
 for f in $DLLS; do
-	cp /usr/x86_64-w64-mingw32/bin/$f build/$f
+	cp $LIB_DIR/$f build/$f
 done
 
 # Link
