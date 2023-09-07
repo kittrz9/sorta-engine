@@ -19,9 +19,9 @@ cd "$(dirname $0)"
 EXE_NAME="openGL-test"
 LIBS="-lm"
 INCLUDES="-Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates -Isrc/external"
-CFLAGS="$CFLAGS -Os -Wall -Wextra -Wpedantic"
+CFLAGS="$CFLAGS -Os -Wall -Wextra -Wpedantic -std=c99"
 LDFLAGS="$LDFLAGS -Os"
-DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"
+DEFINES="$DEFINES -DUNUSED=__attribute__((unused)) -D_XOPEN_SOURCE=700" # https://stackoverflow.com/questions/3875197/gcc-with-std-c99-complains-about-not-knowing-struct-timespec
 
 # tcc requires -DSTBI_NO_SIMD in DEFINES to compile for some reason
 [ "$CC" = tcc ] && DEFINES="$DEFINES -DSTBI_NO_SIMD"

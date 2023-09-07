@@ -1,5 +1,8 @@
 #include "gameLoop.h"
 
+// https://stackoverflow.com/questions/3875197/gcc-with-std-c99-complains-about-not-knowing-struct-timespec
+//#define _XOPEN_SOURCE 500
+
 #include <stdio.h>
 #include <time.h>
 
@@ -15,6 +18,7 @@
 
 #include "gameStates.h"
 #include "gameStateRunning.h"
+
 
 int gameLoop(void){
 	double lastTime = glfwGetTime();
