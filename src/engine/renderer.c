@@ -241,6 +241,8 @@ void uninitRenderer(void){
 	glDeleteBuffers(1, &textVertexBuffer.bufferID);
 
 	glDeleteTextures(1, ((GLuint*)fallbackTexture));
+
+	glfwTerminate();
 	
 	return;
 }

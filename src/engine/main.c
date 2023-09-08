@@ -29,15 +29,14 @@ int main(UNUSED int argc, UNUSED char** argv, UNUSED char** envp){
 	// end
 	debugLog(LOG_NORMAL, "closing\n");
 	
-	uninitRenderer();
-	uninitAudio();
-	
 	destroyEntityList();
+	
+	uninitAudio();
 
 	uninitResourceManager();
 	
-	glfwTerminate();
-	
+	uninitRenderer();
+
 	closeLogFile();
 	
 	return 0;
