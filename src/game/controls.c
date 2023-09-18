@@ -2,37 +2,14 @@
 
 #include <stdio.h>
 
+#define DEFINE_KEY(id, code) [id] = { .held=false, .pressedTimer=0.0f, .keyCode=code }
+
 key keys[CONTROLS_LENGTH] = {
-	[KEY_EXIT] = {
-		.name="exit",
-		.held=false,
-		.pressedTimer=0.0f,
-		.keyCode=GLFW_KEY_ESCAPE,
-	},
-	[KEY_UP] = {
-		.name="up",
-		.held=false,
-		.pressedTimer=0.0f,
-		.keyCode=GLFW_KEY_UP,
-	},
-	[KEY_DOWN] = {
-		.name="down",
-		.held=false,
-		.pressedTimer=0.0f,
-		.keyCode=GLFW_KEY_DOWN,
-	},
-	[KEY_LEFT] = {
-		.name="left",
-		.held=false,
-		.pressedTimer=0.0f,
-		.keyCode=GLFW_KEY_LEFT,
-	},
-	[KEY_RIGHT] = {
-		.name="right",
-		.held=false,
-		.pressedTimer=0.0f,
-		.keyCode=GLFW_KEY_RIGHT,
-	},
+	DEFINE_KEY(KEY_EXIT, GLFW_KEY_ESCAPE),
+	DEFINE_KEY(KEY_UP, GLFW_KEY_UP),
+	DEFINE_KEY(KEY_DOWN, GLFW_KEY_DOWN),
+	DEFINE_KEY(KEY_LEFT, GLFW_KEY_LEFT),
+	DEFINE_KEY(KEY_RIGHT, GLFW_KEY_RIGHT),
 };
 
 void handleKeyEvent(UNUSED GLFWwindow* window, int key, UNUSED int scancode, int action, UNUSED int mods) {

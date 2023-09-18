@@ -9,7 +9,6 @@ typedef struct {
 	bool held;
 	float pressedTimer;
 	int keyCode;
-	const char* name;
 } key;
 
 enum CONTROLS{KEY_EXIT, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, CONTROLS_LENGTH};
