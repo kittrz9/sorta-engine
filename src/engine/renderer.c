@@ -157,11 +157,14 @@ void flushAllVertexBuffers(void) {
 }
 
 void initRenderer(void){
+	const char* errorDescription;
+	int errorCode;
 	debugLog(LOG_NORMAL, "initializing renderer\n"); 
 	// init GLFW
 	debugLog(LOG_NORMAL, "initializing GLFW\n");
 	if(!glfwInit()) {
-		debugLog(LOG_ERROR, "could not initialize GLFW\n");
+		errorCode = glfwGetError(&errorDescription);
+		debugLog(LOG_ERROR, "could not initialize GLFW. GLFW Error #%i: \"%s\"\n", errorCode, errorDescription);
 		exit(-1);
 	}
 	debugLog(LOG_SUCCESS, "glfw successfully initialized\n");
@@ -172,7 +175,8 @@ void initRenderer(void){
 	glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
 	window = glfwCreateWindow(windowWidth, windowHeight, "bruh", NULL, NULL);
 	if(!window) {
-		debugLog(LOG_ERROR, "could not create window\n");
+		errorCode = glfwGetError(&errorDescription);
+		debugLog(LOG_ERROR, "could not create window. GLFW error #%i: \"%s\"\n", errorCode, errorDescription);
 		glfwTerminate();
 		exit(-1);
 	}

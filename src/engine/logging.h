@@ -10,9 +10,6 @@ typedef enum {
 	LOG_ERROR,
 } LOG_TYPE;
 
-// will not print anything lower than logPriority (i.e. will not print LOG_WARN and below when set to LOG_ERROR)
-extern LOG_TYPE logPriority;
-
 void initLogFile(void);
 void closeLogFile(void);
 
