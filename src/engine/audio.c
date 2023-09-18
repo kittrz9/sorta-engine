@@ -1,12 +1,12 @@
-#include "audio.h" 
+#include "engine/audio.h" 
 
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
 
-#include "logging.h"
-#include "resourceManager.h"
+#include "engine/logging.h"
+#include "engine/resourceManager.h"
 
 #include "portaudio.h"
 

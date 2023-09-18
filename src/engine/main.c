@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "renderer.h"
+#include "engine/renderer.h"
+#include "engine/entity.h"
+#include "engine/resourceManager.h"
+#include "engine/logging.h"
+#include "engine/audio.h"
 
-#include "gameLoop.h"
-#include "controls.h"
-#include "entity.h"
-#include "resourceManager.h"
-#include "logging.h"
-#include "audio.h"
+#include "game/gameLoop.h"
 
 int main(UNUSED int argc, UNUSED char** argv, UNUSED char** envp){
 	// initialize the log file

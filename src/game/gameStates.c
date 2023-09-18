@@ -1,4 +1,4 @@
-#include "gameStates.h"
+#include "game/gameStates.h"
 
 #include <stddef.h>
 

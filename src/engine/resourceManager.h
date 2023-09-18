@@ -30,9 +30,9 @@ void addResourceToList(RESOURCE_TYPE type, const char* name, resource* res);
 void clearResourceList(void);
 
 // include the header for every resource loader here
-#include "resourceLoaders/textureLoader.h"
-#include "resourceLoaders/shaderLoader.h"
-#include "resourceLoaders/fontLoader.h"
-#include "resourceLoaders/wavLoader.h"
+#include "engine/resourceLoaders/textureLoader.h"
+#include "engine/resourceLoaders/shaderLoader.h"
+#include "engine/resourceLoaders/fontLoader.h"
+#include "engine/resourceLoaders/wavLoader.h"
 
 #endif

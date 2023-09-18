@@ -1,4 +1,4 @@
-#include "fontLoader.h"
+#include "engine/resourceLoaders/fontLoader.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,9 +6,9 @@
 
 #include "stb_image/stb_image.h"
 
-#include "logging.h"
-#include "resourceManager.h"
-#include "files.h"
+#include "engine/logging.h"
+#include "engine/resourceManager.h"
+#include "engine/files.h"
 
 resource* loadFont(const char* name, const char* fontFilename, const char* fontDataFilename) {
 	resource* tempRes = checkIfAlreadyLoaded(name);

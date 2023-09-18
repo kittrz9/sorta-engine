@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include "resourceManager.h"
-#include "renderer.h"
+#include "engine/resourceManager.h"
+#include "engine/renderer.h"
 
 typedef struct {
 	rect textureRect;

@@ -1,8 +1,8 @@
 #ifndef TEXTURE_LOADER_H
 #define TEXTURE_LOADER_H
 
-#include "resourceManager.h"
-#include "vectors.h"
+#include "engine/resourceManager.h"
+#include "engine/vectors.h"
 
 #include "glad/gl.h"
 

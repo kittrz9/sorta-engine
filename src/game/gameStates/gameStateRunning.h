@@ -1,7 +1,7 @@
 #ifndef GAMESTATE_RUNNING_H
 #define GAMESTATE_RUNNING_H
 
-#include "gameStates.h"
+#include "game/gameStates.h"
 
 void initGameStateRunning(void);
 void uninitGameStateRunning(void);

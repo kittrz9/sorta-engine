@@ -1,8 +1,8 @@
-#include "animation.h"
+#include "engine/animation.h"
 
 #include <stdlib.h>
 
-#include "renderer.h"
+#include "engine/renderer.h"
 
 animationStruct* createAnimationStruct(resource* texture, animationFrame* anim, uint16_t animSize, animationFrame* nextAnim, uint16_t nextAnimSize) {
 	animationStruct* animStruct = malloc(sizeof(animationStruct));

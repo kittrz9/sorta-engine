@@ -1,4 +1,4 @@
-#include "textureLoader.h"
+#include "engine/resourceLoaders/textureLoader.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -7,10 +7,10 @@
 #include "glad/gl.h"
 #include "stb_image/stb_image.h"
 
-#include "logging.h"
-#include "renderer.h"
-#include "resourceManager.h"
-#include "files.h"
+#include "engine/logging.h"
+#include "engine/renderer.h"
+#include "engine/resourceManager.h"
+#include "engine/files.h"
 
 resource* loadTexture(const char* filename){
 	resource* tempRes = checkIfAlreadyLoaded(filename);

@@ -1,4 +1,4 @@
-#include "resourceManager.h"
+#include "engine/resourceManager.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "logging.h"
+#include "engine/logging.h"
 
 #define RESOURCE_LIST_INITIAL_SIZE 32
 

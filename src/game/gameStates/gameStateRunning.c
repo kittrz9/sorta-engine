@@ -1,15 +1,15 @@
-#include "gameStates/gameStateRunning.h" 
+#include "game/gameStates/gameStateRunning.h" 
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "entity.h"
-#include "player.h"
-#include "controls.h"
-#include "audio.h"
-#include "files.h"
+#include "engine/renderer.h"
+#include "engine/entity.h"
+#include "engine/audio.h"
+#include "engine/files.h"
 
-#include "renderer.h"
+#include "game/player.h"
+#include "game/controls.h"
 
 struct {
 	resource* defaultFont;

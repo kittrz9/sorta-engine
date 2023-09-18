@@ -1,13 +1,13 @@
-#include "wavLoader.h"
+#include "engine/resourceLoaders/wavLoader.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "logging.h"
-#include "resourceManager.h"
-#include "audio.h"
-#include "files.h"
+#include "engine/logging.h"
+#include "engine/resourceManager.h"
+#include "engine/audio.h"
+#include "engine/files.h"
 
 typedef struct {
 	char chunkID[4]; // "RIFF"

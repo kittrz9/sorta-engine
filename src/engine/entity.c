@@ -1,10 +1,10 @@
-#include "entity.h"
+#include "engine/entity.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "logging.h"
+#include "engine/logging.h"
 
 entListNode* entListHead = NULL;
 entListNode* entListTail = NULL;

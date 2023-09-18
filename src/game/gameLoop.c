@@ -1,4 +1,4 @@
-#include "gameLoop.h"
+#include "game/gameLoop.h"
 
 // https://stackoverflow.com/questions/3875197/gcc-with-std-c99-complains-about-not-knowing-struct-timespec
 //#define _XOPEN_SOURCE 500
@@ -9,15 +9,14 @@
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
 
-#include "renderer.h"
-#include "controls.h"
-#include "resourceManager.h"
+#include "engine/renderer.h"
+#include "engine/entity.h"
+#include "engine/resourceManager.h"
 
-#include "entity.h"
-#include "player.h"
+#include "game/gameStates.h"
+#include "game/gameStates/gameStateRunning.h"
+#include "game/controls.h"
 
-#include "gameStates.h"
-#include "gameStateRunning.h"
 
 
 int gameLoop(void){
@@ -27,6 +26,9 @@ int gameLoop(void){
 	uint32_t frameCap = 0;
 	struct timespec tim, tim2;
 	tim.tv_sec = 0;
+
+	// set key callback
+	glfwSetKeyCallback(window, handleKeyEvent);
 	
 	initGameState(&gameStateRunning);
 	

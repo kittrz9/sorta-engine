@@ -1,4 +1,4 @@
-#include "shaderLoader.h"
+#include "engine/resourceLoaders/shaderLoader.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,9 +6,9 @@
 
 #include "glad/gl.h"
 
-#include "logging.h"
-#include "resourceManager.h"
-#include "files.h"
+#include "engine/logging.h"
+#include "engine/resourceManager.h"
+#include "engine/files.h"
 
 GLuint readAndCompileShader(const char* shaderFilePath, GLenum shaderType){
 	GLint  shaderCompiled = 1;

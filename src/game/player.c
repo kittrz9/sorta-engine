@@ -1,14 +1,14 @@
-#include "player.h"
+#include "game/player.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
-#include "renderer.h"
-#include "controls.h"
-#include "vectors.h"
+#include "engine/renderer.h"
+#include "engine/vectors.h"
+#include "engine/audio.h"
 
-#include "audio.h"
+#include "game/controls.h"
 
 #define playerObj ((playerStruct*)(ent->object))
 

@@ -3,10 +3,10 @@
 
 #include <stdbool.h>
 
-#include "resourceManager.h"
-#include "vectors.h"
-#include "entity.h"
-#include "animation.h"
+#include "engine/resourceManager.h"
+#include "engine/vectors.h"
+#include "engine/entity.h"
+#include "engine/animation.h"
 
 extern entity* player;
 

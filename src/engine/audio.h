@@ -4,7 +4,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "resourceManager.h"
+#include "engine/resourceManager.h"
+
 #include "portaudio.h"
 
 #define SAMPLE_RATE 44100

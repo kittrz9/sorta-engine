@@ -4,8 +4,8 @@
 #include "glad/gl.h"
 #include <GLFW/glfw3.h>
 
-#include "resourceManager.h"
-#include "vectors.h"
+#include "engine/resourceManager.h"
+#include "engine/vectors.h"
 
 extern int windowWidth;
 extern int windowHeight;

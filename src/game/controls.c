@@ -1,4 +1,4 @@
-#include "controls.h"
+#include "game/controls.h"
 
 #include <stdio.h>
 

@@ -5,7 +5,7 @@
 
 #include "glad/gl.h"
 
-#include "resourceManager.h"
+#include "engine/resourceManager.h"
 
 typedef struct {
 	bool loaded;

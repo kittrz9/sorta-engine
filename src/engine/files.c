@@ -1,4 +1,4 @@
-#include "files.h"
+#include "engine/files.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,8 +12,8 @@
 #include <zlib.h>
 #endif
 
-#include "resourceManager.h"
-#include "logging.h"
+#include "engine/resourceManager.h"
+#include "engine/logging.h"
 
 gameFile readGameFile(const char* filename, bool isText) {
 	if(strcmp(filename + (strlen(filename)-3), ".gz") == 0) {

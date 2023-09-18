@@ -1,17 +1,15 @@
-#include "renderer.h"
+#include "engine/renderer.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "logging.h"
-#include "controls.h"
-#include "vectors.h"
+#include "engine/logging.h"
+#include "engine/vectors.h"
+#include "engine/resourceManager.h"
 
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
-
-#include "resourceManager.h"
 
 int windowWidth  = 640;
 int windowHeight = 480;
@@ -202,7 +200,6 @@ void initRenderer(void){
 	glfwSetWindowSizeCallback(window, glfwWindowSizeCallback);
 
 	// set key callback
-	glfwSetKeyCallback(window, handleKeyEvent);
 	glfwSetErrorCallback(glfwErrorCallback);
 
 //	debugLog(LOG_NORMAL, "setting up text vertex object array\n");
