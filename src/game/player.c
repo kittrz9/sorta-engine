@@ -14,12 +14,6 @@
 
 entity* player = NULL;
 
-const vec2f worldSize = {1333.3f, 1000.0f};
-
-vec2f worldToScreenSpace(vec2f inputVector){
-	return (vec2f){ (inputVector.x/worldSize.x)*2-1, (inputVector.y/worldSize.y)*2-1};
-}
-
 animationFrame runAnimation[] = {
 	{
 		.textureRect = {

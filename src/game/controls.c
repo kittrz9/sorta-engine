@@ -22,3 +22,21 @@ void handleKeyEvent(UNUSED GLFWwindow* window, int key, UNUSED int scancode, int
 	
 	return;
 }
+
+struct mouseStruct mouse;
+void handleMouseMoveEvent(GLFWwindow* window, double xpos, double ypos) {
+	mouse.x = (float)xpos;
+	mouse.y = (float)ypos;
+
+	return;
+}
+
+void handleMouseButtonEvent(GLFWwindow* window, int button, int action, UNUSED int mods) {
+	if(action == GLFW_PRESS) {
+		mouse.buttons |= 1 << button;
+	}
+	if(action == GLFW_RELEASE) {
+		mouse.buttons &= ~(1 << button);
+	}
+}
+

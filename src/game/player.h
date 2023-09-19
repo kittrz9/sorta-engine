@@ -8,6 +8,8 @@
 #include "engine/entity.h"
 #include "engine/animation.h"
 
+#include "game/world.h"
+
 extern entity* player;
 
 typedef struct {

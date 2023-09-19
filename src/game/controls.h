@@ -31,4 +31,20 @@ extern key keys[CONTROLS_LENGTH];
 // glfw key event callback
 void handleKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+enum {
+	MOUSE_LEFT   = 1 << GLFW_MOUSE_BUTTON_LEFT,
+	MOUSE_RIGHT  = 1 << GLFW_MOUSE_BUTTON_RIGHT,
+	MOUSE_MIDDLE = 1 << GLFW_MOUSE_BUTTON_MIDDLE,
+};
+
+struct mouseStruct {
+	float x, y;
+	uint8_t buttons;
+};
+
+extern struct mouseStruct mouse;
+
+void handleMouseMoveEvent(GLFWwindow* window, double xpos, double ypos);
+void handleMouseButtonEvent(GLFWwindow* window, int button, int action, int mods);
+
 #endif

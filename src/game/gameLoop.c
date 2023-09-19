@@ -29,6 +29,8 @@ int gameLoop(void){
 
 	// set key callback
 	glfwSetKeyCallback(window, handleKeyEvent);
+	glfwSetCursorPosCallback(window, handleMouseMoveEvent);
+	glfwSetMouseButtonCallback(window, handleMouseButtonEvent);
 	
 	initGameState(&gameStateRunning);
 	

@@ -71,6 +71,12 @@ int runGameStateRunning(double deltaTime){
 	useShader(gsRunningData.fontShader);
 	drawText(gsRunningData.defaultFont, fpsStr, 25.0, (colorRGBA){0.0f,0.0f,1.0f,1.0f}, 0, 0, TEXT_ALIGN_LEFT);
 
+	vec2f test = { mouse.x/windowWidth * worldSize.x, mouse.y/windowHeight * worldSize.y };
+	if(mouse.buttons & MOUSE_LEFT) {
+		((playerStruct*)(player->object))->pos.x = test.x;
+		((playerStruct*)(player->object))->pos.y = test.y;
+	}
+
 	static float fontTime = 0.0f;
 	useShader(gsRunningData.fontShader2);
 	setShaderUniform1f("time", fontTime);
