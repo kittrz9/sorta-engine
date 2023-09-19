@@ -18,7 +18,7 @@ cd "$(dirname $0)"
 
 EXE_NAME="openGL-test"
 LIBS="-lgdi32 -lm"
-INCLUDES="-Isrc/engine/resourceLoaders -Isrc/engine -Isrc/game -Isrc/game/gameStates -Isrc/external"
+INCLUDES="-Isrc/ -Isrc/external"
 CFLAGS="$CFLAGS -Os -Wall -Wextra -Wpedantic"
 LDFLAGS="$LDFLAGS -Os"
 DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"

@@ -17,6 +17,8 @@
 // the synthesizer part of this is based on the synth code I made for the other thing
 // https://github.com/kittrz9/SDL_ProjectBase/blob/main/src/engine/audio.c
 
+bool audioEnabled = true;
+
 PaStream* stream;
 
 typedef struct {
@@ -44,6 +46,10 @@ typedef struct {
 sampleListEntry activeSamples[AUDIO_CHANNELS];
 
 void initAudio(void) {
+	if(!audioEnabled) {
+		debugLog(LOG_NORMAL, "audio is currently disabled\n");
+		return;
+	}
 	// initialize the list of active synths and samples
 	for(int i = 0; i < AUDIO_CHANNELS; i++){
 		activeSynths[i].data = NULL;
@@ -71,17 +77,26 @@ void initAudio(void) {
 	
 	outputParameters.device = -1;
 	const PaDeviceInfo* deviceInfo;
+#if !defined(_WIN32) && !defined(WIN32)
+	for(uint8_t i = 0; i < numDevices; ++i) {
+		deviceInfo = Pa_GetDeviceInfo(i);
+		printf("Device %i: %i, %s, %i, %i\n", i, deviceInfo->structVersion, deviceInfo->name, deviceInfo->maxInputChannels, deviceInfo->maxOutputChannels);
+		if(strncmp(deviceInfo->name, "default", 7) == 0) {
+			outputParameters.device = i;
+			break;
+		}
+	}
+#else
 	const char* audioDevices[] = {
-		"default",
-		"Speaker",
-		"Primary", // I can't figure out how to actually get the right audio device for wine, but this makes it not crash at least
+		"Speakers (High Definition Audio)", // can't test this again since my windows vm just decided it can't use opengl anymore lmao
+		"Wine Sound Mapper - Output",
 	};
 	for(uint8_t d = 0; d < sizeof(audioDevices)/sizeof(audioDevices[0]); ++d) {
 		for(int i = 0; i < numDevices; i++){
 			deviceInfo = Pa_GetDeviceInfo(i);
 			printf("Device %i: %i, %s, %i, %i\n", i, deviceInfo->structVersion, deviceInfo->name, deviceInfo->maxInputChannels, deviceInfo->maxOutputChannels);
 			// pick default device
-			if(strncmp(deviceInfo->name, audioDevices[d], 7) == 0) {
+			if(strcmp(deviceInfo->name, audioDevices[d]) == 0) {
 				outputParameters.device = i;
 				break;
 			}
@@ -90,8 +105,12 @@ void initAudio(void) {
 			break;
 		}
 	}
+#endif
 	if(outputParameters.device == -1){
-		debugLog(LOG_ERROR, "could not find default audio device\n");
+		debugLog(LOG_ERROR, "could not find default audio device, disabling audio\n");
+		Pa_Terminate();
+		audioEnabled = false;
+		return;
 	}
 	
 	outputParameters.channelCount = 2;
@@ -125,6 +144,7 @@ void initAudio(void) {
 }
 
 void uninitAudio(void) {
+	if(!audioEnabled) { return; }
 	PaError error;
 	
 	debugLog(LOG_NORMAL, "uninitializing audio\n");
@@ -156,6 +176,7 @@ void uninitAudio(void) {
 }
 
 bool playSample(resource* sample, float volume, float resampleFactor) {
+	if(!audioEnabled) { return false; }
 	int freeChannel = -1;
 	for(int i = 0; i < AUDIO_CHANNELS; ++i) {
 		if(activeSamples[i].sample == NULL) {
@@ -174,6 +195,7 @@ bool playSample(resource* sample, float volume, float resampleFactor) {
 }
 
 bool stopSample(resource* sample) {
+	if(!audioEnabled) { return false; }
 	for(int i = 0; i < AUDIO_CHANNELS; ++i) {
 		if(activeSamples[i].sample == sample->pointer) {
 			activeSamples[i].sample = NULL;
@@ -184,6 +206,7 @@ bool stopSample(resource* sample) {
 }
 
 bool playSynth(synthData* data){
+	if(!audioEnabled) { return false; }
 	int freeChannel = -1;
 	if(data->channel < 0){
 		// check for free audio channels

@@ -123,6 +123,7 @@ Where the font files should be. They are generated with [msdf-atlas-gen](https:/
 
  - Make it not need to start a whole new batch when switching textures
  - Completely rewrite the audio system
+ - Maybe rewrite the entity system
  - Music playback (probably using amiga mod files since [libopenmpt](https://lib.openmpt.org/libopenmpt/) is a thing)
  - Fix some of the older rendering functions
  - [ciumgui](https://github.com/cimgui/cimgui) integration (requires cmake though)

@@ -4,6 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(WIN32) || defined(_WIN32)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 FILE* logFile;
 
 LOG_TYPE logMode = LOG_NORMAL;
@@ -71,6 +76,12 @@ void debugLog(LOG_TYPE type, const char* fmt, ...) {
 	if(logFile){
 		fprintf(logFile, "%s", str);
 	}
+	if(type == LOG_ERROR) {
+		fflush(logFile);
+#if defined(WIN32) || defined(_WIN32)
+		MessageBox(NULL, str, "Sorta Engine Error", MB_OK | MB_ICONERROR);
+#endif
+	}
 	free(tempStr);
 	free(str);
 
@@ -86,10 +97,6 @@ void debugLog(LOG_TYPE type, const char* fmt, ...) {
 #if !defined(WIN32) && !defined(_WIN32)
 	printf("%s", logAnsiColorStrings[LOG_NORMAL]);
 #endif
-
-	if(type == LOG_ERROR) {
-		fflush(logFile);
-	}
 	
 	return;
 }

@@ -87,6 +87,8 @@ entity* createPlayer(vec2f pos, vec2f size){
 	ent->update = updatePlayerInAir;
 	
 	ent->destructor = destroyPlayer;
+
+	ent->markedForDeletion = false;
 	
 	pushToEntityList(ent);
 
