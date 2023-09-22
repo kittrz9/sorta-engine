@@ -152,6 +152,7 @@ void flushAllVertexBuffers(void) {
 	flushVertexBuffer(&textureVertexBuffer);
 	flushVertexBuffer(&defaultVertexBuffer);
 	flushVertexBuffer(&textVertexBuffer);
+	currentTexture = NULL;
 }
 
 void initRenderer(void){
@@ -325,14 +326,12 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 		glBindTexture(GL_TEXTURE_2D, ((textureStruct*)textureRes->pointer)->id);
 	}
 
-	if(textureRes == fallbackTexture) {
+	/*if(textureRes == fallbackTexture) {
 		textureRect.x = 0;
 		textureRect.y = 0;
 		textureRect.w = 2;
 		textureRect.h = 2;
-	}
-
-	switchVertexBuffer(&textureVertexBuffer);
+	}*/
 
 	// make things not render around the center of the texture but to the top left corner
 	drawnRect.x += drawnRect.w;
@@ -342,14 +341,24 @@ void drawTexture(rect drawnRect, rect textureRect, colorRGBA color, float angle,
 	drawnRect.h *= -1;
 
 	vertex quad[4];
-	for(unsigned int i = 0; i < 4; ++i) {
-		vertex point;
-		point.position = rotateVec2f(points[i].position, angle);
-		quad[i].position.x = (point.position.x * drawnRect.w) + drawnRect.x;
-		quad[i].position.y = (point.position.y * drawnRect.h) + drawnRect.y;
-		quad[i].texCoords.x = ((points[i].texCoords.x * textureRect.w) + textureRect.x) / ((textureStruct*)textureRes->pointer)->size.x;
-		quad[i].texCoords.y = ((points[i].texCoords.y * textureRect.h) + textureRect.y) / ((textureStruct*)textureRes->pointer)->size.y;
-		quad[i].color = color;
+	if(angle == 0) {
+		for(unsigned int i = 0; i < 4; ++i) {
+			quad[i].position.x = (points[i].position.x * drawnRect.w) + drawnRect.x;
+			quad[i].position.y = (points[i].position.y * drawnRect.h) + drawnRect.y;
+			quad[i].texCoords.x = ((points[i].texCoords.x * textureRect.w) + textureRect.x) / ((textureStruct*)textureRes->pointer)->size.x;
+			quad[i].texCoords.y = ((points[i].texCoords.y * textureRect.h) + textureRect.y) / ((textureStruct*)textureRes->pointer)->size.y;
+			quad[i].color = color;
+		}
+	} else {
+		for(unsigned int i = 0; i < 4; ++i) {
+			vertex point;
+			point.position = rotateVec2f(points[i].position, angle);
+			quad[i].position.x = (point.position.x * drawnRect.w) + drawnRect.x;
+			quad[i].position.y = (point.position.y * drawnRect.h) + drawnRect.y;
+			quad[i].texCoords.x = ((points[i].texCoords.x * textureRect.w) + textureRect.x) / ((textureStruct*)textureRes->pointer)->size.x;
+			quad[i].texCoords.y = ((points[i].texCoords.y * textureRect.h) + textureRect.y) / ((textureStruct*)textureRes->pointer)->size.y;
+			quad[i].color = color;
+		}
 	}
 
 	addVerticesToVertexBuffer(&textureVertexBuffer, &quad[0], 4);
