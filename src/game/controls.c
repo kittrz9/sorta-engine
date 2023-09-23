@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include "GLFW/glfw3.h"
+
 #define INIT_KEY(id, code) [id] = { .held=false, .pressedTimer=0.0f, .keyCode=code },
 key keys[CONTROLS_LENGTH] = {
 	KEYS_MACRO(INIT_KEY)
@@ -24,14 +26,14 @@ void handleKeyEvent(UNUSED GLFWwindow* window, int key, UNUSED int scancode, int
 }
 
 struct mouseStruct mouse;
-void handleMouseMoveEvent(GLFWwindow* window, double xpos, double ypos) {
+void handleMouseMoveEvent(UNUSED GLFWwindow* window, double xpos, double ypos) {
 	mouse.x = (float)xpos;
 	mouse.y = (float)ypos;
 
 	return;
 }
 
-void handleMouseButtonEvent(GLFWwindow* window, int button, int action, UNUSED int mods) {
+void handleMouseButtonEvent(UNUSED GLFWwindow* window, int button, int action, UNUSED int mods) {
 	if(action == GLFW_PRESS) {
 		mouse.buttons |= 1 << button;
 	}

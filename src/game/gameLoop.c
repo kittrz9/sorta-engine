@@ -9,6 +9,7 @@
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
 
+#include "engine/window.h"
 #include "engine/renderer.h"
 #include "engine/entity.h"
 #include "engine/resourceManager.h"

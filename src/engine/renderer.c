@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "engine/window.h"
 #include "engine/logging.h"
 #include "engine/vectors.h"
 #include "engine/resourceManager.h"
@@ -11,19 +12,7 @@
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
 
-int windowWidth  = 640;
-int windowHeight = 480;
-
-GLFWwindow* window;
-
 colorRGBA screenClearColor = { 0.3f, 0.3f, 0.3f, 1.0f };
-
-GLint vertexAngleLocation;
-GLint vertexRectLocation;
-GLint fragmentTextureRectLocation;
-GLint fragmentInputColorLocation;
-GLint fragmentUseTextureLocation;
-GLint fragmentWindowSize;
 
 resource* currentShaderRes;
 GLuint currentShader;
@@ -47,20 +36,6 @@ void setShaderUniform4f(const char* name, float value1, float value2, float valu
 void setShaderUniform1ui(const char* name, unsigned int value) {
 	GLint location = glGetUniformLocation(currentShader, name);
 	glUniform1ui(location, value);
-}
-void glfwWindowSizeCallback(UNUSED GLFWwindow* window, int width, int height){
-	windowWidth = width;
-	windowHeight = height;
-	
-	glViewport(0,0,width,height);
-	
-	setShaderUniform2f("windowSize", width, height);
-	
-	return;
-}
-
-void glfwErrorCallback(int error, const char* description) {
-	debugLog(LOG_ERROR, "GLFW error %i: %s", error, description);
 }
 
 const vertex points[] = {
@@ -156,32 +131,6 @@ void flushAllVertexBuffers(void) {
 }
 
 void initRenderer(void){
-	const char* errorDescription;
-	int errorCode;
-	debugLog(LOG_NORMAL, "initializing renderer\n"); 
-	// init GLFW
-	debugLog(LOG_NORMAL, "initializing GLFW\n");
-	if(!glfwInit()) {
-		errorCode = glfwGetError(&errorDescription);
-		debugLog(LOG_ERROR, "could not initialize GLFW. GLFW Error #%i: \"%s\"\n", errorCode, errorDescription);
-		exit(-1);
-	}
-	debugLog(LOG_SUCCESS, "glfw successfully initialized\n");
-
-	// create window
-	debugLog(LOG_NORMAL, "creating window\n");
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-	glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
-	window = glfwCreateWindow(windowWidth, windowHeight, "bruh", NULL, NULL);
-	if(!window) {
-		errorCode = glfwGetError(&errorDescription);
-		debugLog(LOG_ERROR, "could not create window. GLFW error #%i: \"%s\"\n", errorCode, errorDescription);
-		glfwTerminate();
-		exit(-1);
-	}
-	glfwMakeContextCurrent(window);
-	debugLog(LOG_SUCCESS, "window successfully created\n");
-
 	debugLog(LOG_NORMAL, "initializing glad\n");
 	int gladVersion = gladLoadGL(glfwGetProcAddress);
 	debugLog(LOG_NORMAL, "using glad version: %d.%d\n", GLAD_VERSION_MAJOR(gladVersion), GLAD_VERSION_MINOR(gladVersion));
@@ -193,15 +142,6 @@ void initRenderer(void){
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version  = glGetString(GL_VERSION);
 	debugLog(LOG_NORMAL, "Renderer: %s, OpenGL version: %s\n", renderer, version);
-
-	// turn off vsync
-	glfwSwapInterval(0);
-
-	// set window size callback
-	glfwSetWindowSizeCallback(window, glfwWindowSizeCallback);
-
-	// set key callback
-	glfwSetErrorCallback(glfwErrorCallback);
 
 //	debugLog(LOG_NORMAL, "setting up text vertex object array\n");
 //	glGenVertexArrays(1, &textVertexArray);
@@ -243,8 +183,6 @@ void uninitRenderer(void){
 	glDeleteBuffers(1, &textVertexBuffer.bufferID);
 
 	glDeleteTextures(1, ((GLuint*)fallbackTexture));
-
-	glfwTerminate();
 	
 	return;
 }

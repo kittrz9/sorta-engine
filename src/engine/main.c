@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "engine/window.h"
 #include "engine/renderer.h"
 #include "engine/entity.h"
 #include "engine/resourceManager.h"
@@ -15,6 +16,8 @@ int main(UNUSED int argc, UNUSED char** argv, UNUSED char** envp){
 
 	// initialize the resource manager
 	initResourceManager();
+	
+	initWindow();
 	
 	// initialize the renderer
 	initRenderer();
@@ -35,6 +38,8 @@ int main(UNUSED int argc, UNUSED char** argv, UNUSED char** envp){
 	uninitResourceManager();
 	
 	uninitRenderer();
+
+	destroyWindow();
 
 	closeLogFile();
 	

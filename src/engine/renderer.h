@@ -7,12 +7,6 @@
 #include "engine/resourceManager.h"
 #include "engine/vectors.h"
 
-extern int windowWidth;
-extern int windowHeight;
-extern GLFWwindow* window;
-
-void glfwWindowSizeCallback(GLFWwindow* window, int width, int height);
-
 typedef struct {
 	float x,y,w,h;
 } rect;
@@ -54,15 +48,6 @@ extern colorRGBA screenClearColor;
 
 void initRenderer(void);
 void uninitRenderer(void);
-
-// location of the uniform things in the shaders
-extern GLint vertexAngleLocation;
-extern GLint vertexRectLocation;
-extern GLint fragmentTextureRectLocation;
-extern GLint fragmentInputColorLocation;
-// there's probably a better way to make the drawRect function not use a texture
-extern GLint fragmentUseTextureLocation;
-extern GLint fragmentWindowSize;
 
 void setShaderUniform1f(const char* name, float value);
 void setShaderUniform2f(const char* name, float value1, float value2);

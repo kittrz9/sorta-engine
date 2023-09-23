@@ -2,7 +2,9 @@
 #define CONTROLS_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
+// really need to get GLFW untangled from the controls eventually
 #include "GLFW/glfw3.h"
 
 typedef struct {
@@ -29,6 +31,7 @@ enum CONTROLS {
 extern key keys[CONTROLS_LENGTH];
 
 // glfw key event callback
+// glfw complains if I make these use SORTA_WINDOW instead of GLFWwindow* even though I literally never use them so I can't fully untangle this for now
 void handleKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 enum {
