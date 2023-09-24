@@ -20,7 +20,7 @@ EXE_NAME="openGL-test"
 LIBS="-lgdi32 -lm"
 INCLUDES="-Isrc/ -Isrc/external"
 CFLAGS="$CFLAGS -Os -Wall -Wextra -Wpedantic"
-LDFLAGS="$LDFLAGS -Os"
+LDFLAGS="$LDFLAGS -Os -mwindows"
 DEFINES="$DEFINES -DUNUSED=__attribute__((unused))"
 DLLS="libbz2-1.dll libportaudio-2.dll libwinpthread-1.dll zlib1.dll libssp-0.dll"
 
