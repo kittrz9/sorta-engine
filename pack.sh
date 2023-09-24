@@ -13,8 +13,8 @@ fi
 
 for f in build/*; do
 	# doesn't strip mingw executable
-	if [ "$(file $f | grep "not stripped")" ]; then
-		strip $f
+	if file "$f" | grep -q "not stripped"; then
+		strip "$f"
 	fi
 done
 
