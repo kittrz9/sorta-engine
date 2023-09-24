@@ -11,6 +11,13 @@ if [ ! -e build/ ]; then
 	exit 1
 fi
 
+for f in build/*; do
+	# doesn't strip mingw executable
+	if [ "$(file $f | grep "not stripped")" ]; then
+		strip $f
+	fi
+done
+
 GIT_HASH="$(git log -n 1 --pretty=format:%h)"
 PACKED_NAME=sortaEngine-"$GIT_HASH"
 # compression name has to be abbreviated since it's relying on tar to compress it
