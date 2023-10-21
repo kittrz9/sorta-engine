@@ -18,21 +18,59 @@
 #include "game/gameStates/gameStateRunning.h"
 #include "game/controls.h"
 
+#define USING_GLFW
 
-
-int gameLoop(void){
-	double lastTime = glfwGetTime();
-	double deltaTime = 0.0f;
-
-	uint32_t frameCap = 0;
-	struct timespec tim, tim2;
-	tim.tv_sec = 0;
+void initGame(double* lastTime) {
+#ifdef USING_GLFW
+	*lastTime = glfwGetTime();
 
 	// set key callback
 	glfwSetKeyCallback(window, handleKeyEvent);
 	glfwSetCursorPosCallback(window, handleMouseMoveEvent);
 	glfwSetMouseButtonCallback(window, handleMouseButtonEvent);
+#endif
+
+	return;
+}
+
+void endFrame(double* deltaTime, double* lastTime, uint32_t frameCap) {
+	flushAllVertexBuffers();
 	
+
+#ifdef USING_GLFW
+	static struct timespec tim, tim2;
+	tim.tv_sec = 0;
+
+	// swap the frame buffers
+	glfwSwapBuffers(window);
+	// poll for events
+	glfwPollEvents();
+	
+	// update delta time
+	*deltaTime = glfwGetTime() - *lastTime;
+	*lastTime = glfwGetTime();
+
+	if(frameCap != 0) {
+		tim.tv_nsec = 1000000000L/frameCap - *deltaTime*1000000000L;
+		nanosleep(&tim, &tim2);
+	}
+
+	if(running == false)  { glfwSetWindowShouldClose(window, GLFW_TRUE); }
+
+#endif
+
+	return;
+}
+
+
+int gameLoop(void){
+	double lastTime;
+	double deltaTime = 0.0f;
+
+	uint32_t frameCap = 0;
+
+	initGame(&lastTime);
+
 	initGameState(&gameStateRunning);
 	
 	while(!glfwWindowShouldClose(window)){
@@ -42,28 +80,11 @@ int gameLoop(void){
 			}
 		}
 		
-		//clearScreen();
-		
 		if((*(currentState->stateLoop))(deltaTime)) {running = false;}
 		
-		if(running == false)  { glfwSetWindowShouldClose(window, GLFW_TRUE); }
-
-		flushAllVertexBuffers();
-		
-		// swap the frame buffers
-		glfwSwapBuffers(window);
-		// poll for events
-		glfwPollEvents();
-		
-		// update delta time
-		deltaTime = glfwGetTime() - lastTime;
-		lastTime = glfwGetTime();
-
-		if(frameCap != 0) {
-			tim.tv_nsec = 1000000000L/frameCap - deltaTime*1000000000L;
-			nanosleep(&tim, &tim2);
-		}
+		endFrame(&deltaTime, &lastTime, frameCap);
 	}
 	
 	return 0;
 }
+
