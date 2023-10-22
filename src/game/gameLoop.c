@@ -55,7 +55,7 @@ void endFrame(double* deltaTime, double* lastTime, uint32_t frameCap) {
 		nanosleep(&tim, &tim2);
 	}
 
-	if(running == false)  { glfwSetWindowShouldClose(window, GLFW_TRUE); }
+	if(glfwWindowShouldClose(window)) { running = false; }
 
 #endif
 
@@ -73,7 +73,7 @@ int gameLoop(void){
 
 	initGameState(&gameStateRunning);
 	
-	while(!glfwWindowShouldClose(window)){
+	while(running){
 		for(int i = 0; i < CONTROLS_LENGTH; i++){
 			if(keys[i].pressedTimer > 0.0){
 				keys[i].pressedTimer -= deltaTime;
